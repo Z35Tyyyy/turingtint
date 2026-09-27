@@ -1,4 +1,4 @@
-# Optional local research environment; web app does not import these packages.
+# Optional local model environment; heavy packages load only during inference.
 -r requirements-dev.txt
 numpy==2.5.3
 scikit-learn==1.9.1
@@ -8,5 +8,7 @@ threadpoolctl==3.7.0
 transformers==4.56.2
 safetensors==0.8.0
 huggingface-hub==0.36.2
+accelerate==1.10.1
+lm-format-enforcer==0.11.3
 # Install PyTorch separately for your hardware; experiment used 2.6.0+cu124.
 # python -m pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124

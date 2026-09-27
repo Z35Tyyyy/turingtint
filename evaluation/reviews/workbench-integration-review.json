@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "independent-review",
+      "reviewer_id": "iteration_framework",
+      "independent": true,
+      "subject_sha256": "d06d7647805bc76989cbfb2ffcb64b88199fb59bb17bf2268e3e7f51aedf7be1",
+      "decision": "approve",
+      "summary": "Approve scoped coach/API/browser integration after 29 focused tests and 11 browser checks. Prior unchanged experiment/report review remains applicable. This reviewer implemented workbench.py, guidance.py and detector metrics, so their independent approval is explicitly excluded; COACH-001 is resolved by separate root and plagiarism_research inspection/testing of the privacy helper. Scientific accuracy, factual rewrites, mixed authorship and sentence localization are not approved.",
+      "evidence_paths": [
+        "evaluation/reviews/workbench-integration-audit.md",
+        "evaluation/reviews/workbench-model-audit.md",
+        "evaluation/reviews/phase2-experiment-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "EXP-001",
+        "EXP-002",
+        "EXP-003",
+        "UI-001",
+        "UI-002",
+        "COACH-001"
+      ]
+    }
+  ]
+}

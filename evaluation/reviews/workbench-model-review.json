@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "model-metrics-review",
+      "reviewer_id": "plagiarism_research",
+      "independent": true,
+      "decision": "approve",
+      "subject_sha256": "d06d7647805bc76989cbfb2ffcb64b88199fb59bb17bf2268e3e7f51aedf7be1",
+      "summary": "Independent scoped review of workbench model/threshold use, root API/shared-lock integration and privacy-safe guidance helper.16 workbench,7API and3guidance tests independently pass; actual calibration artifacts verified. Excludes reviewer-authored coaching implementation and user-facing accuracy approval. Scientific gates remain blocked.",
+      "evidence_paths": [
+        "evaluation/reviews/workbench-model-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": []
+    }
+  ]
+}

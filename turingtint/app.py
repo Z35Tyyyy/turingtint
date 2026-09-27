@@ -1,4 +1,4 @@
-"""Offline API and static web application, bound to loopback by the CLI."""
+"""Local writing workbench with an explicitly selected optional cloud coach."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import asyncio
 import threading
 import time
 import uuid
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
@@ -20,6 +21,8 @@ from . import __version__
 from .corpus import ROOT, corpus_summary, default_corpus_path, open_readonly
 from .matching import MAX_QUERY_TOKENS, analyze_sources, suggestions_for
 from .research import ResearchBusy, ResearchDetector, ResearchUnavailable
+from .coaching import WritingCoach
+from .workbench import WorkbenchDetector
 from .text import tokenize
 
 
@@ -27,7 +30,7 @@ MAX_TEXT_CHARS = 50_000
 MAX_BODY_BYTES = 350_000
 AUTHORSHIP = {
     "status": "unavailable", "score": None, "spans": [],
-    "reason": "No validated local AI-authorship model is installed. Human, AI, and mixed authorship cannot be estimated by this build.",
+    "reason": "No detector has met the authorship accuracy requirements. Experimental model assessments are available separately and are not verified authorship conclusions.",
 }
 
 
@@ -48,6 +51,10 @@ class AnalyzeInput(BaseModel):
         if len(tokenize(value)) > MAX_QUERY_TOKENS:
             raise ValueError(f"Use at most {MAX_QUERY_TOKENS:,} words.")
         return value
+
+
+class CoachInput(AnalyzeInput):
+    provider: Literal["local", "openai"] = "local"
 
 
 class LocalRequestMiddleware:
@@ -114,12 +121,15 @@ class LocalRequestMiddleware:
         await self.app(scope, replay, safe_send)
 
 
-def create_app(corpus_path: str | Path | None = None, web_path: str | Path | None = None, *, research_detector: ResearchDetector | None = None) -> FastAPI:
+def create_app(corpus_path: str | Path | None = None, web_path: str | Path | None = None, *, research_detector: ResearchDetector | None = None,
+               workbench_detector: WorkbenchDetector | None = None, writing_coach: WritingCoach | None = None) -> FastAPI:
     path = Path(corpus_path) if corpus_path is not None else default_corpus_path()
     frontend = Path(web_path) if web_path is not None else ROOT / "web"
     app = FastAPI(title="TuringTint Local", version=__version__, docs_url=None, redoc_url=None, openapi_url=None)
     scan_slots = threading.BoundedSemaphore(2)
     research = research_detector if research_detector is not None else ResearchDetector()
+    workbench = workbench_detector if workbench_detector is not None else WorkbenchDetector(research_detector=research)
+    coach = writing_coach if writing_coach is not None else WritingCoach()
     app.add_middleware(LocalRequestMiddleware)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]", "testserver"])
 
@@ -135,7 +145,33 @@ def create_app(corpus_path: str | Path | None = None, web_path: str | Path | Non
     def health():
         return {"status": "ok", "version": __version__, "mode": "local", "authorship": AUTHORSHIP,
                 "limits": {"max_text_characters": MAX_TEXT_CHARS, "max_words": MAX_QUERY_TOKENS},
-                "privacy": "Submitted paragraphs are analyzed locally and are not saved by the application."}
+                "privacy": "Analysis is local by default. Selecting OpenAI sends the passage to its API for review. The application does not save submitted paragraphs."}
+
+    @app.get("/api/workbench/status")
+    def workbench_status():
+        return {"detector": {"available": (ROOT / ".cache/detector-models/mage/manifest.json").is_file()
+                                         and (ROOT / "outputs/experiments/tfidf-v1/baseline.joblib").is_file(),
+                             "validated": False}, "coaching": coach.status()}
+
+    @app.post("/api/workbench/analyze")
+    def workbench_analyze(payload: AnalyzeInput):
+        try:
+            result = workbench.analyze(payload.text)
+        except ResearchBusy as error:
+            raise HTTPException(status_code=409, detail=str(error)) from None
+        except ResearchUnavailable as error:
+            raise HTTPException(status_code=503, detail=str(error)) from None
+        except Exception:
+            raise HTTPException(status_code=503, detail="The model assessment could not finish. Try a shorter passage or restart the app.") from None
+        return {**result, "request_id": payload.request_id or str(uuid.uuid4())}
+
+    @app.post("/api/coach/review")
+    def coach_review(payload: CoachInput):
+        try:
+            result = coach.review(payload.text, provider=payload.provider)
+        except Exception:
+            raise HTTPException(status_code=503, detail="The writing review could not finish. Try again shortly.") from None
+        return {**result, "request_id": payload.request_id or str(uuid.uuid4())}
 
     @app.get("/api/corpus")
     def corpus():

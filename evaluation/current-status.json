@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-27T15:07:28.173517+00:00",
-  "run_id": "20260927T150704-9f07146a34f5",
-  "subject_sha256": "92fb4c60695086b17e82f493fa6acceab6d272863ce3a11b6312a256a45e9509",
+  "generated_at": "2026-09-27T19:25:56.320141+00:00",
+  "run_id": "20260927T192438-3c9f18b996f8",
+  "subject_sha256": "d06d7647805bc76989cbfb2ffcb64b88199fb59bb17bf2268e3e7f51aedf7be1",
   "decision": "block",
   "decision_scope": "Only the configured protocol; passing software checks is not a measured detector accuracy claim.",
   "checks": [
     {
       "id": "software-tests",
       "status": "passed",
-      "summary": "102 tests; 0 failures; 0 errors; 0 skipped."
+      "summary": "142 tests; 0 failures; 0 errors; 0 skipped."
     },
     {
       "id": "reference-corpus",
@@ -18,7 +18,7 @@
     {
       "id": "browser-integration",
       "status": "passed",
-      "summary": "10 browser integration checks passed."
+      "summary": "11 browser integration checks passed."
     },
     {
       "id": "authorship-experiment",
@@ -30,12 +30,12 @@
     {
       "id": "independent-review",
       "status": "passed",
-      "summary": "Approved the experimental multiline UI/API workflow after independent backend tests, browser regressions, and one real local GPU browser request. The unchanged prior experiment/report review remains applicable. This does not approve detector accuracy or human/AI/mixed classification; scientific gates remain blocked and model/metrics review is separate."
+      "summary": "Approve scoped coach/API/browser integration after 29 focused tests and 11 browser checks. Prior unchanged experiment/report review remains applicable. This reviewer implemented workbench.py, guidance.py and detector metrics, so their independent approval is explicitly excluded; COACH-001 is resolved by separate root and plagiarism_research inspection/testing of the privacy helper. Scientific accuracy, factual rewrites, mixed authorship and sentence localization are not approved."
     },
     {
       "id": "model-metrics-review",
       "status": "passed",
-      "summary": "Scoped approval of unchanged audited model/metrics and experimental local wrapper/claim wording. Final implementation/input hashes verified. No user-facing accuracy or scientific validation approval; research gates remain blocked."
+      "summary": "Independent scoped review of workbench model/threshold use, root API/shared-lock integration and privacy-safe guidance helper.16 workbench,7API and3guidance tests independently pass; actual calibration artifacts verified. Excludes reviewer-authored coaching implementation and user-facing accuracy approval. Scientific gates remain blocked."
     }
   ],
   "open_gates": [
@@ -46,9 +46,26 @@
   "source_count": 12,
   "source_scope": "PLOS abstracts only",
   "authorship": "unavailable",
-  "research_phase": "Two local models evaluated; neither approved for release.",
+  "research_phase": "Experimental two-classifier workbench and local language-model revisions are available; authorship accuracy remains unvalidated.",
   "comparison_report": "evaluation/results/phase2-comparison.json",
   "results_summary": "research/phase2-results.md",
   "next_work": "research/NEXT.md",
-  "experimental_detector_ui": "Available for local raw-score testing; unvalidated. Multiline input and truncation are explicit."
+  "experimental_detector_ui": "Primary Analyze writing action runs MAGE and the trained TF-IDF model, shows provisional context-block signals and complete coverage metadata, then requests local Qwen revisions.",
+  "writing_coach": {
+    "local_model": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "guided_json": true,
+    "authorship_opinion_validated": false,
+    "factual_rewrites_verified": false,
+    "openai": "Implemented, unconfigured, no paid live API test."
+  },
+  "live_ui_smoke": {
+    "status": "passed",
+    "characters": 797,
+    "both_local_classifiers_complete": true,
+    "model_assessment": "inconclusive",
+    "anchored_local_llm_suggestions": 2,
+    "coach_elapsed_ms": 35720,
+    "external_browser_requests": 0
+  }
 }

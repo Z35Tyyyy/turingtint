@@ -1,19 +1,123 @@
 {
   "version": 1,
-  "allowed_scripts": ["evaluation/check_software.py", "evaluation/check_corpus.py", "evaluation/check_browser.py", "evaluation/check_authorship.py"],
-  "implementation_paths": ["turingtint", "web", "corpus_tools", "iteration", "authorship_data", "detector_models", "detector_eval", "tests", "requirements.txt", "requirements-dev.txt", "requirements-ml.txt"],
-  "input_paths": ["data/reference.sqlite", "data/corpus-seed/manifest.json", "data/authorship/aide", "data/authorship/hc3-wiki", "data/authorship/experiments/hc3-v1", "data/authorship/experiments/aide-v1", ".cache/detector-models/mage", "outputs/experiments/tfidf-v1", "outputs/experiments/mage-hc3-v1/predictions.jsonl", "outputs/experiments/mage-aide-v1/predictions.jsonl"],
+  "allowed_scripts": [
+    "evaluation/check_software.py",
+    "evaluation/check_corpus.py",
+    "evaluation/check_browser.py",
+    "evaluation/check_authorship.py"
+  ],
+  "implementation_paths": [
+    "turingtint",
+    "web",
+    "corpus_tools",
+    "iteration",
+    "authorship_data",
+    "detector_models",
+    "detector_eval",
+    "tests",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "requirements-ml.txt",
+    "scripts/setup_coach.py"
+  ],
+  "input_paths": [
+    "data/reference.sqlite",
+    "data/corpus-seed/manifest.json",
+    "data/authorship/aide",
+    "data/authorship/hc3-wiki",
+    "data/authorship/experiments/hc3-v1",
+    "data/authorship/experiments/aide-v1",
+    ".cache/detector-models/mage",
+    "outputs/experiments/tfidf-v1",
+    "outputs/experiments/mage-hc3-v1/predictions.jsonl",
+    "outputs/experiments/mage-aide-v1/predictions.jsonl",
+    ".cache/coaching-model/manifest.json",
+    ".cache/coaching-model/LICENSE",
+    ".cache/coaching-model/README.md",
+    ".cache/coaching-model/config.json",
+    ".cache/coaching-model/generation_config.json",
+    ".cache/coaching-model/merges.txt",
+    ".cache/coaching-model/tokenizer.json",
+    ".cache/coaching-model/tokenizer_config.json",
+    ".cache/coaching-model/vocab.json",
+    ".cache/coaching-model/model.safetensors.index.json",
+    ".cache/coaching-model/model-00001-of-00002.safetensors",
+    ".cache/coaching-model/model-00002-of-00002.safetensors"
+  ],
   "checks": [
-    {"id": "software-tests", "script": "evaluation/check_software.py", "args": [], "required": true, "timeout_seconds": 90, "output": "json"},
-    {"id": "reference-corpus", "script": "evaluation/check_corpus.py", "args": [], "required": true, "timeout_seconds": 15, "output": "json"},
-    {"id": "browser-integration", "script": "evaluation/check_browser.py", "args": [], "required": true, "timeout_seconds": 90, "output": "json"},
-    {"id": "authorship-experiment", "script": "evaluation/check_authorship.py", "args": [], "required": true, "timeout_seconds": 60, "output": "json"}
+    {
+      "id": "software-tests",
+      "script": "evaluation/check_software.py",
+      "args": [],
+      "required": true,
+      "timeout_seconds": 90,
+      "output": "json"
+    },
+    {
+      "id": "reference-corpus",
+      "script": "evaluation/check_corpus.py",
+      "args": [],
+      "required": true,
+      "timeout_seconds": 15,
+      "output": "json"
+    },
+    {
+      "id": "browser-integration",
+      "script": "evaluation/check_browser.py",
+      "args": [],
+      "required": true,
+      "timeout_seconds": 90,
+      "output": "json"
+    },
+    {
+      "id": "authorship-experiment",
+      "script": "evaluation/check_authorship.py",
+      "args": [],
+      "required": true,
+      "timeout_seconds": 60,
+      "output": "json"
+    }
   ],
   "gates": [
-    {"id": "working-prototype", "description": "Software, browser checks and corpus ingestion pass; this does not establish detection accuracy.", "check_ids": ["software-tests", "reference-corpus", "browser-integration"], "required": true},
-    {"id": "authorship-validation", "description": "Recompute diagnostic evidence; target-population, source independence and unseen-generator validation remain required before authorship claims are enabled.", "check_ids": ["authorship-experiment"], "required": true},
-    {"id": "mixed-span-validation", "description": "Mixed authorship and sentence highlights need distinct ground truth and localization evaluation.", "check_ids": [], "required": true},
-    {"id": "retrieval-benchmark", "description": "A held-out source-matching benchmark must measure exact/near-exact precision, recall, common-phrase false alarms and source-absent cases.", "check_ids": [], "required": true}
+    {
+      "id": "working-prototype",
+      "description": "Software, browser checks and corpus ingestion pass; this does not establish detection accuracy.",
+      "check_ids": [
+        "software-tests",
+        "reference-corpus",
+        "browser-integration"
+      ],
+      "required": true
+    },
+    {
+      "id": "authorship-validation",
+      "description": "Recompute diagnostic evidence; target-population, source independence and unseen-generator validation remain required before authorship claims are enabled.",
+      "check_ids": [
+        "authorship-experiment"
+      ],
+      "required": true
+    },
+    {
+      "id": "mixed-span-validation",
+      "description": "Mixed authorship and sentence highlights need distinct ground truth and localization evaluation.",
+      "check_ids": [],
+      "required": true
+    },
+    {
+      "id": "retrieval-benchmark",
+      "description": "A held-out source-matching benchmark must measure exact/near-exact precision, recall, common-phrase false alarms and source-absent cases.",
+      "check_ids": [],
+      "required": true
+    }
   ],
-  "review_slots": [{"id": "independent-review", "required": true}, {"id": "model-metrics-review", "required": true}]
+  "review_slots": [
+    {
+      "id": "independent-review",
+      "required": true
+    },
+    {
+      "id": "model-metrics-review",
+      "required": true
+    }
+  ]
 }

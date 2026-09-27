@@ -3,71 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="A local writing analysis workspace with source-backed evidence.">
-  <title>TuringTint · Writing laboratory</title>
+  <meta name="description" content="Explore AI-writing signals and get explained revisions in a local writing workspace.">
+  <title>TuringTint · Writing workbench</title>
   <link rel="stylesheet" href="/static/styles.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="/" aria-label="TuringTint home"><span class="brand-mark">t<span>.</span></span><span>TuringTint</span></a>
-    <nav aria-label="Main"><a class="active" href="#workspace">Workspace</a><a href="#method">How it works</a></nav>
-    <span class="local-badge"><i></i> Local workspace</span>
+    <nav aria-label="Main"><a class="active" href="#workspace">Workbench</a><a href="#method">How it works</a></nav>
+    <span id="privacy-badge" class="local-badge"><i></i> Local by default</span>
   </header>
   <main>
     <section class="intro">
-      <div class="eyebrow"><span>THE WRITING LABORATORY</span><span class="edition">PROTOTYPE / 01</span></div>
-      <h1>A closer look<br>at your <em>words.</em></h1>
-      <div class="intro-bottom"><p>Explore the sources behind a passage.<br>Understand the evidence before drawing a conclusion.</p><div class="corpus-summary"><span class="tiny-label">REFERENCE LIBRARY</span><strong id="corpus-count">Connecting…</strong><span id="corpus-detail">Checking local availability</span></div></div>
+      <div class="eyebrow">THE WRITING LABORATORY <span class="edition">EXPERIMENTAL WORKBENCH</span></div>
+      <h1>AI signals.<br><em>Better writing.</em></h1>
+      <p>Explore highlighted passages and get specific revisions<br class="desktop-break"> with explanations for what to change and why.</p>
     </section>
-
     <section id="workspace" class="workspace" aria-label="Writing analysis">
       <div class="editor-panel">
-        <div class="panel-heading"><div><span class="step">01</span><h2>Your passage</h2></div><button id="example" class="text-button" type="button">Try a reference passage ↗</button></div>
-        <label for="passage" class="sr-only">Paste English academic or student writing</label>
-        <textarea id="passage" maxlength="30000" placeholder="Paste a paragraph, an abstract, or an essay excerpt here…" spellcheck="false"></textarea>
-        <div class="editor-meta"><span id="word-count">0 words</span><span>English academic &amp; student writing</span></div>
-        <div class="editor-actions"><p><span class="small-dot"></span>Analysis stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze passage <span>↗</span></button></div>
+        <div class="panel-heading"><div><span class="step">01</span><h2>Your writing</h2></div><button id="example" class="text-button" type="button">Try a generated sample ↗</button></div>
+        <label for="passage" class="sr-only">Paste English academic or student writing, including multiple paragraphs</label>
+        <textarea id="passage" maxlength="30000" placeholder="Paste your paragraph or essay excerpt here. Line breaks are preserved." spellcheck="false"></textarea>
+        <div class="editor-meta"><span id="word-count">0 words · 0 characters</span><span>English academic &amp; student writing</span></div>
+        <div class="editor-settings"><label for="coach-provider">Revision coach</label><select id="coach-provider"><option value="local">Local model</option></select><span id="coach-availability">Checking availability…</span></div>
+        <div class="editor-actions"><p id="privacy-note"><span class="small-dot"></span>Your writing stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze writing <span>↗</span></button></div>
         <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
       </div>
       <aside class="overview-panel">
-        <span class="step">02</span><h2>Evidence, in context.</h2><p class="overview-copy">Two different questions.<br>Two separate kinds of evidence.</p>
-        <div class="signal-item"><span class="signal-icon source-icon">≋</span><div><h3>Source overlap</h3><p>Matching passages from your local reference library, with citations.</p><span id="source-state" class="pill available">Checking library</span></div></div>
-        <div class="signal-item"><span class="signal-icon ai-icon">∴</span><div><h3>Validated authorship</h3><p>AI estimates need an independently evaluated detector.</p><span class="pill muted">Not yet available</span></div></div>
-        <div class="scope-note">A source match is evidence of shared wording. Quotation, citation, and context still matter.</div>
+        <span class="step">ONE ANALYSIS</span><h2>Signals to action.</h2>
+        <div class="signal-item"><span class="signal-icon">∴</span><div><h3>Model assessment</h3><p>Compare detector signals and inspect the context blocks behind them.</p><span id="detector-ready" class="pill muted">Checking local models</span></div></div>
+        <div class="signal-item"><span class="signal-icon">↗</span><div><h3>Explained revisions</h3><p>A writing coach suggests specific changes, reasons, and optional rewrites.</p></div></div>
+        <div class="signal-item"><span class="signal-icon">≋</span><div><h3>Source evidence</h3><p>Shared wording is checked against your local reference library.</p><span id="corpus-count" class="pill muted">Checking library</span></div></div>
       </aside>
     </section>
-
-    <section id="research" class="research-panel" aria-labelledby="research-heading">
-      <div class="research-heading">
-        <div><span class="eyebrow">EXPERIMENTAL / UNVALIDATED</span><h2 id="research-heading">Test the local detector.</h2></div>
-        <button id="research-analyze" class="secondary-button" type="button" disabled>Test experimental detector</button>
-      </div>
-      <p class="research-intro">Submits the full passage from the editor above, including line breaks. Long inputs may be truncated; the result shows how much was analyzed. Authorship conclusions remain unavailable. The first test may take a few seconds while the local model loads.</p>
-      <div id="research-notice" class="notice" role="status" aria-live="polite" hidden></div>
-      <div id="research-result" class="research-result" aria-live="polite" hidden>
-        <div class="research-score-card"><span class="tiny-label">RAW MODEL SCORE</span><output id="research-score"></output><span class="pill research-pill">Experimental · unvalidated</span><p>Uncalibrated value from 0 to 1. This is not a percentage of AI-written text or a verified authorship probability.</p></div>
-        <div class="research-details">
-          <h3>What the model received</h3>
-          <dl class="research-counts"><div><dt>Characters submitted</dt><dd id="research-characters"></dd></div><div><dt>Words submitted</dt><dd id="research-words"></dd></div><div><dt>Tokens in the full passage</dt><dd id="research-original-tokens"></dd></div><div><dt>Tokens analyzed</dt><dd id="research-input-tokens"></dd></div></dl>
-          <p id="research-truncation" class="notice" hidden></p>
-          <p id="research-runtime" class="muted-copy"></p>
-          <details class="research-model-details"><summary>Model details and limitations</summary><p id="research-model"></p><ul id="research-limitations"></ul></details>
+    <p class="experiment-note"><strong>Experimental.</strong> Model signals and coach opinions can be wrong. Highlights describe context blocks, not proven authorship; disagreement is inconclusive.</p>
+    <section id="results" class="results" hidden aria-label="Writing analysis results">
+      <div class="results-title"><div><span class="eyebrow">YOUR WRITING, EXAMINED</span><h2>Understand. Then revise.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>
+      <div class="analysis-layout">
+        <div class="detector-column">
+          <section class="assessment-card" aria-labelledby="assessment-label" aria-live="polite">
+            <div class="section-kicker"><span>MODEL ASSESSMENT</span><span id="detector-status" class="pill muted">Queued</span></div>
+            <h3 id="assessment-label">Checking your writing…</h3><p id="assessment-summary">Local detector signals will appear here first.</p><div id="model-signals" class="model-signals"></div><p id="detector-error" class="notice" role="status" hidden></p>
+          </section>
+          <section class="annotated-panel" aria-labelledby="passage-view-heading">
+            <div class="annotation-header"><h3 id="passage-view-heading">Context block signals</h3><span id="block-count" class="muted-copy"></span></div>
+            <div class="block-legend"><span><i class="lean-ai"></i>AI-leaning</span><span><i class="lean-human"></i>Human-leaning</span><span><i class="lean-inconclusive"></i>Inconclusive</span></div>
+            <div id="annotated-text" class="annotated-text"></div><div id="block-detail" class="block-detail" hidden><strong id="block-label"></strong><p id="block-reason"></p></div><p id="coverage-note" class="notice" hidden></p>
+          </section>
+          <details id="model-diagnostics" class="diagnostics"><summary>Model details and raw scores</summary><p class="muted-copy">Raw scores are uncalibrated outputs, not percentages of AI-written text. No authorship is proved by a score.</p><div id="model-cards"></div><p id="input-details" class="muted-copy"></p><ul id="detector-limitations"></ul></details>
         </div>
+        <section class="coach-panel" aria-labelledby="coach-heading">
+          <div class="section-kicker"><span>WRITING COACH</span><span id="coach-status" class="pill muted">Queued</span></div>
+          <h3 id="coach-heading">What to improve, and why.</h3><p id="coach-progress" class="muted-copy">The coach starts after the detector, then suggestions appear here.</p><p id="coach-error" class="notice" role="status" hidden></p>
+          <div id="coach-opinion" class="coach-opinion" hidden><span class="tiny-label">COACH OPINION · SEPARATE FROM THE DETECTOR</span><strong id="coach-assessment"></strong><p id="coach-reason"></p></div>
+          <p id="coach-summary" class="coach-summary"></p><p id="revision-review-note" class="muted-copy" hidden>Review facts and any [placeholders] before applying a revision.</p><div id="revision-cards"></div>
+          <details id="coach-details" class="diagnostics" hidden><summary>Coaching details and limits</summary><p id="coach-model"></p><ul id="coach-limitations"></ul></details>
+        </section>
       </div>
+      <details id="source-section" class="source-section"><summary><span>Source matching <span id="match-count" class="count-badge">—</span></span><span id="source-status" class="muted-copy">Checking local library…</span></summary>
+        <p id="source-error" class="notice" role="status" hidden></p><p id="component-warning" class="notice" role="status" hidden></p>
+        <div class="source-tools"><p id="report-summary" class="muted-copy">This comparison covers the installed reference library.</p><button id="source-example" class="text-button" type="button">Load a reference example ↗</button></div>
+        <div class="source-grid"><div id="source-annotated-text" class="annotated-text"></div><div id="source-cards"></div></div><div id="source-suggestions"></div>
+      </details>
     </section>
-
-    <section id="results" class="results" hidden aria-label="Analysis results">
-      <div class="results-title"><div><span class="eyebrow">ANALYSIS REPORT</span><h2>Follow the evidence.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>
-      <div class="report-grid">
-        <div class="annotated-panel"><div class="annotation-header"><h3>Passage view</h3><span class="legend"><i></i> Source overlap</span></div><p id="component-warning" class="notice" role="status" hidden></p><div id="annotated-text" class="annotated-text"></div><p id="report-summary" class="report-summary"></p></div>
-        <div class="evidence-panel"><div class="evidence-heading"><h3>Source evidence</h3><span id="match-count" class="count-badge">0</span></div><div id="source-cards"></div></div>
-      </div>
-      <div id="suggestions-panel" class="suggestions-panel" hidden><h3>Consider these changes</h3><p class="muted-copy">Suggestions address attribution and clarity. They do not establish authorship or guarantee a lower AI score.</p><div id="suggestions"></div></div>
-    </section>
-
-    <section id="method" class="method"><div><span class="eyebrow">OUR APPROACH</span><h2>Useful signals.<br>Visible limits.</h2></div><div class="method-grid"><article><span>01 / LOCAL</span><h3>A library you can inspect</h3><p>Source matching searches the installed corpus. It does not search every website, paper, or private document.</p></article><article><span>02 / EVIDENCE</span><h3>Claims with receipts</h3><p>Open a match to compare the actual words and source. No match means none was found in the searched library.</p></article><article><span>03 / RESEARCH</span><h3>Accuracy is earned</h3><p>Authorship conclusions stay unavailable until a detector passes evaluation. The experimental panel exposes raw model output for testing.</p></article></div></section>
+    <section id="method" class="method"><div><span class="eyebrow">HOW IT WORKS</span><h2>One passage.<br>Three perspectives.</h2></div><div class="method-grid"><article><span>01 / DETECTORS</span><h3>Compare model signals</h3><p>Local classifiers estimate how your writing resembles their training examples. Disagreement remains visible.</p></article><article><span>02 / REVISIONS</span><h3>Make considered changes</h3><p>The coach explains its suggestions. Review each rewrite, preserve your facts and citations, then analyze again.</p></article><article><span>03 / SOURCES</span><h3>Check the actual evidence</h3><p>Source matches show shared wording in your local library. Matching text alone does not establish plagiarism.</p></article></div></section>
   </main>
-  <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>LOCAL RESEARCH PROTOTYPE</span></footer>
+  <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>EXPERIMENTAL WRITING WORKBENCH</span></footer>
 </body>
 </html>

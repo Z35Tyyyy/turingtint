@@ -5,6 +5,8 @@ import math
 import threading
 import time
 
+from .coaching import GPU_LOCK
+
 
 class ResearchBusy(Exception):
     pass
@@ -30,6 +32,9 @@ class ResearchDetector:
     def analyze(self, text: str) -> dict:
         if not self._lock.acquire(blocking=False):
             raise ResearchBusy("An experimental detector test is already running. Please retry shortly.")
+        if not GPU_LOCK.acquire(blocking=False):
+            self._lock.release()
+            raise ResearchBusy("The local writing model is busy. Please retry after its review finishes.")
         started = time.perf_counter()
         try:
             if self._model is None:
@@ -62,4 +67,5 @@ class ResearchDetector:
                           elapsed_ms=round((time.perf_counter() - started) * 1000), limitations=limitations)
             return result
         finally:
+            GPU_LOCK.release()
             self._lock.release()

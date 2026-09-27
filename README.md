@@ -2,23 +2,25 @@
 
 A local writing-analysis workspace for English academic and student prose.
 
-The first prototype compares a pasted passage against an installed reference
-library, highlights matching wording, shows the source and license, and suggests
-reviewing quotation and attribution. Analysis does not transmit the passage to
-an external service or save it in the reference library.
+**Analyze writing** runs two local machine-learning classifiers and a language
+model review. The main report shows experimental model leanings, highlights the
+context blocks that were scored, and provides specific revision suggestions with
+the original wording, a reason and a proposed edit. A secondary source panel
+checks wording against the installed reference library.
 
-**Validated AI-authorship detection is not yet available.** The source report
-returns null authorship scores. A separate **Test experimental detector** button
-runs the installed local MAGE model for research: it shows an uncalibrated raw
-score, full input counts and any truncation, without AI/human/mixed verdicts.
-Source overlap is not proof of plagiarism, and no match means none was found in
-the local library.
+The classifiers are the pretrained MAGE transformer and the project's trained
+TF-IDF/logistic baseline. The writing coach is pinned Qwen3-1.7B running locally,
+or an explicitly selected OpenAI API model. An LLM opinion is shown separately
+from the classifiers. Conflicting signals remain inconclusive; they do not
+establish mixed authorship. **These are experimental predictions, not validated
+authorship conclusions or percentages of AI-written text.**
 
 The second phase adds licensed corpus acquisition, frozen training/calibration
 splits, a trained local baseline and a pinned pretrained detector comparison.
 See the [experiment instructions](detector_eval/README.md) and
 [measured results](research/phase2-results.md). These diagnostics do not
-yet justify enabling authorship labels.
+yet justify validated authorship claims. No model score or suggested rewrite
+proves that writing is human or guarantees a lower detector score.
 
 ## Run locally
 
@@ -32,17 +34,31 @@ powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 
 Open http://127.0.0.1:8765. The first corpus command downloads a small selection
 of PLOS abstracts through Europe PMC, verifies article-level CC BY evidence,
-and records provenance. Downloads happen during setup; analysis is offline.
-Use the reference-example button to try a real source match.
+and records provenance. Use the reference example to test source matching and
+the labeled AI-generated example to exercise the model workflow.
 
-To test the research detector, paste the complete paragraph into the same text
-box and click **Test experimental detector**. Multiline pastes are supported.
-The first request loads the model and can take longer; later requests reuse it.
-The optional model and research dependencies must already be installed (see
-[experiment setup](detector_eval/README.md)). The result shows how many characters,
-words and model tokens were read. Inputs over 512 model tokens are explicitly
-marked as truncated. Editing the passage invalidates the previous result.
-Paragraphs stay local and are not saved by this endpoint.
+For model analysis, install the research dependencies and model artifacts in
+[experiment setup](detector_eval/README.md), then install the writing coach:
+
+```powershell
+.venv/Scripts/python.exe -m pip install -r requirements-ml.txt
+.venv/Scripts/python.exe scripts/setup_coach.py
+```
+
+The coach download is approximately 4.1 GB and uses Apache-2.0 weights. CUDA with
+6 GB of GPU memory is suitable for this configuration; CPU generation can be
+slow. Paste a complete paragraph and click **Analyze writing**. Model results
+arrive before the language-model review. First use loads the models; subsequent
+requests reuse them. Editing or applying a revision clears the old results.
+Long or unsupported inputs show their limits rather than silently pretending
+that the whole passage was assessed.
+
+Local mode requires no API key and does not transmit or save your passage.
+To use OpenAI instead, configure `OPENAI_API_KEY` and `TURINGTINT_OPENAI_MODEL`
+in the server environment, restart, and explicitly select OpenAI in the UI.
+That choice sends the passage to OpenAI and uses separately billed API access.
+Keys are never entered into the page or returned by the server. See
+[LLM setup and behavior](research/llm-review.md).
 
 The same application runs with `python -m turingtint` on other supported
 platforms after installing `requirements.txt` into a virtual environment.
@@ -83,7 +99,7 @@ Use one bounded sweep by default; rerun after changes or new evidence.
 | Path | Purpose |
 |---|---|
 | `web/` | Accessible static interface; no external fonts or frontend services |
-| `turingtint/` | Local API, SQLite corpus, bounded lexical source matching |
+| `turingtint/` | ML workbench, local/API writing coach, source matching and local web API |
 | `corpus_tools/` | License-filtered academic reference acquisition |
 | `authorship_data/` | Provenance-checked AIDE and licensed HC3 subset acquisition |
 | `detector_models/` | Pinned offline MAGE inference and artifact verification |
@@ -112,7 +128,7 @@ content-security policy. This local prototype is not a public multi-user service
 
 Raw corpora, models, local iteration histories, logs and virtual environments are
 excluded from Git. Downloaded sources retain their own licenses and attribution.
-No API key is required. Avoid committing private text or credentials.
+No API key is required for local mode. Avoid committing private text or credentials.
 
 The former paraphraser code was archived outside the active working tree before
 this reset. Git history is retained. No former rewriting loss or detector score
