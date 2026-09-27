@@ -22,6 +22,7 @@ from .corpus import ROOT, corpus_summary, default_corpus_path, open_readonly
 from .matching import MAX_QUERY_TOKENS, analyze_sources, suggestions_for
 from .research import ResearchBusy, ResearchDetector, ResearchUnavailable
 from .coaching import WritingCoach
+from .examples import demo_cases
 from .workbench import WorkbenchDetector
 from .text import tokenize
 
@@ -176,6 +177,10 @@ def create_app(corpus_path: str | Path | None = None, web_path: str | Path | Non
     @app.get("/api/corpus")
     def corpus():
         return corpus_summary(path)
+
+    @app.get("/api/examples")
+    def examples():
+        return demo_cases()
 
     @app.post("/api/research/analyze")
     def research_analyze(payload: AnalyzeInput):

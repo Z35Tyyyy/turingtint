@@ -8,12 +8,18 @@ context blocks that were scored, and provides specific revision suggestions with
 the original wording, a reason and a proposed edit. A secondary source panel
 checks wording against the installed reference library.
 
-The classifiers are the pretrained MAGE transformer and the project's trained
-TF-IDF/logistic baseline. The writing coach is pinned Qwen3-1.7B running locally,
-or an explicitly selected OpenAI API model. An LLM opinion is shown separately
-from the classifiers. Conflicting signals remain inconclusive; they do not
-establish mixed authorship. **These are experimental predictions, not validated
+The primary classifier is the pretrained MAGE transformer. The project's trained
+TF-IDF/logistic baseline remains a visible secondary diagnostic. The writing coach
+uses a pinned local Qwen instruct model, or an explicitly selected OpenAI API model,
+and provides editing advice without guessing authorship. Different block results
+remain inconclusive for the whole passage; they do not establish mixed authorship.
+**These are experimental predictions, not validated
 authorship conclusions or percentages of AI-written text.**
+
+Start with [the test walkthrough](TESTING.md): six labeled cases, optional fast
+analysis, exact edit previews, and original/revised comparisons. The current
+[model-policy experiment](research/candidate-diagnostic.md) reports gains and
+false-positive regressions alongside the original detector results.
 
 The second phase adds licensed corpus acquisition, frozen training/calibration
 splits, a trained local baseline and a pinned pretrained detector comparison.
@@ -34,8 +40,8 @@ powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 
 Open http://127.0.0.1:8765. The first corpus command downloads a small selection
 of PLOS abstracts through Europe PMC, verifies article-level CC BY evidence,
-and records provenance. Use the reference example to test source matching and
-the labeled AI-generated example to exercise the model workflow.
+and records provenance. Use **Load case** for the six writing examples, or
+**Load a reference example** in the source panel to test source matching.
 
 For model analysis, install the research dependencies and model artifacts in
 [experiment setup](detector_eval/README.md), then install the writing coach:
@@ -45,11 +51,18 @@ For model analysis, install the research dependencies and model artifacts in
 .venv/Scripts/python.exe scripts/setup_coach.py
 ```
 
-The coach download is approximately 4.1 GB and uses Apache-2.0 weights. CUDA with
-6 GB of GPU memory is suitable for this configuration; CPU generation can be
-slow. Paste a complete paragraph and click **Analyze writing**. Model results
-arrive before the language-model review. First use loads the models; subsequent
-requests reuse them. Editing or applying a revision clears the old results.
+The full historical evaluation protocol also fingerprints the smaller comparison
+model. Install it with `scripts/setup_coach.py --profile small` when reproducing
+that protocol on a fresh machine; the default UI continues to use `instruct`.
+
+The default Qwen3-4B-Instruct-2507 coach downloads approximately 8.1 GB of Apache-2.0
+weights and loads them with NF4 quantization on a CUDA GPU. The project also retains
+the smaller 1.7B profile for comparison; setup and resource details are in the
+[coach notes](research/llm-review.md). Paste a complete paragraph and click
+**Analyze writing**. Uncheck **Include writing feedback** for faster model-only
+testing. Model results arrive before the language-model review. First use loads
+the models; subsequent requests reuse them. Applying a revision preserves the
+original model signals for comparison after reanalysis; unrelated new text resets it.
 Long or unsupported inputs show their limits rather than silently pretending
 that the whole passage was assessed.
 

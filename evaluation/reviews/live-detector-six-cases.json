@@ -1,0 +1,678 @@
+{
+  "timestamp": "2026-09-27T20:04:29.872423+00:00",
+  "scope": "Actual local detector API smoke, six fixed public/synthetic cases; not accuracy validation",
+  "cases": [
+    {
+      "id": "hc3-human",
+      "text_sha256": "9bfd66b3beefdba6d05fbffc2be9f7cdb07a8078a45f7499accf927c96677a91",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "human_leaning",
+          "summary": "The primary MAGE detector is provisionally human-leaning across all scored context blocks. This experimental signal does not prove how the passage was written."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "human_leaning",
+            "score_ai": 0.0001733271702059668,
+            "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+            "reason": "One raw context score.",
+            "role": "primary",
+            "scored_contexts": 1,
+            "total_contexts": 1,
+            "logit_margin": -8.66015625,
+            "legacy_softmax_score_ai": 0.0001733271637931466
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "human_leaning",
+            "score_ai": 0.16343003293125477,
+            "score_kind": "uncalibrated_logistic_class_1",
+            "reason": "One raw context score.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 1,
+            "total_contexts": 1
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 1507,
+            "text": "Inductive logic programming (ILP) is a subfield of symbolic artificial intelligence  which uses logic programming as a uniform representation for examples, background knowledge and hypotheses. Given an encoding of the known background knowledge and a set of examples represented as a logical database of facts, an ILP system will derive a hypothesised logic program which entails all the positive and none of the negative examples.\nInductive logic programming is particularly useful in bioinformatics and natural language processing. Gordon Plotkin and Ehud Shapiro laid the initial theoretical foundation for inductive machine learning in a logical setting. Shapiro built their first implementation (Model Inference System) in 1981: a Prolog program that inductively inferred logic programs from positive and negative examples. The first full first-order implementation of inductive logic programming was Theorist in 1986.[citation needed] The term Inductive Logic Programming was first introduced in a paper by Stephen Muggleton in 1991. Muggleton also founded the annual international conference on Inductive Logic Programming, introduced the theoretical ideas of Predicate Invention, Inverse resolution, and Inverse entailment.[10] Muggleton implemented Inverse entailment first in the PROGOL system. The term \"inductive\" here refers to philosophical (i.e. suggesting a theory to explain observed facts) rather than mathematical (i.e. proving a property for all members of a well-ordered set) induction.",
+            "words": 210,
+            "label": "human_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.0001733271702059668,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": -8.66015625,
+                "legacy_softmax_score_ai": 0.0001733271637931466
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.16343003293125474,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 1507,
+          "words": 210,
+          "analyzed_characters": 1507,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 1,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 3950,
+        "request_id": "f7459a8b-1c56-4eed-83d0-bfa3748cbba3"
+      },
+      "elapsed_seconds": 3.957
+    },
+    {
+      "id": "hc3-ai",
+      "text_sha256": "f01968759d3befd23ae609db0f08c8260e7cffc5274ca61cbd801639baabbedc",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "ai_leaning",
+          "summary": "The primary MAGE detector is provisionally AI-leaning across all scored context blocks. This experimental signal does not prove how the passage was written."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "ai_leaning",
+            "score_ai": 0.9999876850897587,
+            "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+            "reason": "One raw context score.",
+            "role": "primary",
+            "scored_contexts": 1,
+            "total_contexts": 1,
+            "logit_margin": 11.3046875,
+            "legacy_softmax_score_ai": 0.9999877214431763
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "ai_leaning",
+            "score_ai": 0.8170069590770261,
+            "score_kind": "uncalibrated_logistic_class_1",
+            "reason": "One raw context score.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 1,
+            "total_contexts": 1
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 1154,
+            "text": "Inductive logic programming (ILP) is a subfield of artificial intelligence and machine learning that focuses on the development of algorithms and systems that can automatically construct logical rules and models from data.\n\n\n\nIn ILP, the goal is to learn logical rules that can be used to make predictions or classify examples based on a set of input features. These rules are typically represented in a logical language, such as first-order logic or propositional logic, and are learned from examples or training data using an inductive process.\n\n\n\nThe key idea behind ILP is to use logical reasoning and induction to learn rules from data. Induction is the process of inferring general principles or patterns from specific observations or examples. In the context of ILP, this means using a set of training examples to learn a set of logical rules that can be used to make predictions or classify new examples.\n\n\n\nILP has been applied to a wide range of tasks, including natural language processing, biomedical informatics, and robotics. It has also been used to build expert systems and knowledge-based systems in domains such as medicine and biology.",
+            "words": 186,
+            "label": "ai_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "ai_leaning",
+                "score_ai": 0.9999876850897587,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": 11.3046875,
+                "legacy_softmax_score_ai": 0.9999877214431763
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "ai_leaning",
+                "score_ai": 0.8170069590770261,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 1154,
+          "words": 186,
+          "analyzed_characters": 1154,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 1,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 82,
+        "request_id": "74d186b4-645a-4a50-9252-b8129676b719"
+      },
+      "elapsed_seconds": 0.1
+    },
+    {
+      "id": "student-human",
+      "text_sha256": "134016b45f3a515406e8357ca28b608457c38d663d70f58a13aa95e463478c86",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "human_leaning",
+          "summary": "The primary MAGE detector is provisionally human-leaning across all scored context blocks. This experimental signal does not prove how the passage was written."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "human_leaning",
+            "score_ai": 0.9987478504432322,
+            "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+            "reason": "One raw context score.",
+            "role": "primary",
+            "scored_contexts": 1,
+            "total_contexts": 1,
+            "logit_margin": 6.681640625,
+            "legacy_softmax_score_ai": 0.9987478256225586
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "human_leaning",
+            "score_ai": 0.3451522500260871,
+            "score_kind": "uncalibrated_logistic_class_1",
+            "reason": "One raw context score.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 1,
+            "total_contexts": 1
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 1213,
+            "text": "In like matter of this, article, \"In German Suburb, Life Goes On Without Cars,\" by Elizabeth Rosenthal states, how automobiles are the linchpin of suburbs, where middle class families from either Shanghai or Chicago tend to make their homes. Experts say how this is a huge impediment to current efforts to reduce greenhouse gas emissions from tailpipe. Passenger cars are responsible for 12 percent of greenhouse gas emissions in Europe...and up to 50 percent in some carintensive areas in the United States. Cars are the main reason for the greenhouse gas emissions because of a lot of people driving them around all the time getting where they need to go. Article, \"Paris bans driving due to smog,\" by Robert Duffer says, how Paris, after days of nearrecord pollution, enforced a partial driving ban to clear the air of the global city. It also says, how on Monday, motorist with evennumbered license plates were ordered to leave their cars at home or be fined a 22euro fine 31. The same order would be applied to oddnumbered plates the following day. Cars are the reason for polluting entire cities like Paris. This shows how bad cars can be because, of all the pollution that they can cause to an entire city.",
+            "words": 209,
+            "label": "human_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.9987478504432323,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": 6.681640625,
+                "legacy_softmax_score_ai": 0.9987478256225586
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.3451522500260871,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 1213,
+          "words": 209,
+          "analyzed_characters": 1213,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 1,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 76,
+        "request_id": "0494c0fd-bd27-42ee-a360-9a842c1eed57"
+      },
+      "elapsed_seconds": 0.078
+    },
+    {
+      "id": "constructed-mixed",
+      "text_sha256": "b198b0ab222688abac3185c164c706fc02169dbcc8eba93e6e3b54f2ce5af50c",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "inconclusive",
+          "summary": "The primary MAGE detector does not provide consistent, fully supported evidence for one passage-level leaning. Review its block signals and the separate TF-IDF diagnostic below."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "inconclusive",
+            "score_ai": 0.6666768880979871,
+            "score_kind": "word_weighted_mean_uncalibrated_context_scores",
+            "reason": "Word-weighted mean of available raw context scores; boundaries were applied separately to each block, never to this mean. Context opinions do not support one consistent passage leaning.",
+            "role": "primary",
+            "scored_contexts": 3,
+            "total_contexts": 3
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "inconclusive",
+            "score_ai": 0.4663112177295261,
+            "score_kind": "word_weighted_mean_uncalibrated_context_scores",
+            "reason": "Word-weighted mean of available raw context scores; boundaries were applied separately to each block, never to this mean. Context opinions do not support one consistent passage leaning.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 3,
+            "total_contexts": 3
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 941,
+            "text": "Inductive logic programming (ILP) is a subfield of symbolic artificial intelligence  which uses logic programming as a uniform representation for examples, background knowledge and hypotheses. Given an encoding of the known background knowledge and a set of examples represented as a logical database of facts, an ILP system will derive a hypothesised logic program which entails all the positive and none of the negative examples.\nInductive logic programming is particularly useful in bioinformatics and natural language processing. Gordon Plotkin and Ehud Shapiro laid the initial theoretical foundation for inductive machine learning in a logical setting. Shapiro built their first implementation (Model Inference System) in 1981: a Prolog program that inductively inferred logic programs from positive and negative examples. The first full first-order implementation of inductive logic programming was Theorist in 1986.[citation needed] ",
+            "words": 132,
+            "label": "human_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.00019411318677896262,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": -8.546875,
+                "legacy_softmax_score_ai": 0.00019411317771300673
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.26815299872133147,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          },
+          {
+            "start": 941,
+            "end": 1847,
+            "text": "The term Inductive Logic Programming was first introduced in a paper by Stephen Muggleton in 1991. Muggleton also founded the annual international conference on Inductive Logic Programming, introduced the theoretical ideas of Predicate Invention, Inverse resolution, and Inverse entailment.[10] Muggleton implemented Inverse entailment first in the PROGOL system. The term \"inductive\" here refers to philosophical (i.e. suggesting a theory to explain observed facts) rather than mathematical (i.e. proving a property for all members of a well-ordered set) induction.\n\nInductive logic programming (ILP) is a subfield of artificial intelligence and machine learning that focuses on the development of algorithms and systems that can automatically construct logical rules and models from data.\n\n\n\nIn ILP, the goal is to learn logical rules that can be used to make predictions or classify examples based on a ",
+            "words": 132,
+            "label": "human_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.9998488180067273,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": 8.796875,
+                "legacy_softmax_score_ai": 0.9998488426208496
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.35274303192509804,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          },
+          {
+            "start": 1847,
+            "end": 2663,
+            "text": "set of input features. These rules are typically represented in a logical language, such as first-order logic or propositional logic, and are learned from examples or training data using an inductive process.\n\n\n\nThe key idea behind ILP is to use logical reasoning and induction to learn rules from data. Induction is the process of inferring general principles or patterns from specific observations or examples. In the context of ILP, this means using a set of training examples to learn a set of logical rules that can be used to make predictions or classify new examples.\n\n\n\nILP has been applied to a wide range of tasks, including natural language processing, biomedical informatics, and robotics. It has also been used to build expert systems and knowledge-based systems in domains such as medicine and biology.",
+            "words": 132,
+            "label": "ai_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "ai_leaning",
+                "score_ai": 0.9999877331004549,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": 11.30859375,
+                "legacy_softmax_score_ai": 0.9999877214431763
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "ai_leaning",
+                "score_ai": 0.7780376225421488,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 2663,
+          "words": 396,
+          "analyzed_characters": 2663,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 3,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 214,
+        "request_id": "099e5099-9b6a-46e1-8adf-50db62772d35"
+      },
+      "elapsed_seconds": 0.216
+    },
+    {
+      "id": "assistant-challenge",
+      "text_sha256": "695452093e928666c4e44006f534b73a1961e2a014cfcf98be30dff8f12167f6",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "inconclusive",
+          "summary": "The primary MAGE detector does not provide consistent, fully supported evidence for one passage-level leaning. Review its block signals and the separate TF-IDF diagnostic below."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "inconclusive",
+            "score_ai": 0.9999829691777323,
+            "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+            "reason": "One raw context score. Context opinions do not support one consistent passage leaning.",
+            "role": "primary",
+            "scored_contexts": 1,
+            "total_contexts": 1,
+            "logit_margin": 10.98046875,
+            "legacy_softmax_score_ai": 0.9999829530715942
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "inconclusive",
+            "score_ai": 0.43704189440074476,
+            "score_kind": "uncalibrated_logistic_class_1",
+            "reason": "One raw context score. Context opinions do not support one consistent passage leaning.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 1,
+            "total_contexts": 1
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 797,
+            "text": "Urban green spaces can contribute to student wellbeing by providing accessible places for exercise, social interaction, and quiet reflection. Trees and vegetation may also reduce local heat and improve the comfort of outdoor study areas. However, the benefits of a new park depend on its location, maintenance, and accessibility. A space that is difficult to reach or feels unsafe may be used less often, even if its design is attractive. Universities should therefore combine environmental planning with consultation among students and nearby residents. Evaluating patterns of use before and after a change would help determine whether the space meets the needs of its community. These observations should be supported with local evidence rather than assumed to apply equally across all campuses.",
+            "words": 121,
+            "label": "inconclusive",
+            "reason": "The primary MAGE result is uncertain or its thresholds are unverified; the secondary diagnostic cannot supply an authorship decision.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "inconclusive",
+                "score_ai": 0.9999829691777323,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This raw score lies between the model's provisional human-leaning and AI-leaning boundaries.",
+                "role": "primary",
+                "logit_margin": 10.98046875,
+                "legacy_softmax_score_ai": 0.9999829530715942
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "inconclusive",
+                "score_ai": 0.43704189440074476,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This raw score lies between the model's provisional human-leaning and AI-leaning boundaries.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 797,
+          "words": 121,
+          "analyzed_characters": 797,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 1,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 85,
+        "request_id": "d8e1b249-e3c4-4d25-9d6b-0161167b8764"
+      },
+      "elapsed_seconds": 0.087
+    },
+    {
+      "id": "revision-practice",
+      "text_sha256": "45e209641268c988915c8f649b98ee7c0984866dfa89f1d1d94c98f4895cfa1f",
+      "result": {
+        "status": "experimental",
+        "product_approved": false,
+        "validated": false,
+        "decision_policy": "mage_margin_primary_v1",
+        "primary_model": "mage",
+        "assessment": {
+          "label": "human_leaning",
+          "summary": "The primary MAGE detector is provisionally human-leaning across all scored context blocks. This experimental signal does not prove how the passage was written."
+        },
+        "models": [
+          {
+            "id": "mage",
+            "name": "MAGE primary detector",
+            "status": "ok",
+            "label": "human_leaning",
+            "score_ai": 0.00011018041091029862,
+            "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+            "reason": "One raw context score.",
+            "role": "primary",
+            "scored_contexts": 1,
+            "total_contexts": 1,
+            "logit_margin": -9.11328125,
+            "legacy_softmax_score_ai": 0.00011018042278010398
+          },
+          {
+            "id": "tfidf",
+            "name": "TF-IDF secondary diagnostic",
+            "status": "ok",
+            "label": "inconclusive",
+            "score_ai": 0.37806335277036607,
+            "score_kind": "uncalibrated_logistic_class_1",
+            "reason": "One raw context score. Context opinions do not support one consistent passage leaning.",
+            "role": "secondary_diagnostic",
+            "scored_contexts": 1,
+            "total_contexts": 1
+          }
+        ],
+        "segments": [
+          {
+            "start": 0,
+            "end": 584,
+            "text": "In my personal opinion, I think that students should plan ahead in advance before they begin studying. Our survey included 120 students, and 36 reported sleeping fewer than 6 hours. This small survey proves that every student learns better online. The results of the survey were collected together and combined into a single summary. These observations describe the surveyed group; they do not establish what caused the reported sleep patterns. The report should distinguish observations from explanations, preserve the sample size, and state which claims require additional evidence.",
+            "words": 88,
+            "label": "human_leaning",
+            "reason": "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship.",
+            "models": [
+              {
+                "id": "mage",
+                "name": "MAGE primary detector",
+                "status": "ok",
+                "label": "human_leaning",
+                "score_ai": 0.00011018041091029862,
+                "score_kind": "uncalibrated_float64_sigmoid_logit_margin",
+                "reason": "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship.",
+                "role": "primary",
+                "logit_margin": -9.11328125,
+                "legacy_softmax_score_ai": 0.00011018042278010398
+              },
+              {
+                "id": "tfidf",
+                "name": "TF-IDF secondary diagnostic",
+                "status": "ok",
+                "label": "inconclusive",
+                "score_ai": 0.37806335277036607,
+                "score_kind": "uncalibrated_logistic_class_1",
+                "reason": "This raw score lies between the model's provisional human-leaning and AI-leaning boundaries.",
+                "role": "secondary_diagnostic"
+              }
+            ],
+            "coverage_complete": true,
+            "evidence_scope": "context_block_not_sentence_authorship"
+          }
+        ],
+        "offset_encoding": "utf-16",
+        "input": {
+          "characters": 584,
+          "words": 88,
+          "analyzed_characters": 584,
+          "truncated": false,
+          "coverage_complete": true,
+          "coverage_basis": "complete_primary_mage_contexts",
+          "scored_windows": 1,
+          "window_limit": 12
+        },
+        "limitations": [
+          "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
+          "Raw model scores and averages are not the probability or percentage of AI-written text.",
+          "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
+          "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+          "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+          "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims."
+        ],
+        "elapsed_ms": 77,
+        "request_id": "e8a093c9-c2ae-47a5-a3a9-61dc10145229"
+      },
+      "elapsed_seconds": 0.079
+    }
+  ]
+}

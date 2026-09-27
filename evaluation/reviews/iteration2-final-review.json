@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "independent-review",
+      "reviewer_id": "iteration_framework",
+      "independent": true,
+      "subject_sha256": "babe1b3a8997d2a4d1b1a8a3375eb8dfe8cb3f078c7dd1afb7fa08ba34411717",
+      "decision": "approve",
+      "summary": "Approve scoped coach/profile/API/example/browser engineering integration for a restricted experimental prototype. Independently passed 44 focused tests and 18 browser groups, verified final fingerprints, and inspected all v6 quality outputs plus the real UI v2 receipt with 83 passing checks. COACH-003 remains an unresolved quality limitation outside this engineering approval: factuality, broad coaching usefulness and detector accuracy are not approved. My authored candidate, workbench, metrics, guidance and iteration runner are excluded from independent approval; unchanged experiment review remains applicable. Scientific gates remain blocked.",
+      "evidence_paths": [
+        "evaluation/reviews/iteration2-integration-audit.md",
+        "evaluation/reviews/phase2-experiment-audit.md",
+        "evaluation/reviews/coach-quality-v6-4b.json",
+        "evaluation/reviews/coach-v6-manual.md",
+        "evaluation/reviews/live-workbench-v2.json",
+        "evaluation/reviews/live-workbench-v2.manual-review.json"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "EXP-001",
+        "EXP-002",
+        "EXP-003",
+        "UI-003",
+        "UI-004",
+        "UI-005",
+        "COACH-002"
+      ]
+    },
+    {
+      "slot": "model-metrics-review",
+      "reviewer_id": "plagiarism_research",
+      "independent": true,
+      "decision": "approve",
+      "subject_sha256": "babe1b3a8997d2a4d1b1a8a3375eb8dfe8cb3f078c7dd1afb7fa08ba34411717",
+      "summary": "Scoped independent approval of candidate calibration/metric integrity, verified primary-model policy, raw-logit integration, demo provenance and final comparison eligibility.23 workbench tests and18 browser groups independently pass; complete final on-disk fingerprint recomputed. Excludes reviewer-authored coaching implementation; separate integration review covers that code. Scientific release gates, rewrite factuality and general accuracy remain unapproved.",
+      "evidence_paths": [
+        "evaluation/reviews/candidate-model-audit.md",
+        "evaluation/reviews/iteration2-integration-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "CANDIDATE-001",
+        "CANDIDATE-002"
+      ]
+    }
+  ]
+}

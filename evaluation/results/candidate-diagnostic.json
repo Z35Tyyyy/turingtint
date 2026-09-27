@@ -1,0 +1,475 @@
+{
+  "version": 1,
+  "phase": "retrospective_diagnostics_complete",
+  "product_approved": false,
+  "frozen_at": "2026-09-27T19:33:04.496431+00:00",
+  "selection": {
+    "selected_on": "hc3_calibration_only",
+    "selected_candidate": "logit_margin",
+    "rule": "Maximum calibration AI recall, then coverage, under separate empirical 1% class-error caps; ties prefer margin then class0 then saved softmax.",
+    "caps_are_empirical_not_confidence_guarantees": true,
+    "candidates": {
+      "float32_softmax": {
+        "thresholds": {
+          "human_max": 0.9998989105224609,
+          "ai_min": 0.9999876022338867,
+          "selected_on": "calibration",
+          "calibration_sha256": "d8b56656efb108a7bc9371cf60822f12523ded1b9b40b934abc57fb933b30032",
+          "ai_false_positive_cap": 0.01,
+          "human_false_positive_cap": 0.01
+        },
+        "native_logit_thresholds": {},
+        "calibration_metrics": {
+          "records": 293,
+          "human": 126,
+          "ai": 167,
+          "confusion": {
+            "tp": 105,
+            "fp": 1,
+            "tn": 91,
+            "fn": 1,
+            "abstain_human": 34,
+            "abstain_ai": 61
+          },
+          "answered": 198,
+          "coverage": 0.6757679180887372,
+          "human_fpr": 0.007936507936507936,
+          "ai_recall": 0.6287425149700598,
+          "false_human_rate": 0.005988023952095809,
+          "answered_human_fpr": 0.010869565217391304,
+          "human_coverage": 0.7301587301587301,
+          "ai_coverage": 0.6347305389221557,
+          "ranking_auroc": 0.9782577701739379
+        },
+        "distinct_calibration_scores": 139
+      },
+      "class0_logit": {
+        "thresholds": {
+          "human_max": 0.9904775143296634,
+          "ai_min": 0.9965435903319345,
+          "selected_on": "calibration",
+          "calibration_sha256": "4dd37a3418616859562612f6cef865a13dcb3e109f7da79d3c6514b9c53883ba",
+          "ai_false_positive_cap": 0.01,
+          "human_false_positive_cap": 0.01
+        },
+        "native_logit_thresholds": {
+          "human_max": 4.64453125,
+          "ai_min": 5.6640625
+        },
+        "calibration_metrics": {
+          "records": 293,
+          "human": 126,
+          "ai": 167,
+          "confusion": {
+            "tp": 110,
+            "fp": 1,
+            "tn": 91,
+            "fn": 1,
+            "abstain_human": 34,
+            "abstain_ai": 56
+          },
+          "answered": 203,
+          "coverage": 0.6928327645051194,
+          "human_fpr": 0.007936507936507936,
+          "ai_recall": 0.6586826347305389,
+          "false_human_rate": 0.005988023952095809,
+          "answered_human_fpr": 0.010869565217391304,
+          "human_coverage": 0.7301587301587301,
+          "ai_coverage": 0.6646706586826348,
+          "ranking_auroc": 0.9757865221937079
+        },
+        "distinct_calibration_scores": 135
+      },
+      "logit_margin": {
+        "thresholds": {
+          "human_max": 0.9998988918541782,
+          "ai_min": 0.9999874911605668,
+          "selected_on": "calibration",
+          "calibration_sha256": "e7849683efc6ab60389c1795088c1542886a12f8b5e22f56508c13a28dbe409a",
+          "ai_false_positive_cap": 0.01,
+          "human_false_positive_cap": 0.01
+        },
+        "native_logit_thresholds": {
+          "human_max": 9.19921875,
+          "ai_min": 11.2890625
+        },
+        "calibration_metrics": {
+          "records": 293,
+          "human": 126,
+          "ai": 167,
+          "confusion": {
+            "tp": 122,
+            "fp": 1,
+            "tn": 91,
+            "fn": 1,
+            "abstain_human": 34,
+            "abstain_ai": 44
+          },
+          "answered": 215,
+          "coverage": 0.7337883959044369,
+          "human_fpr": 0.007936507936507936,
+          "ai_recall": 0.7305389221556886,
+          "false_human_rate": 0.005988023952095809,
+          "answered_human_fpr": 0.010869565217391304,
+          "human_coverage": 0.7301587301587301,
+          "ai_coverage": 0.7365269461077845,
+          "ranking_auroc": 0.9777587681779298
+        },
+        "distinct_calibration_scores": 150
+      }
+    },
+    "calibration_records_sha256": "ca5bbd48f9ea6fd06a94af0624164199f28934299da00e6ce34f19530d51a197",
+    "selection_sha256": "3078a7ad126af7ee9474a27da1663713f6061816c10df439ae633be3a839f62a"
+  },
+  "input_hashes": {
+    "hc3": "cf51486d8c8f57afb9d96890a753cac708e72ad9628adfbe7cc51f9d39754c7f",
+    "aide": "7bebfd4f335d458e31545e2e8683260d26ed9157494dd2a7b2f35f20632c8ccc",
+    "tfidf_predictions": "5469841063eed50b1dd0fb4f9adeff94f9a9258d8c4b56ac64b62787ce172891",
+    "mage_hc3_predictions": "8901b0607df9fff118347d53d8b489763f98a496260b64a2ec6ad425d0e0369f",
+    "mage_aide_predictions": "8f6fc991ff3b7342c8752fa550a735d2866a3df07c74704aa9acb9b9cf2d20c0",
+    "mage_manifest": "a02a9ca7bbfcecd50766e89fe55a53be260e3783fa85ff2d5870d078bb438494"
+  },
+  "limitations": [
+    "All benchmark artifacts were previously examined; these are retrospective development diagnostics, not an independent blind validation.",
+    "Only the declared HC3 calibration split selected the new score representation and thresholds; current test/external outcomes cannot change the frozen selection.",
+    "HC3 may overlap pretrained MAGE training. AIDE has only 3 AI examples and lacks verified independent-author groups.",
+    "No model was retrained and no new inference was run. Saved raw logits came from float16 CUDA inference; sigmoid is recomputed in Python double precision.",
+    "These are excerpt-level decisions on complete 80-250-word records, not mixed/sentence localization or multi-block passage validation.",
+    "Upstream fixed-logit rule on raw text is only a mismatch diagnostic; upstream cleaning was not evaluated here."
+  ],
+  "diagnostics": {
+    "calibration": {
+      "current_mandatory_agreement": {
+        "records": 293,
+        "human": 126,
+        "ai": 167,
+        "confusion": {
+          "tp": 88,
+          "fp": 0,
+          "tn": 63,
+          "fn": 0,
+          "abstain_human": 63,
+          "abstain_ai": 79
+        },
+        "answered": 151,
+        "coverage": 0.515358361774744,
+        "human_fpr": 0.0,
+        "ai_recall": 0.5269461077844312,
+        "false_human_rate": 0.0,
+        "answered_human_fpr": 0.0,
+        "human_coverage": 0.5,
+        "ai_coverage": 0.5269461077844312
+      },
+      "existing_mage_only": {
+        "records": 293,
+        "human": 126,
+        "ai": 167,
+        "confusion": {
+          "tp": 105,
+          "fp": 1,
+          "tn": 91,
+          "fn": 1,
+          "abstain_human": 34,
+          "abstain_ai": 61
+        },
+        "answered": 198,
+        "coverage": 0.6757679180887372,
+        "human_fpr": 0.007936507936507936,
+        "ai_recall": 0.6287425149700598,
+        "false_human_rate": 0.005988023952095809,
+        "answered_human_fpr": 0.010869565217391304,
+        "human_coverage": 0.7301587301587301,
+        "ai_coverage": 0.6347305389221557
+      },
+      "existing_tfidf_only": {
+        "records": 293,
+        "human": 126,
+        "ai": 167,
+        "confusion": {
+          "tp": 134,
+          "fp": 1,
+          "tn": 81,
+          "fn": 1,
+          "abstain_human": 44,
+          "abstain_ai": 32
+        },
+        "answered": 217,
+        "coverage": 0.7406143344709898,
+        "human_fpr": 0.007936507936507936,
+        "ai_recall": 0.8023952095808383,
+        "false_human_rate": 0.005988023952095809,
+        "answered_human_fpr": 0.012195121951219513,
+        "human_coverage": 0.6507936507936508,
+        "ai_coverage": 0.8083832335329342
+      },
+      "frozen_primary_mage_candidate": {
+        "records": 293,
+        "human": 126,
+        "ai": 167,
+        "confusion": {
+          "tp": 122,
+          "fp": 1,
+          "tn": 91,
+          "fn": 1,
+          "abstain_human": 34,
+          "abstain_ai": 44
+        },
+        "answered": 215,
+        "coverage": 0.7337883959044369,
+        "human_fpr": 0.007936507936507936,
+        "ai_recall": 0.7305389221556886,
+        "false_human_rate": 0.005988023952095809,
+        "answered_human_fpr": 0.010869565217391304,
+        "human_coverage": 0.7301587301587301,
+        "ai_coverage": 0.7365269461077845,
+        "ranking_auroc": 0.9777587681779298
+      },
+      "upstream_fixed_logit_on_raw_text_mismatch": {
+        "records": 293,
+        "human": 126,
+        "ai": 167,
+        "confusion": {
+          "tp": 167,
+          "fp": 56,
+          "tn": 70,
+          "fn": 0,
+          "abstain_human": 0,
+          "abstain_ai": 0
+        },
+        "answered": 293,
+        "coverage": 1.0,
+        "human_fpr": 0.4444444444444444,
+        "ai_recall": 1.0,
+        "false_human_rate": 0.0,
+        "answered_human_fpr": 0.4444444444444444,
+        "human_coverage": 1.0,
+        "ai_coverage": 1.0
+      }
+    },
+    "hc3_test_retrospective": {
+      "current_mandatory_agreement": {
+        "records": 289,
+        "human": 123,
+        "ai": 166,
+        "confusion": {
+          "tp": 97,
+          "fp": 0,
+          "tn": 65,
+          "fn": 2,
+          "abstain_human": 58,
+          "abstain_ai": 67
+        },
+        "answered": 164,
+        "coverage": 0.5674740484429066,
+        "human_fpr": 0.0,
+        "ai_recall": 0.5843373493975904,
+        "false_human_rate": 0.012048192771084338,
+        "answered_human_fpr": 0.0,
+        "human_coverage": 0.5284552845528455,
+        "ai_coverage": 0.5963855421686747
+      },
+      "existing_mage_only": {
+        "records": 289,
+        "human": 123,
+        "ai": 166,
+        "confusion": {
+          "tp": 113,
+          "fp": 1,
+          "tn": 87,
+          "fn": 3,
+          "abstain_human": 35,
+          "abstain_ai": 50
+        },
+        "answered": 204,
+        "coverage": 0.7058823529411765,
+        "human_fpr": 0.008130081300813009,
+        "ai_recall": 0.6807228915662651,
+        "false_human_rate": 0.018072289156626505,
+        "answered_human_fpr": 0.011363636363636364,
+        "human_coverage": 0.7154471544715447,
+        "ai_coverage": 0.6987951807228916
+      },
+      "existing_tfidf_only": {
+        "records": 289,
+        "human": 123,
+        "ai": 166,
+        "confusion": {
+          "tp": 124,
+          "fp": 0,
+          "tn": 91,
+          "fn": 2,
+          "abstain_human": 32,
+          "abstain_ai": 40
+        },
+        "answered": 217,
+        "coverage": 0.7508650519031141,
+        "human_fpr": 0.0,
+        "ai_recall": 0.7469879518072289,
+        "false_human_rate": 0.012048192771084338,
+        "answered_human_fpr": 0.0,
+        "human_coverage": 0.7398373983739838,
+        "ai_coverage": 0.7590361445783133
+      },
+      "frozen_primary_mage_candidate": {
+        "records": 289,
+        "human": 123,
+        "ai": 166,
+        "confusion": {
+          "tp": 124,
+          "fp": 1,
+          "tn": 87,
+          "fn": 3,
+          "abstain_human": 35,
+          "abstain_ai": 39
+        },
+        "answered": 215,
+        "coverage": 0.7439446366782007,
+        "human_fpr": 0.008130081300813009,
+        "ai_recall": 0.7469879518072289,
+        "false_human_rate": 0.018072289156626505,
+        "answered_human_fpr": 0.011363636363636364,
+        "human_coverage": 0.7154471544715447,
+        "ai_coverage": 0.7650602409638554,
+        "ranking_auroc": 0.9762464492114801
+      },
+      "upstream_fixed_logit_on_raw_text_mismatch": {
+        "records": 289,
+        "human": 123,
+        "ai": 166,
+        "confusion": {
+          "tp": 165,
+          "fp": 48,
+          "tn": 75,
+          "fn": 1,
+          "abstain_human": 0,
+          "abstain_ai": 0
+        },
+        "answered": 289,
+        "coverage": 1.0,
+        "human_fpr": 0.3902439024390244,
+        "ai_recall": 0.9939759036144579,
+        "false_human_rate": 0.006024096385542169,
+        "answered_human_fpr": 0.3902439024390244,
+        "human_coverage": 1.0,
+        "ai_coverage": 1.0
+      }
+    },
+    "aide_external_retrospective": {
+      "current_mandatory_agreement": {
+        "records": 1378,
+        "human": 1375,
+        "ai": 3,
+        "confusion": {
+          "tp": 0,
+          "fp": 3,
+          "tn": 105,
+          "fn": 0,
+          "abstain_human": 1267,
+          "abstain_ai": 3
+        },
+        "answered": 108,
+        "coverage": 0.0783744557329463,
+        "human_fpr": 0.002181818181818182,
+        "ai_recall": 0.0,
+        "false_human_rate": 0.0,
+        "answered_human_fpr": 0.027777777777777776,
+        "human_coverage": 0.07854545454545454,
+        "ai_coverage": 0.0
+      },
+      "existing_mage_only": {
+        "records": 1378,
+        "human": 1375,
+        "ai": 3,
+        "confusion": {
+          "tp": 1,
+          "fp": 27,
+          "tn": 1077,
+          "fn": 1,
+          "abstain_human": 271,
+          "abstain_ai": 1
+        },
+        "answered": 1106,
+        "coverage": 0.8026124818577649,
+        "human_fpr": 0.019636363636363636,
+        "ai_recall": 0.3333333333333333,
+        "false_human_rate": 0.3333333333333333,
+        "answered_human_fpr": 0.024456521739130436,
+        "human_coverage": 0.8029090909090909,
+        "ai_coverage": 0.6666666666666666
+      },
+      "existing_tfidf_only": {
+        "records": 1378,
+        "human": 1375,
+        "ai": 3,
+        "confusion": {
+          "tp": 0,
+          "fp": 67,
+          "tn": 119,
+          "fn": 0,
+          "abstain_human": 1189,
+          "abstain_ai": 3
+        },
+        "answered": 186,
+        "coverage": 0.13497822931785197,
+        "human_fpr": 0.04872727272727273,
+        "ai_recall": 0.0,
+        "false_human_rate": 0.0,
+        "answered_human_fpr": 0.3602150537634409,
+        "human_coverage": 0.13527272727272727,
+        "ai_coverage": 0.0
+      },
+      "frozen_primary_mage_candidate": {
+        "records": 1378,
+        "human": 1375,
+        "ai": 3,
+        "confusion": {
+          "tp": 1,
+          "fp": 38,
+          "tn": 1077,
+          "fn": 1,
+          "abstain_human": 260,
+          "abstain_ai": 1
+        },
+        "answered": 1117,
+        "coverage": 0.8105950653120464,
+        "human_fpr": 0.027636363636363636,
+        "ai_recall": 0.3333333333333333,
+        "false_human_rate": 0.3333333333333333,
+        "answered_human_fpr": 0.034080717488789235,
+        "human_coverage": 0.8109090909090909,
+        "ai_coverage": 0.6666666666666666,
+        "ranking_auroc": 0.769090909090909
+      },
+      "upstream_fixed_logit_on_raw_text_mismatch": {
+        "records": 1378,
+        "human": 1375,
+        "ai": 3,
+        "confusion": {
+          "tp": 2,
+          "fp": 479,
+          "tn": 896,
+          "fn": 1,
+          "abstain_human": 0,
+          "abstain_ai": 0
+        },
+        "answered": 1378,
+        "coverage": 1.0,
+        "human_fpr": 0.3483636363636364,
+        "ai_recall": 0.6666666666666666,
+        "false_human_rate": 0.3333333333333333,
+        "answered_human_fpr": 0.3483636363636364,
+        "human_coverage": 1.0,
+        "ai_coverage": 1.0
+      }
+    }
+  },
+  "diagnosed_at": "2026-09-27T19:35:07.811282+00:00",
+  "score_recipe": {
+    "version": 1,
+    "source": "raw_logits_ai_class_0_minus_human_class_1",
+    "transform": "python_float64_stable_sigmoid",
+    "preprocessing": "raw_text_v1",
+    "max_tokens": 512,
+    "legacy_float32_softmax_used_for_decision": false
+  }
+}

@@ -22,10 +22,13 @@
     </section>
     <section id="workspace" class="workspace" aria-label="Writing analysis">
       <div class="editor-panel">
-        <div class="panel-heading"><div><span class="step">01</span><h2>Your writing</h2></div><button id="example" class="text-button" type="button">Try a generated sample ↗</button></div>
+        <div class="panel-heading"><div><span class="step">01</span><h2>Your writing</h2></div><button id="new-writing" class="text-button" type="button">New writing</button></div>
+        <div class="case-picker"><label for="example-case">Reference case</label><select id="example-case" disabled><option>Loading cases…</option></select><button id="example" class="secondary-button" type="button" disabled>Load case</button></div>
+        <div id="case-info" class="case-info" hidden><span id="case-kind" class="pill muted"></span><strong id="case-title"></strong><p id="case-purpose"></p><details><summary>Provenance and what to observe</summary><p id="case-description"></p><p id="case-expectation"></p><div id="case-source"></div><p>These labels describe how the reference case was collected or constructed, not the detector's result.</p></details></div>
         <label for="passage" class="sr-only">Paste English academic or student writing, including multiple paragraphs</label>
         <textarea id="passage" maxlength="30000" placeholder="Paste your paragraph or essay excerpt here. Line breaks are preserved." spellcheck="false"></textarea>
         <div class="editor-meta"><span id="word-count">0 words · 0 characters</span><span>English academic &amp; student writing</span></div>
+        <div class="feedback-setting"><label><input id="include-feedback" type="checkbox" checked> Include writing feedback</label><span id="feedback-mode">Detector, sources, and explained revisions</span></div>
         <div class="editor-settings"><label for="coach-provider">Revision coach</label><select id="coach-provider"><option value="local">Local model</option></select><span id="coach-availability">Checking availability…</span></div>
         <div class="editor-actions"><p id="privacy-note"><span class="small-dot"></span>Your writing stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze writing <span>↗</span></button></div>
         <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
@@ -37,26 +40,26 @@
         <div class="signal-item"><span class="signal-icon">≋</span><div><h3>Source evidence</h3><p>Shared wording is checked against your local reference library.</p><span id="corpus-count" class="pill muted">Checking library</span></div></div>
       </aside>
     </section>
-    <p class="experiment-note"><strong>Experimental.</strong> Model signals and coach opinions can be wrong. Highlights describe context blocks, not proven authorship; disagreement is inconclusive.</p>
+    <p class="experiment-note"><strong>Experimental.</strong> Model signals and writing suggestions can be wrong. MAGE supplies the primary signal; TF-IDF provides a separate comparison. Highlights do not prove authorship.</p>
+    <section id="comparison" class="comparison-panel" hidden aria-labelledby="comparison-heading"><div class="comparison-heading"><div><span class="eyebrow">REVISION CHECK</span><h2 id="comparison-heading">Original → revised</h2></div><button id="reset-comparison" class="text-button" type="button">Clear comparison</button></div><p id="comparison-status" class="muted-copy"></p><table class="comparison-counts"><thead><tr><th scope="col">Text size</th><th scope="col">Original</th><th scope="col">Revised</th></tr></thead><tbody><tr><th scope="row">Characters</th><td id="comparison-original-characters"></td><td id="comparison-revised-characters"></td></tr><tr><th scope="row" title="Whitespace-separated words">Words</th><td id="comparison-original-words"></td><td id="comparison-revised-words"></td></tr></tbody></table><div id="comparison-signals"></div><p class="comparison-note">Signals can change after an edit without proving authorship. Versions stay in this page's memory until you clear them or leave.</p><details><summary>Read both versions</summary><div class="version-texts"><div><h3>Original</h3><p id="comparison-original-text"></p></div><div><h3>Revised</h3><p id="comparison-revised-text"></p></div></div></details></section>
     <section id="results" class="results" hidden aria-label="Writing analysis results">
       <div class="results-title"><div><span class="eyebrow">YOUR WRITING, EXAMINED</span><h2>Understand. Then revise.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>
       <div class="analysis-layout">
         <div class="detector-column">
           <section class="assessment-card" aria-labelledby="assessment-label" aria-live="polite">
             <div class="section-kicker"><span>MODEL ASSESSMENT</span><span id="detector-status" class="pill muted">Queued</span></div>
-            <h3 id="assessment-label">Checking your writing…</h3><p id="assessment-summary">Local detector signals will appear here first.</p><div id="model-signals" class="model-signals"></div><p id="detector-error" class="notice" role="status" hidden></p>
+            <h3 id="assessment-label">Checking your writing…</h3><p id="assessment-summary">Local detector signals will appear here first.</p><p id="length-note" class="notice" role="status" hidden></p><div id="model-signals" class="model-signals"></div><p id="detector-error" class="notice" role="status" hidden></p>
           </section>
           <section class="annotated-panel" aria-labelledby="passage-view-heading">
             <div class="annotation-header"><h3 id="passage-view-heading">Context block signals</h3><span id="block-count" class="muted-copy"></span></div>
             <div class="block-legend"><span><i class="lean-ai"></i>AI-leaning</span><span><i class="lean-human"></i>Human-leaning</span><span><i class="lean-inconclusive"></i>Inconclusive</span></div>
-            <div id="annotated-text" class="annotated-text"></div><div id="block-detail" class="block-detail" hidden><strong id="block-label"></strong><p id="block-reason"></p></div><p id="coverage-note" class="notice" hidden></p>
+            <div id="annotated-text" class="annotated-text"></div><section id="revision-preview" class="revision-preview" hidden aria-labelledby="preview-heading"><div class="preview-heading"><h4 id="preview-heading">Review this change</h4><button id="close-preview" class="text-button" type="button">Close</button></div><span class="tiny-label">ORIGINAL QUOTE · SELECTED ABOVE</span><blockquote id="preview-original"></blockquote><span class="tiny-label">PROPOSED WORDING</span><p id="preview-proposed"></p><p id="preview-reason" class="muted-copy"></p><button id="apply-revision" class="secondary-button" type="button">Use this revision</button></section><div id="block-detail" class="block-detail" hidden><strong id="block-label"></strong><p id="block-reason"></p></div><p id="coverage-note" class="notice" hidden></p>
           </section>
           <details id="model-diagnostics" class="diagnostics"><summary>Model details and raw scores</summary><p class="muted-copy">Raw scores are uncalibrated outputs, not percentages of AI-written text. No authorship is proved by a score.</p><div id="model-cards"></div><p id="input-details" class="muted-copy"></p><ul id="detector-limitations"></ul></details>
         </div>
-        <section class="coach-panel" aria-labelledby="coach-heading">
+        <section id="coach-panel" class="coach-panel" aria-labelledby="coach-heading">
           <div class="section-kicker"><span>WRITING COACH</span><span id="coach-status" class="pill muted">Queued</span></div>
           <h3 id="coach-heading">What to improve, and why.</h3><p id="coach-progress" class="muted-copy">The coach starts after the detector, then suggestions appear here.</p><p id="coach-error" class="notice" role="status" hidden></p>
-          <div id="coach-opinion" class="coach-opinion" hidden><span class="tiny-label">COACH OPINION · SEPARATE FROM THE DETECTOR</span><strong id="coach-assessment"></strong><p id="coach-reason"></p></div>
           <p id="coach-summary" class="coach-summary"></p><p id="revision-review-note" class="muted-copy" hidden>Review facts and any [placeholders] before applying a revision.</p><div id="revision-cards"></div>
           <details id="coach-details" class="diagnostics" hidden><summary>Coaching details and limits</summary><p id="coach-model"></p><ul id="coach-limitations"></ul></details>
         </section>

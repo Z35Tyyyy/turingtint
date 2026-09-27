@@ -89,6 +89,16 @@ class ResearchAPITests(unittest.TestCase):
             self.model.predict.return_value = [prediction(score_ai=score)]
             self.assertEqual(self.client.post("/api/research/analyze", json={"text": "Valid text"}).status_code, 503)
 
+    def test_raw_logits_are_preserved_without_changing_legacy_score(self):
+        self.model.predict.return_value = [prediction(raw_logits=[5.671875, -5.6328125])]
+        result = self.client.post("/api/research/analyze", json={"text": "Valid text"}).json()
+        self.assertEqual(result["raw_logits"], [5.671875, -5.6328125])
+        self.assertEqual(result["score_ai"], .99998)
+        self.assertEqual(result["score_kind"], "uncalibrated_softmax_class_0")
+        for logits in ([1], [1, 2, 3], [float("nan"), 0], [True, 0], ["1", 0]):
+            self.model.predict.return_value = [prediction(raw_logits=logits)]
+            self.assertEqual(self.client.post("/api/research/analyze", json={"text": "Valid text"}).status_code, 503)
+
     def test_busy_model_does_not_block_health_or_start_second_inference(self):
         entered, release = threading.Event(), threading.Event()
         def waiting(*args, **kwargs):

@@ -50,6 +50,14 @@ class ResearchDetector:
                     raise ValueError("Invalid model output")
                 result = {key: prediction[key] for key in (
                     "model_id", "model_revision", "score_kind", "original_tokens", "input_tokens", "max_tokens", "truncated", "device")}
+                if "raw_logits" in prediction:
+                    logits = prediction["raw_logits"]
+                    if not isinstance(logits, (list, tuple)) or len(logits) != 2 or any(
+                        isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value)
+                        for value in logits
+                    ):
+                        raise ValueError("Invalid raw logits")
+                    result["raw_logits"] = [float(value) for value in logits]
             except Exception:
                 raise ResearchUnavailable("The local experimental test could not finish. Try a shorter paragraph or restart the local app.") from None
             words = len(text.split())

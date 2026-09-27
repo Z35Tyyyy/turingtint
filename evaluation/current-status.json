@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-27T19:25:56.320141+00:00",
-  "run_id": "20260927T192438-3c9f18b996f8",
-  "subject_sha256": "d06d7647805bc76989cbfb2ffcb64b88199fb59bb17bf2268e3e7f51aedf7be1",
+  "generated_at": "2026-09-27T20:21:19.968628+00:00",
+  "run_id": "20260927T201956-836b32f64f34",
+  "subject_sha256": "babe1b3a8997d2a4d1b1a8a3375eb8dfe8cb3f078c7dd1afb7fa08ba34411717",
   "decision": "block",
   "decision_scope": "Only the configured protocol; passing software checks is not a measured detector accuracy claim.",
   "checks": [
     {
       "id": "software-tests",
       "status": "passed",
-      "summary": "142 tests; 0 failures; 0 errors; 0 skipped."
+      "summary": "164 tests; 0 failures; 0 errors; 0 skipped."
     },
     {
       "id": "reference-corpus",
@@ -18,7 +18,12 @@
     {
       "id": "browser-integration",
       "status": "passed",
-      "summary": "11 browser integration checks passed."
+      "summary": "18 browser integration checks passed."
+    },
+    {
+      "id": "candidate-evidence",
+      "status": "passed",
+      "summary": "Calibration choice and retrospective margin-policy metrics reproduce exactly; this checks evidence integrity, not authorship accuracy."
     },
     {
       "id": "authorship-experiment",
@@ -30,12 +35,12 @@
     {
       "id": "independent-review",
       "status": "passed",
-      "summary": "Approve scoped coach/API/browser integration after 29 focused tests and 11 browser checks. Prior unchanged experiment/report review remains applicable. This reviewer implemented workbench.py, guidance.py and detector metrics, so their independent approval is explicitly excluded; COACH-001 is resolved by separate root and plagiarism_research inspection/testing of the privacy helper. Scientific accuracy, factual rewrites, mixed authorship and sentence localization are not approved."
+      "summary": "Approve scoped coach/profile/API/example/browser engineering integration for a restricted experimental prototype. Independently passed 44 focused tests and 18 browser groups, verified final fingerprints, and inspected all v6 quality outputs plus the real UI v2 receipt with 83 passing checks. COACH-003 remains an unresolved quality limitation outside this engineering approval: factuality, broad coaching usefulness and detector accuracy are not approved. My authored candidate, workbench, metrics, guidance and iteration runner are excluded from independent approval; unchanged experiment review remains applicable. Scientific gates remain blocked."
     },
     {
       "id": "model-metrics-review",
       "status": "passed",
-      "summary": "Independent scoped review of workbench model/threshold use, root API/shared-lock integration and privacy-safe guidance helper.16 workbench,7API and3guidance tests independently pass; actual calibration artifacts verified. Excludes reviewer-authored coaching implementation and user-facing accuracy approval. Scientific gates remain blocked."
+      "summary": "Scoped independent approval of candidate calibration/metric integrity, verified primary-model policy, raw-logit integration, demo provenance and final comparison eligibility.23 workbench tests and18 browser groups independently pass; complete final on-disk fingerprint recomputed. Excludes reviewer-authored coaching implementation; separate integration review covers that code. Scientific release gates, rewrite factuality and general accuracy remain unapproved."
     }
   ],
   "open_gates": [
@@ -44,28 +49,65 @@
     "gate:retrieval-benchmark"
   ],
   "source_count": 12,
-  "source_scope": "PLOS abstracts only",
-  "authorship": "unavailable",
-  "research_phase": "Experimental two-classifier workbench and local language-model revisions are available; authorship accuracy remains unvalidated.",
-  "comparison_report": "evaluation/results/phase2-comparison.json",
-  "results_summary": "research/phase2-results.md",
+  "source_scope": "Small PLOS abstract reference seed; source matches are separate from authorship.",
+  "authorship": "Validated conclusions unavailable; experimental model leanings available.",
+  "research_phase": "Testable local workbench with six provenance-labeled cases, MAGE primary signals, trained TF-IDF diagnostic and typed Qwen revisions.",
+  "decision_policy": "mage_margin_primary_v1",
+  "comparison_report": "evaluation/results/candidate-diagnostic.json",
+  "historical_comparison": "evaluation/results/phase2-comparison.json",
+  "results_summary": "research/candidate-diagnostic.md",
   "next_work": "research/NEXT.md",
-  "experimental_detector_ui": "Primary Analyze writing action runs MAGE and the trained TF-IDF model, shows provisional context-block signals and complete coverage metadata, then requests local Qwen revisions.",
+  "test_walkthrough": "TESTING.md",
+  "candidate_diagnostics": {
+    "scope": "Retrospective development, not independent validation",
+    "hc3_ai_caught": 124,
+    "hc3_ai_total": 166,
+    "hc3_human_false_ai": 1,
+    "hc3_human_total": 123,
+    "aide_human_false_ai": 38,
+    "aide_human_total": 1375,
+    "old_mage_aide_human_false_ai": 27,
+    "aide_ai_total": 3
+  },
   "writing_coach": {
-    "local_model": "Qwen/Qwen3-1.7B",
-    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
-    "guided_json": true,
-    "authorship_opinion_validated": false,
+    "local_model": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "quantization": "nf4_double_fp16",
+    "model_outputs": [
+      "sentence_id",
+      "issue_type",
+      "rewrite"
+    ],
+    "explanations": "Attributed fixed editorial guidance; count summary is system status.",
+    "numeric_policy": "Complete sentences containing digits are protected; incomplete and citation-needed suggestions have no automatic rewrite.",
+    "authorship_opinion": "not_provided",
     "factual_rewrites_verified": false,
+    "development_suite": {
+      "requests_completed": 8,
+      "mechanical_passes": 5,
+      "cases": 8,
+      "manual_fully_appropriate": 4,
+      "manual_partial": 1,
+      "manual_missed_edits": 3,
+      "evidence": "evaluation/reviews/coach-v6-manual.md"
+    },
+    "open_quality_issue": "COACH-003: missed edits and unsupported rewritten inferences remain.",
     "openai": "Implemented, unconfigured, no paid live API test."
   },
   "live_ui_smoke": {
     "status": "passed",
-    "characters": 797,
-    "both_local_classifiers_complete": true,
-    "model_assessment": "inconclusive",
-    "anchored_local_llm_suggestions": 2,
-    "coach_elapsed_ms": 35720,
-    "external_browser_requests": 0
-  }
+    "checks_passed": 83,
+    "total_checks": 83,
+    "workbench_requests": 8,
+    "coach_requests": 1,
+    "external_browser_requests": 0,
+    "original_words": 88,
+    "revised_words": 79,
+    "comparison": "Not comparable; revision falls below the 80-word minimum.",
+    "selected_edit": "Useful redundancy reduction; numeric sentence unchanged.",
+    "unapplied_edit_limitation": "Suggested online-learning claim remains unsupported by the supplied sleep survey.",
+    "evidence": "evaluation/reviews/live-workbench-v2.json",
+    "manual_review": "evaluation/reviews/live-workbench-v2.manual-review.json"
+  },
+  "server_url": "http://127.0.0.1:8765"
 }

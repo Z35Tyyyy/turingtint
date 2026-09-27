@@ -4,7 +4,8 @@
     "evaluation/check_software.py",
     "evaluation/check_corpus.py",
     "evaluation/check_browser.py",
-    "evaluation/check_authorship.py"
+    "evaluation/check_authorship.py",
+    "evaluation/check_candidate.py"
   ],
   "implementation_paths": [
     "turingtint",
@@ -18,7 +19,10 @@
     "requirements.txt",
     "requirements-dev.txt",
     "requirements-ml.txt",
-    "scripts/setup_coach.py"
+    "scripts/setup_coach.py",
+    "scripts/build_demo_cases.py",
+    "evaluation/coach_quality.py",
+    "evaluation/live_workbench_smoke.py"
   ],
   "input_paths": [
     "data/reference.sqlite",
@@ -42,7 +46,24 @@
     ".cache/coaching-model/vocab.json",
     ".cache/coaching-model/model.safetensors.index.json",
     ".cache/coaching-model/model-00001-of-00002.safetensors",
-    ".cache/coaching-model/model-00002-of-00002.safetensors"
+    ".cache/coaching-model/model-00002-of-00002.safetensors",
+    "evaluation/fixtures/demo-cases.json",
+    "evaluation/results/candidate-diagnostic.json",
+    "evaluation/coach_quality_fixtures.json",
+    ".cache/coaching-model-4b/manifest.json",
+    ".cache/coaching-model-4b/LICENSE",
+    ".cache/coaching-model-4b/README.md",
+    ".cache/coaching-model-4b/config.json",
+    ".cache/coaching-model-4b/generation_config.json",
+    ".cache/coaching-model-4b/merges.txt",
+    ".cache/coaching-model-4b/tokenizer.json",
+    ".cache/coaching-model-4b/tokenizer_config.json",
+    ".cache/coaching-model-4b/vocab.json",
+    ".cache/coaching-model-4b/model.safetensors.index.json",
+    ".cache/coaching-model-4b/model-00001-of-00003.safetensors",
+    ".cache/coaching-model-4b/model-00002-of-00003.safetensors",
+    ".cache/coaching-model-4b/model-00003-of-00003.safetensors",
+    "evaluation/results/phase2-comparison.json"
   ],
   "checks": [
     {
@@ -70,6 +91,14 @@
       "output": "json"
     },
     {
+      "id": "candidate-evidence",
+      "script": "evaluation/check_candidate.py",
+      "args": [],
+      "required": true,
+      "timeout_seconds": 30,
+      "output": "json"
+    },
+    {
       "id": "authorship-experiment",
       "script": "evaluation/check_authorship.py",
       "args": [],
@@ -81,11 +110,12 @@
   "gates": [
     {
       "id": "working-prototype",
-      "description": "Software, browser checks and corpus ingestion pass; this does not establish detection accuracy.",
+      "description": "Software, browser, corpus ingestion and experimental-policy evidence integrity pass; this does not establish detection accuracy.",
       "check_ids": [
         "software-tests",
         "reference-corpus",
-        "browser-integration"
+        "browser-integration",
+        "candidate-evidence"
       ],
       "required": true
     },

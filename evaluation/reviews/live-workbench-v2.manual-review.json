@@ -1,0 +1,74 @@
+{
+  "reviewed_at": "2026-09-27T20:16:44.163906+00:00",
+  "receipt": "outputs\\reviews\\live-workbench-v2.json",
+  "receipt_sha256": "5cfbdb22fb387d957de25f19ac8e7a0fa7f6046f1826431e1221c860b0020809",
+  "scope": "Manual inspection of actual v2 edits, the exact quote preview, and the final revised comparison screenshot. No further inference or feature changes.",
+  "ui_contract_checks": {
+    "passed": 83,
+    "failed": 0
+  },
+  "applied_edit_review": {
+    "returned_index": 0,
+    "verdict": "appropriate_redundancy_reduction",
+    "reason": "The replacement removes repeated personal-opinion and advance-planning phrases, preserving the practical advice. The anchored apply leaves the numeric sentence and all other text unchanged."
+  },
+  "unapplied_edit_review": {
+    "returned_index": 1,
+    "verdict": "partially_appropriate_but_unsupported_inference_remains",
+    "reason": "Qualifying proves every student is useful, but the replacement still says the survey suggests that some students may learn better online. The supplied survey observations concern sleep, not online-learning outcomes, so that implication lacks support."
+  },
+  "comparison_review": {
+    "original_words": 88,
+    "revised_words": 79,
+    "original_characters": 584,
+    "revised_characters": 534,
+    "original_signal": "human_leaning",
+    "revised_signal": "inconclusive",
+    "reason": "The revised context is below the 80-word research range. Inconclusive is a length eligibility result here, not evidence of worse writing or different authorship.",
+    "ui_observation": "Both MAGE and TF-IDF comparison rows show Not comparable. The comparison states that the revised passage has 79 words and requires at least 80 words per context block. The same reason appears prominently beside the Inconclusive assessment.",
+    "previous_ui_issue": "resolved_in_v2"
+  },
+  "detector_observations": [
+    {
+      "case": "hc3-human",
+      "known_fixture_kind": "documented_human",
+      "observed_label": "human_leaning"
+    },
+    {
+      "case": "hc3-ai",
+      "known_fixture_kind": "documented_ai",
+      "observed_label": "ai_leaning"
+    },
+    {
+      "case": "student-human",
+      "known_fixture_kind": "documented_human",
+      "observed_label": "human_leaning"
+    },
+    {
+      "case": "constructed-mixed",
+      "known_fixture_kind": "synthetic_mixed",
+      "observed_label": "inconclusive"
+    },
+    {
+      "case": "assistant-challenge",
+      "known_fixture_kind": "documented_ai",
+      "observed_label": "inconclusive"
+    },
+    {
+      "case": "revision-practice",
+      "known_fixture_kind": "writing_fixture",
+      "observed_label": "human_leaning"
+    }
+  ],
+  "limitations": [
+    "This is a fixed development smoke set, not an independent accuracy or writing-quality evaluation.",
+    "UI contract success does not imply that every proposed rewrite is supported by the passage."
+  ],
+  "v1_evidence_preserved": true,
+  "performance": {
+    "total_wall_ms": 132250,
+    "first_detector_ui_ms": 36640,
+    "cold_local_coach_ui_ms": 84391,
+    "revised_fast_ui_ms": 734
+  }
+}

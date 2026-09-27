@@ -1,7 +1,7 @@
 """Bounded local model opinions with explicit context and coverage limits.
 
 These provisional thresholds were selected on an out-of-domain research corpus.
-Agreement is an experimental model opinion, not validated authorship evidence.
+MAGE supplies the primary opinion; the HC3-trained baseline is diagnostic only.
 Context blocks are not sentence-level localization or a mixed-authorship class.
 """
 
@@ -28,8 +28,10 @@ MAX_CONTEXT_WORDS = 250
 MAX_WINDOW_WORDS = 200
 MAX_INPUT_CHARACTERS = 50_000
 MAX_MODEL_BYTES = 128 * 1024 * 1024
-MODEL_NAMES = {"mage": "MAGE local language-model detector", "tfidf": "Local TF-IDF / logistic detector"}
-RAW_KINDS = {"mage": "uncalibrated_softmax_class_0", "tfidf": "uncalibrated_logistic_class_1"}
+MODEL_NAMES = {"mage": "MAGE primary detector", "tfidf": "TF-IDF secondary diagnostic"}
+LEGACY_MAGE_KIND = "uncalibrated_softmax_class_0"
+RAW_KINDS = {"mage": "uncalibrated_float64_sigmoid_logit_margin", "tfidf": "uncalibrated_logistic_class_1"}
+DECISION_POLICY = "mage_margin_primary_v1"
 LABELS = {"ai_leaning", "human_leaning", "inconclusive"}
 
 
@@ -138,9 +140,27 @@ Recompute only the declared calibration selection, never optimize on test data.
                 predictions = read_jsonl(predictions_path)
                 if any(row.get("model_id") != MODEL_ID or row.get("model_revision") != MODEL_REVISION
                        or row.get("preprocessing") != PREPROCESSING or row.get("max_tokens") != 512
-                       or row.get("score_kind") != RAW_KINDS["mage"] for row in predictions):
+                       or row.get("score_kind") != LEGACY_MAGE_KIND for row in predictions):
                     continue
-                scored = attach_scores(rows, predictions)
+                attach_scores(rows, predictions)
+                from detector_eval.candidate import SCORE_RECIPE, select_on_calibration
+
+                candidate = _json(root / "evaluation/results/candidate-diagnostic.json")
+                if (candidate.get("version") != 1 or candidate.get("score_recipe") != SCORE_RECIPE
+                        or candidate.get("product_approved") is not False
+                        or candidate.get("input_hashes") != comparison["input_hashes"]):
+                    continue
+                selection, candidate_thresholds = select_on_calibration(
+                    [row for row in rows if row["split"] == "calibration"],
+                    {row["id"]: row for row in predictions},
+                )
+                # Recompute the entire calibration-only selection and recipe;
+                # altered thresholds, choice, input hashes or receipt fail closed.
+                if candidate.get("selection") != selection or selection["selected_candidate"] != "logit_margin":
+                    continue
+                selected = candidate_thresholds["logit_margin"]
+                verified[model_id] = _threshold_pair(selected.to_dict())
+                continue
             selected = select_thresholds([row for row in scored if row["split"] == "calibration"])
             actual = selected.to_dict()
             if any(actual[key] != expected[key] for key in ("human_max", "ai_min", "selected_on", "calibration_sha256")):
@@ -195,7 +215,9 @@ def _lean(score: float, thresholds: dict[str, float | None] | None) -> str:
 
 def _opinion(model_id: str, *, status: str, score: float | None = None, label: str = "inconclusive", reason: str) -> dict[str, Any]:
     return {"id": model_id, "name": MODEL_NAMES[model_id], "status": status, "label": label,
-            "score_ai": score, "score_kind": RAW_KINDS[model_id], "reason": reason}
+            "score_ai": score, "score_kind": RAW_KINDS[model_id], "reason": reason,
+            "leaning_supported": False,
+            "role": "primary" if model_id == "mage" else "secondary_diagnostic"}
 
 
 class WorkbenchDetector:
@@ -252,10 +274,15 @@ class WorkbenchDetector:
             try:
                 if model_id == "mage":
                     prediction = self.research.analyze(block["text"])
-                    value = _score(prediction["score_ai"])
+                    legacy_score = _score(prediction["score_ai"])
+                    from detector_eval.candidate import score as margin_score
+
+                    value = margin_score(prediction, "logit_margin")
+                    if abs(value - legacy_score) > 1e-6:
+                        raise ValueError("Saved softmax and checked logits are inconsistent.")
                     if prediction.get("input_characters") != len(block["text"]):
                         raise ValueError("Model did not report the complete submitted context.")
-                    if prediction.get("score_kind") != RAW_KINDS[model_id] or not isinstance(prediction.get("truncated"), bool):
+                    if prediction.get("score_kind") != LEGACY_MAGE_KIND or not isinstance(prediction.get("truncated"), bool):
                         raise ValueError("Invalid research-model metadata.")
                     original_tokens, input_tokens = prediction.get("original_tokens"), prediction.get("input_tokens")
                     if (prediction.get("max_tokens") != 512 or isinstance(original_tokens, bool) or isinstance(input_tokens, bool)
@@ -290,7 +317,12 @@ class WorkbenchDetector:
                     reason = "This raw score lies between the model's provisional human-leaning and AI-leaning boundaries."
                 else:
                     reason = "This context crosses a provisional research boundary; this is an unvalidated model opinion, not proof of authorship."
-                opinions.append(_opinion(model_id, status="ok", score=value, label=label, reason=reason))
+                opinion = _opinion(model_id, status="ok", score=value, label=label, reason=reason)
+                opinion["leaning_supported"] = supported_length and model_id in thresholds
+                if model_id == "mage":
+                    opinion.update(logit_margin=prediction["raw_logits"][0] - prediction["raw_logits"][1],
+                                   legacy_softmax_score_ai=legacy_score)
+                opinions.append(opinion)
             except ResearchBusy:
                 raise
             except Exception:
@@ -303,14 +335,16 @@ class WorkbenchDetector:
             return "inconclusive", "The window limit was reached; this remaining text was not scored."
         if words < MIN_CONTEXT_WORDS:
             return "inconclusive", "This short context is outside the research length range; model scores cannot support a leaning label."
-        if any(opinion["status"] != "ok" for opinion in opinions):
-            return "inconclusive", "Both models must process the entire context before a combined leaning is assigned."
-        labels = {opinion["label"] for opinion in opinions}
-        if len(labels) == 1 and "inconclusive" not in labels:
-            return labels.pop(), "Both models lean the same way for this context block. This is experimental block evidence, not validated sentence authorship."
-        if labels == {"ai_leaning", "human_leaning"}:
-            return "inconclusive", "The models disagree about this context. Disagreement does not establish mixed human/AI authorship."
-        return "inconclusive", "At least one model has no supported leaning for this context; the combined result remains uncertain."
+        primary = next(opinion for opinion in opinions if opinion["id"] == "mage")
+        secondary = next(opinion for opinion in opinions if opinion["id"] == "tfidf")
+        if primary["status"] != "ok":
+            return "inconclusive", "The primary MAGE model must process the entire context before a leaning is assigned."
+        if primary["label"] == "inconclusive":
+            return "inconclusive", "The primary MAGE result is uncertain or its thresholds are unverified; the secondary diagnostic cannot supply an authorship decision."
+        reason = "The primary MAGE logit-margin score crosses a frozen calibration boundary for this context block. This is experimental block evidence, not validated sentence authorship."
+        if secondary["label"] not in {primary["label"], "inconclusive"}:
+            reason += " The secondary TF-IDF diagnostic disagrees; it does not veto the primary signal or establish mixed authorship."
+        return primary["label"], reason
 
     @staticmethod
     def _aggregate(model_id: str, segments: list[dict[str, Any]]) -> dict[str, Any]:
@@ -336,6 +370,11 @@ class WorkbenchDetector:
             result["score_kind"] = "word_weighted_mean_uncalibrated_context_scores"
         result["scored_contexts"] = len(scored)
         result["total_contexts"] = len(segments)
+        result["leaning_supported"] = all(opinion["leaning_supported"] for opinion in opinions)
+        if model_id == "mage" and len(opinions) == 1:
+            for key in ("logit_margin", "legacy_softmax_score_ai"):
+                if key in opinions[0]:
+                    result[key] = opinions[0][key]
         return result
 
     def analyze(self, text: str) -> dict[str, Any]:
@@ -354,7 +393,7 @@ class WorkbenchDetector:
             for block in blocks:
                 opinions = self._model_opinions(block, thresholds, baseline_available)
                 label, reason = self._combine(opinions, block["words"], block["scheduled"])
-                complete = block["scheduled"] and all(opinion["status"] == "ok" for opinion in opinions)
+                complete = block["scheduled"] and next(opinion for opinion in opinions if opinion["id"] == "mage")["status"] == "ok"
                 if complete:
                     analyzed_characters += len(block["text"])
                 segments.append({"start": utf16_offset(text, block["start_py"]), "end": utf16_offset(text, block["end_py"]),
@@ -362,32 +401,39 @@ class WorkbenchDetector:
                                  "models": opinions, "coverage_complete": complete,
                                  "evidence_scope": "context_block_not_sentence_authorship"})
             full_coverage = analyzed_characters == len(text)
+            context_lengths_supported = all(MIN_CONTEXT_WORDS <= block["words"] <= MAX_CONTEXT_WORDS for block in blocks)
             labels = {segment["label"] for segment in segments}
             if full_coverage and len(labels) == 1 and "inconclusive" not in labels:
                 label = next(iter(labels))
                 direction = "AI-leaning" if label == "ai_leaning" else "human-leaning"
-                summary = f"Both local models are provisionally {direction} across all scored context blocks. This experimental agreement does not prove how the passage was written."
+                summary = f"The primary MAGE detector is provisionally {direction} across all scored context blocks. This experimental signal does not prove how the passage was written."
             else:
                 label = "inconclusive"
-                summary = "The local models do not provide consistent, fully supported evidence for one passage-level leaning. Review the individual model opinions and context limits below."
+                summary = "The primary MAGE detector does not provide consistent, fully supported evidence for one passage-level leaning. Review its block signals and the separate TF-IDF diagnostic below."
+                if any(block["words"] < MIN_CONTEXT_WORDS for block in blocks):
+                    summary = f"At least one context has fewer than {MIN_CONTEXT_WORDS} words. Raw scores remain available, but this text is too short for a supported leaning label."
             truncated = any(not block["scheduled"] for block in blocks) or any(opinion["status"] == "truncated" for segment in segments for opinion in segment["models"])
             limitations = [
                 "These are experimental ML opinions using provisional thresholds from an out-of-domain research corpus; student-writing accuracy has not been established.",
                 "Raw model scores and averages are not the probability or percentage of AI-written text.",
                 "Highlighted blocks show contextual model evidence, not validated sentence or word authorship; disagreements are not mixed-authorship labels.",
-                "Analyzed-character coverage counts only contexts fully processed by both models. A missing model, short context, uncertainty or changing block opinions prevents a combined conclusion.",
-                "Agreement between these models does not establish independent evidence, provenance, or plagiarism.",
+                "MAGE supplies the primary decision using its logit margin; TF-IDF is a secondary diagnostic and does not veto or replace that decision.",
+                "Analyzed-character coverage counts contexts fully processed by MAGE. A missing primary model, short context, uncertainty or changing primary block opinions prevents a passage conclusion.",
+                "The calibration-selected score repair raised retrospective HC3 AI recall from 68.1% to 74.7%, but AIDE human false flags rose from 27/1375 to 38/1375 (2.76%); student-domain accuracy remains inadequate for verified authorship claims.",
             ]
             if truncated:
                 limitations.append("Some text was outside a window/token limit. Unscored or partially processed contexts remain inconclusive.")
             if any(block["words"] < MIN_CONTEXT_WORDS for block in blocks if block["scheduled"]):
                 limitations.append("Contexts shorter than 80 words receive raw scores only; provisional leaning labels are withheld.")
             return {"status": "experimental", "product_approved": False, "validated": False,
+                    "decision_policy": DECISION_POLICY, "primary_model": "mage",
                     "assessment": {"label": label, "summary": summary},
                     "models": [self._aggregate(name, segments) for name in ("mage", "tfidf")],
                     "segments": segments, "offset_encoding": "utf-16",
                     "input": {"characters": len(text), "words": len(text.split()), "analyzed_characters": analyzed_characters,
+                              "context_lengths_supported": context_lengths_supported, "minimum_context_words": MIN_CONTEXT_WORDS,
                               "truncated": truncated, "coverage_complete": full_coverage,
+                              "coverage_basis": "complete_primary_mage_contexts",
                               "scored_windows": sum(block["scheduled"] for block in blocks), "window_limit": self.max_windows},
                     "limitations": limitations, "elapsed_ms": round((time.perf_counter() - started) * 1000)}
         finally:

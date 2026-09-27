@@ -1,0 +1,66 @@
+{
+  "reviewed_at": "2026-09-27T20:09:31.566662+00:00",
+  "receipt": "outputs\\reviews\\live-workbench-v1.json",
+  "receipt_sha256": "d07df3d082d97ac65f5adfc88d63a6a09ebf7a6a567858025bc9345d4b888c78",
+  "scope": "Manual inspection of actual returned edits and original, preview, and revised UI screenshots. No further inference or tuning.",
+  "ui_contract_checks": {
+    "passed": 80,
+    "failed": 0
+  },
+  "applied_edit_review": {
+    "returned_index": 0,
+    "verdict": "appropriate_redundancy_reduction",
+    "reason": "The replacement removes repeated personal-opinion and advance-planning phrases, preserving the practical advice. The anchored apply leaves the numeric sentence and all other text unchanged."
+  },
+  "unapplied_edit_review": {
+    "returned_index": 1,
+    "verdict": "partially_appropriate_but_unsupported_inference_remains",
+    "reason": "Qualifying proves every student is useful, but the replacement still says the survey suggests that some students may learn better online. The supplied survey observations concern sleep, not online-learning outcomes, so that implication lacks support."
+  },
+  "comparison_review": {
+    "original_words": 88,
+    "revised_words": 79,
+    "original_characters": 584,
+    "revised_characters": 534,
+    "original_signal": "human_leaning",
+    "revised_signal": "inconclusive",
+    "reason": "The revised context is below the 80-word research range. Inconclusive is a length eligibility result here, not evidence of worse writing or different authorship.",
+    "ui_observation": "Exact counts and both model labels are visible. The specific minimum-length reason currently requires inspecting context or diagnostic details; a future concise visible explanation would be clearer."
+  },
+  "detector_observations": [
+    {
+      "case": "hc3-human",
+      "known_fixture_kind": "documented_human",
+      "observed_label": "human_leaning"
+    },
+    {
+      "case": "hc3-ai",
+      "known_fixture_kind": "documented_ai",
+      "observed_label": "ai_leaning"
+    },
+    {
+      "case": "student-human",
+      "known_fixture_kind": "documented_human",
+      "observed_label": "human_leaning"
+    },
+    {
+      "case": "constructed-mixed",
+      "known_fixture_kind": "synthetic_mixed",
+      "observed_label": "inconclusive"
+    },
+    {
+      "case": "assistant-challenge",
+      "known_fixture_kind": "documented_ai",
+      "observed_label": "inconclusive"
+    },
+    {
+      "case": "revision-practice",
+      "known_fixture_kind": "writing_fixture",
+      "observed_label": "human_leaning"
+    }
+  ],
+  "limitations": [
+    "This is a fixed development smoke set, not an independent accuracy or writing-quality evaluation.",
+    "UI contract success does not imply that every proposed rewrite is supported by the passage."
+  ]
+}
