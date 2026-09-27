@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A local writing analysis workspace with source-backed evidence.">
+  <title>TuringTint · Writing laboratory</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="TuringTint home"><span class="brand-mark">t<span>.</span></span><span>TuringTint</span></a>
+    <nav aria-label="Main"><a class="active" href="#workspace">Workspace</a><a href="#method">How it works</a></nav>
+    <span class="local-badge"><i></i> Local workspace</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow"><span>THE WRITING LABORATORY</span><span class="edition">PROTOTYPE / 01</span></div>
+      <h1>A closer look<br>at your <em>words.</em></h1>
+      <div class="intro-bottom"><p>Explore the sources behind a passage.<br>Understand the evidence before drawing a conclusion.</p><div class="corpus-summary"><span class="tiny-label">REFERENCE LIBRARY</span><strong id="corpus-count">Connecting…</strong><span id="corpus-detail">Checking local availability</span></div></div>
+    </section>
+
+    <section id="workspace" class="workspace" aria-label="Writing analysis">
+      <div class="editor-panel">
+        <div class="panel-heading"><div><span class="step">01</span><h2>Your passage</h2></div><button id="example" class="text-button" type="button">Try a reference passage ↗</button></div>
+        <label for="passage" class="sr-only">Paste English academic or student writing</label>
+        <textarea id="passage" maxlength="30000" placeholder="Paste a paragraph, an abstract, or an essay excerpt here…" spellcheck="false"></textarea>
+        <div class="editor-meta"><span id="word-count">0 words</span><span>English academic &amp; student writing</span></div>
+        <div class="editor-actions"><p><span class="small-dot"></span>Analysis stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze passage <span>↗</span></button></div>
+        <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+      </div>
+      <aside class="overview-panel">
+        <span class="step">02</span><h2>Evidence, in context.</h2><p class="overview-copy">Two different questions.<br>Two separate kinds of evidence.</p>
+        <div class="signal-item"><span class="signal-icon source-icon">≋</span><div><h3>Source overlap</h3><p>Matching passages from your local reference library, with citations.</p><span id="source-state" class="pill available">Checking library</span></div></div>
+        <div class="signal-item"><span class="signal-icon ai-icon">∴</span><div><h3>Authorship signals</h3><p>AI estimates need an independently evaluated detector.</p><span class="pill muted">Not yet available</span></div></div>
+        <div class="scope-note">A source match is evidence of shared wording. Quotation, citation, and context still matter.</div>
+      </aside>
+    </section>
+
+    <section id="results" class="results" hidden aria-label="Analysis results">
+      <div class="results-title"><div><span class="eyebrow">ANALYSIS REPORT</span><h2>Follow the evidence.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>
+      <div class="report-grid">
+        <div class="annotated-panel"><div class="annotation-header"><h3>Passage view</h3><span class="legend"><i></i> Source overlap</span></div><p id="component-warning" class="notice" role="status" hidden></p><div id="annotated-text" class="annotated-text"></div><p id="report-summary" class="report-summary"></p></div>
+        <div class="evidence-panel"><div class="evidence-heading"><h3>Source evidence</h3><span id="match-count" class="count-badge">0</span></div><div id="source-cards"></div></div>
+      </div>
+      <div id="suggestions-panel" class="suggestions-panel" hidden><h3>Consider these changes</h3><p class="muted-copy">Suggestions address attribution and clarity. They do not establish authorship or guarantee a lower AI score.</p><div id="suggestions"></div></div>
+    </section>
+
+    <section id="method" class="method"><div><span class="eyebrow">OUR APPROACH</span><h2>Useful signals.<br>Visible limits.</h2></div><div class="method-grid"><article><span>01 / LOCAL</span><h3>A library you can inspect</h3><p>Source matching searches the installed corpus. It does not search every website, paper, or private document.</p></article><article><span>02 / EVIDENCE</span><h3>Claims with receipts</h3><p>Open a match to compare the actual words and source. No match means none was found in the searched library.</p></article><article><span>03 / RESEARCH</span><h3>Accuracy is earned</h3><p>Authorship scores stay unavailable until a detector passes evaluation. Uncertainty is part of the report.</p></article></div></section>
+  </main>
+  <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>LOCAL RESEARCH PROTOTYPE</span></footer>
+</body>
+</html>

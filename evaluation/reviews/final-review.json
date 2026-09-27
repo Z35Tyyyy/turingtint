@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "independent-review",
+      "reviewer_id": "plagiarism_research",
+      "independent": true,
+      "decision": "approve",
+      "subject_sha256": "f8c852abd4433c58a36a691642c7bf729ae61423d936ef50b3a8da9fb866852d",
+      "summary": "AUDIT-001, AUDIT-002 and AUDIT-003 fixes independently verified. Approval covers software fixes only; research validation gates remain blocked.",
+      "evidence_paths": [
+        "evaluation/reviews/recheck.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "AUDIT-001",
+        "AUDIT-002",
+        "AUDIT-003"
+      ]
+    }
+  ]
+}

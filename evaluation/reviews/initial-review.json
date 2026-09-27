@@ -1,0 +1,33 @@
+﻿{
+    "version":  1,
+    "reviews":  [
+                    {
+                        "summary":  "Independent audit found incompatible evidence schema, hidden partial results, and unbounded child output storage.",
+                        "independent":  true,
+                        "subject_sha256":  "e5b863ed2c0f0057068b5e59727a3e46df3cf1939c990db16695fbfb18fe1e7e",
+                        "resolved_findings":  [
+
+                                              ],
+                        "findings":  [
+                                         {
+                                             "id":  "AUDIT-001",
+                                             "summary":  "Check adapters must emit evidence lists."
+                                         },
+                                         {
+                                             "id":  "AUDIT-002",
+                                             "summary":  "Partial positive match results must visibly disclose incomplete coverage."
+                                         },
+                                         {
+                                             "id":  "AUDIT-003",
+                                             "summary":  "Subprocess output capture must bound disk usage during execution."
+                                         }
+                                     ],
+                        "evidence_paths":  [
+                                               "evaluation/reviews/independent-audit.md"
+                                           ],
+                        "decision":  "request_changes",
+                        "reviewer_id":  "plagiarism_research",
+                        "slot":  "independent-review"
+                    }
+                ]
+}
