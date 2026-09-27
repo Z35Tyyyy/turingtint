@@ -19,6 +19,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from . import __version__
 from .corpus import ROOT, corpus_summary, default_corpus_path, open_readonly
 from .matching import MAX_QUERY_TOKENS, analyze_sources, suggestions_for
+from .research import ResearchBusy, ResearchDetector, ResearchUnavailable
 from .text import tokenize
 
 
@@ -113,11 +114,12 @@ class LocalRequestMiddleware:
         await self.app(scope, replay, safe_send)
 
 
-def create_app(corpus_path: str | Path | None = None, web_path: str | Path | None = None) -> FastAPI:
+def create_app(corpus_path: str | Path | None = None, web_path: str | Path | None = None, *, research_detector: ResearchDetector | None = None) -> FastAPI:
     path = Path(corpus_path) if corpus_path is not None else default_corpus_path()
     frontend = Path(web_path) if web_path is not None else ROOT / "web"
     app = FastAPI(title="TuringTint Local", version=__version__, docs_url=None, redoc_url=None, openapi_url=None)
     scan_slots = threading.BoundedSemaphore(2)
+    research = research_detector if research_detector is not None else ResearchDetector()
     app.add_middleware(LocalRequestMiddleware)
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]", "testserver"])
 
@@ -138,6 +140,16 @@ def create_app(corpus_path: str | Path | None = None, web_path: str | Path | Non
     @app.get("/api/corpus")
     def corpus():
         return corpus_summary(path)
+
+    @app.post("/api/research/analyze")
+    def research_analyze(payload: AnalyzeInput):
+        try:
+            result = research.analyze(payload.text)
+        except ResearchBusy as error:
+            raise HTTPException(status_code=409, detail=str(error)) from None
+        except ResearchUnavailable as error:
+            raise HTTPException(status_code=503, detail=str(error)) from None
+        return {"request_id": payload.request_id or str(uuid.uuid4()), **result}
 
     @app.get("/api/example")
     def example():

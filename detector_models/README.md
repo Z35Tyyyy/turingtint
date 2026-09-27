@@ -1,7 +1,15 @@
 # MAGE research baseline
 
-This adapter evaluates a pinned public detector locally. It does not activate AI
-labels in the web application and does not establish accuracy for student writing.
+This adapter evaluates a pinned public detector locally. The web application's
+separate **Test experimental detector** panel exposes raw research scores;
+validated AI/human/mixed labels remain unavailable. It does not establish
+accuracy for student writing.
+
+For manual testing, open http://127.0.0.1:8765, paste the full paragraph into the
+text box and use that experimental button. Line breaks are preserved. The local
+model loads on the first request; input counts, score limitations and truncation
+are displayed. No submitted text is saved. This avoids the one-line limitation
+of a terminal command using Python's `input()`.
 
 The official [MAGE checkpoint](https://huggingface.co/yaful/MAGE) declares Apache
 2.0. The pinned model revision is `0d82ca0fdf6ebef5babb813cc11bd8eb2552c846`.

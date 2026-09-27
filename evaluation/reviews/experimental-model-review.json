@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "model-metrics-review",
+      "reviewer_id": "plagiarism_research",
+      "independent": true,
+      "decision": "approve",
+      "subject_sha256": "92fb4c60695086b17e82f493fa6acceab6d272863ce3a11b6312a256a45e9509",
+      "summary": "Scoped approval of unchanged audited model/metrics and experimental local wrapper/claim wording. Final implementation/input hashes verified. No user-facing accuracy or scientific validation approval; research gates remain blocked.",
+      "evidence_paths": [
+        "evaluation/reviews/experimental-model-audit.md",
+        "evaluation/reviews/phase2-model-metrics-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "P2-001",
+        "P2-002"
+      ]
+    }
+  ]
+}

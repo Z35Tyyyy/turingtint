@@ -33,9 +33,28 @@
       <aside class="overview-panel">
         <span class="step">02</span><h2>Evidence, in context.</h2><p class="overview-copy">Two different questions.<br>Two separate kinds of evidence.</p>
         <div class="signal-item"><span class="signal-icon source-icon">≋</span><div><h3>Source overlap</h3><p>Matching passages from your local reference library, with citations.</p><span id="source-state" class="pill available">Checking library</span></div></div>
-        <div class="signal-item"><span class="signal-icon ai-icon">∴</span><div><h3>Authorship signals</h3><p>AI estimates need an independently evaluated detector.</p><span class="pill muted">Not yet available</span></div></div>
+        <div class="signal-item"><span class="signal-icon ai-icon">∴</span><div><h3>Validated authorship</h3><p>AI estimates need an independently evaluated detector.</p><span class="pill muted">Not yet available</span></div></div>
         <div class="scope-note">A source match is evidence of shared wording. Quotation, citation, and context still matter.</div>
       </aside>
+    </section>
+
+    <section id="research" class="research-panel" aria-labelledby="research-heading">
+      <div class="research-heading">
+        <div><span class="eyebrow">EXPERIMENTAL / UNVALIDATED</span><h2 id="research-heading">Test the local detector.</h2></div>
+        <button id="research-analyze" class="secondary-button" type="button" disabled>Test experimental detector</button>
+      </div>
+      <p class="research-intro">Submits the full passage from the editor above, including line breaks. Long inputs may be truncated; the result shows how much was analyzed. Authorship conclusions remain unavailable. The first test may take a few seconds while the local model loads.</p>
+      <div id="research-notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div id="research-result" class="research-result" aria-live="polite" hidden>
+        <div class="research-score-card"><span class="tiny-label">RAW MODEL SCORE</span><output id="research-score"></output><span class="pill research-pill">Experimental · unvalidated</span><p>Uncalibrated value from 0 to 1. This is not a percentage of AI-written text or a verified authorship probability.</p></div>
+        <div class="research-details">
+          <h3>What the model received</h3>
+          <dl class="research-counts"><div><dt>Characters submitted</dt><dd id="research-characters"></dd></div><div><dt>Words submitted</dt><dd id="research-words"></dd></div><div><dt>Tokens in the full passage</dt><dd id="research-original-tokens"></dd></div><div><dt>Tokens analyzed</dt><dd id="research-input-tokens"></dd></div></dl>
+          <p id="research-truncation" class="notice" hidden></p>
+          <p id="research-runtime" class="muted-copy"></p>
+          <details class="research-model-details"><summary>Model details and limitations</summary><p id="research-model"></p><ul id="research-limitations"></ul></details>
+        </div>
+      </div>
     </section>
 
     <section id="results" class="results" hidden aria-label="Analysis results">
@@ -47,7 +66,7 @@
       <div id="suggestions-panel" class="suggestions-panel" hidden><h3>Consider these changes</h3><p class="muted-copy">Suggestions address attribution and clarity. They do not establish authorship or guarantee a lower AI score.</p><div id="suggestions"></div></div>
     </section>
 
-    <section id="method" class="method"><div><span class="eyebrow">OUR APPROACH</span><h2>Useful signals.<br>Visible limits.</h2></div><div class="method-grid"><article><span>01 / LOCAL</span><h3>A library you can inspect</h3><p>Source matching searches the installed corpus. It does not search every website, paper, or private document.</p></article><article><span>02 / EVIDENCE</span><h3>Claims with receipts</h3><p>Open a match to compare the actual words and source. No match means none was found in the searched library.</p></article><article><span>03 / RESEARCH</span><h3>Accuracy is earned</h3><p>Authorship scores stay unavailable until a detector passes evaluation. Uncertainty is part of the report.</p></article></div></section>
+    <section id="method" class="method"><div><span class="eyebrow">OUR APPROACH</span><h2>Useful signals.<br>Visible limits.</h2></div><div class="method-grid"><article><span>01 / LOCAL</span><h3>A library you can inspect</h3><p>Source matching searches the installed corpus. It does not search every website, paper, or private document.</p></article><article><span>02 / EVIDENCE</span><h3>Claims with receipts</h3><p>Open a match to compare the actual words and source. No match means none was found in the searched library.</p></article><article><span>03 / RESEARCH</span><h3>Accuracy is earned</h3><p>Authorship conclusions stay unavailable until a detector passes evaluation. The experimental panel exposes raw model output for testing.</p></article></div></section>
   </main>
   <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>LOCAL RESEARCH PROTOTYPE</span></footer>
 </body>

@@ -3,6 +3,10 @@ const $ = (id) => document.getElementById(id);
 let revision = 0;
 let activeRequest = null;
 let lastReport = null;
+let researchRequest = null;
+let researchSequence = 0;
+let hasResearchResult = false;
+let researchNeedsRetest = false;
 const text = $('passage');
 
 function node(tag, value, className) {
@@ -12,16 +16,95 @@ function node(tag, value, className) {
   return element;
 }
 function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
+function researchNotice(message) { $('research-notice').textContent = message; $('research-notice').hidden = !message; }
 function updateInput() {
   revision++;
   if (activeRequest) { activeRequest.abort(); activeRequest = null; }
+  const invalidateResearch = Boolean(researchRequest) || hasResearchResult;
+  researchNeedsRetest = researchNeedsRetest || invalidateResearch;
+  if (researchRequest) { researchRequest.abort(); researchRequest = null; }
+  hasResearchResult = false;
+  $('research-result').hidden = true;
+  $('research-score').textContent = '';
   const words = text.value.trim() ? text.value.trim().split(/\s+/u).length : 0;
   $('word-count').textContent = `${words.toLocaleString()} words`;
   $('analyze').disabled = !words;
+  $('research-analyze').disabled = !words;
+  $('research-analyze').textContent = 'Test experimental detector';
+  $('research').setAttribute('aria-busy', 'false');
+  researchNotice(researchNeedsRetest ? 'The passage changed. Test again to inspect the updated text.' : '');
   $('analyze').replaceChildren(document.createTextNode('Analyze passage '), node('span', '↗'));
   if (lastReport) { lastReport = null; $('results').hidden = true; notice('The passage changed. Analyze again for an updated report.'); }
 }
 text.addEventListener('input', updateInput);
+
+function renderResearch(result, submitted, requestId) {
+  const countFields = ['input_characters', 'input_words', 'original_tokens', 'input_tokens', 'max_tokens'];
+  const valid = result.request_id === requestId && result.status === 'experimental' && result.product_approved === false
+    && result.score_kind === 'uncalibrated_softmax_class_0'
+    && typeof result.score_ai === 'number' && Number.isFinite(result.score_ai) && result.score_ai >= 0 && result.score_ai <= 1
+    && countFields.every(field => Number.isInteger(result[field]) && result[field] >= 0)
+    && result.input_characters === Array.from(submitted).length
+    && result.input_tokens <= result.original_tokens && result.input_tokens <= result.max_tokens
+    && typeof result.truncated === 'boolean';
+  if (!valid) throw new Error('The experimental result did not match the submitted passage. Please test again.');
+  $('research-score').textContent = result.score_ai.toPrecision(10);
+  $('research-characters').textContent = result.input_characters.toLocaleString();
+  $('research-words').textContent = result.input_words.toLocaleString();
+  $('research-original-tokens').textContent = result.original_tokens.toLocaleString();
+  $('research-input-tokens').textContent = `${result.input_tokens.toLocaleString()} / ${result.max_tokens.toLocaleString()} maximum`;
+  $('research-truncation').hidden = !result.truncated;
+  $('research-truncation').textContent = result.truncated
+    ? `Only the first ${result.input_tokens.toLocaleString()} of ${result.original_tokens.toLocaleString()} tokens were analyzed. The score does not cover the remaining text.` : '';
+  const elapsed = Number.isFinite(result.elapsed_ms) ? `${(result.elapsed_ms / 1000).toFixed(2)} seconds` : 'Time unavailable';
+  $('research-runtime').textContent = `Analyzed on this machine · ${elapsed}`;
+  $('research-model').textContent = `${result.model_id || 'Local model'} · revision ${result.model_revision || 'unavailable'} · ${result.device || 'local device'}`;
+  const limitations = $('research-limitations'); limitations.replaceChildren();
+  if (Array.isArray(result.limitations)) result.limitations.filter(item => typeof item === 'string').forEach(item => limitations.append(node('li', item)));
+  hasResearchResult = true;
+  $('research-result').hidden = false;
+  $('research-result').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+$('research-analyze').addEventListener('click', async () => {
+  if (!text.value.trim() || researchRequest) return;
+  const current = revision;
+  const submitted = text.value;
+  const requestId = `research-${Date.now()}-${++researchSequence}`;
+  const controller = new AbortController(); researchRequest = controller;
+  researchNeedsRetest = false;
+  hasResearchResult = false; $('research-result').hidden = true;
+  $('research-analyze').disabled = true; $('research-analyze').textContent = 'Testing locally…';
+  $('research').setAttribute('aria-busy', 'true');
+  researchNotice('Running the experimental local model. The first test may take a few seconds to load.');
+  const timeout = setTimeout(() => controller.abort(), 120000);
+  try {
+    const response = await fetch('/api/research/analyze', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({text: submitted, request_id: requestId}), signal: controller.signal});
+    if (!response.ok) {
+      let detail = 'The experimental detector could not complete this test.';
+      try { const error = await response.json(); if (typeof error.detail === 'string') detail = error.detail;
+        else if (Array.isArray(error.detail)) detail = error.detail.map(item => item.msg).filter(Boolean).join(' '); } catch (_) {}
+      throw new Error(detail);
+    }
+    const result = await response.json();
+    if (current !== revision || researchRequest !== controller) return;
+    renderResearch(result, submitted, requestId);
+    researchNotice('');
+  } catch (error) {
+    if (current === revision && researchRequest === controller) {
+      researchNotice(error.name === 'AbortError' ? 'The experimental test timed out. No score was produced; the local model may still be running.' : error.message);
+    }
+  } finally {
+    clearTimeout(timeout);
+    if (current === revision && researchRequest === controller) {
+      researchRequest = null;
+      $('research-analyze').disabled = !text.value.trim();
+      $('research-analyze').textContent = 'Test experimental detector';
+      $('research').setAttribute('aria-busy', 'false');
+    }
+  }
+});
 
 async function loadCorpus() {
   try {

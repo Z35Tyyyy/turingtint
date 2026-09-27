@@ -7,9 +7,12 @@ library, highlights matching wording, shows the source and license, and suggests
 reviewing quotation and attribution. Analysis does not transmit the passage to
 an external service or save it in the reference library.
 
-**AI-authorship detection is not yet available.** This build returns null
-scores, not simulated probabilities. Source overlap is not proof of plagiarism,
-and no match means none was found in the local library.
+**Validated AI-authorship detection is not yet available.** The source report
+returns null authorship scores. A separate **Test experimental detector** button
+runs the installed local MAGE model for research: it shows an uncalibrated raw
+score, full input counts and any truncation, without AI/human/mixed verdicts.
+Source overlap is not proof of plagiarism, and no match means none was found in
+the local library.
 
 The second phase adds licensed corpus acquisition, frozen training/calibration
 splits, a trained local baseline and a pinned pretrained detector comparison.
@@ -31,6 +34,15 @@ Open http://127.0.0.1:8765. The first corpus command downloads a small selection
 of PLOS abstracts through Europe PMC, verifies article-level CC BY evidence,
 and records provenance. Downloads happen during setup; analysis is offline.
 Use the reference-example button to try a real source match.
+
+To test the research detector, paste the complete paragraph into the same text
+box and click **Test experimental detector**. Multiline pastes are supported.
+The first request loads the model and can take longer; later requests reuse it.
+The optional model and research dependencies must already be installed (see
+[experiment setup](detector_eval/README.md)). The result shows how many characters,
+words and model tokens were read. Inputs over 512 model tokens are explicitly
+marked as truncated. Editing the passage invalidates the previous result.
+Paragraphs stay local and are not saved by this endpoint.
 
 The same application runs with `python -m turingtint` on other supported
 platforms after installing `requirements.txt` into a virtual environment.

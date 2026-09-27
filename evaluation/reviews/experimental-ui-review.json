@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "independent-review",
+      "reviewer_id": "iteration_framework",
+      "independent": true,
+      "subject_sha256": "92fb4c60695086b17e82f493fa6acceab6d272863ce3a11b6312a256a45e9509",
+      "decision": "approve",
+      "summary": "Approved the experimental multiline UI/API workflow after independent backend tests, browser regressions, and one real local GPU browser request. The unchanged prior experiment/report review remains applicable. This does not approve detector accuracy or human/AI/mixed classification; scientific gates remain blocked and model/metrics review is separate.",
+      "evidence_paths": [
+        "evaluation/reviews/experimental-ui-audit.md",
+        "evaluation/reviews/phase2-experiment-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "EXP-001",
+        "EXP-002",
+        "EXP-003"
+      ]
+    }
+  ]
+}

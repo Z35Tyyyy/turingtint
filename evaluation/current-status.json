@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-27T11:39:07.782799+00:00",
-  "run_id": "20260927T113823-a07ea6a5a8ab",
-  "subject_sha256": "162fa6063d3277ce3a40a6fae11bf0069b3b11504711fb38ec38163d82472976",
+  "generated_at": "2026-09-27T15:07:28.173517+00:00",
+  "run_id": "20260927T150704-9f07146a34f5",
+  "subject_sha256": "92fb4c60695086b17e82f493fa6acceab6d272863ce3a11b6312a256a45e9509",
   "decision": "block",
   "decision_scope": "Only the configured protocol; passing software checks is not a measured detector accuracy claim.",
   "checks": [
     {
       "id": "software-tests",
       "status": "passed",
-      "summary": "94 tests; 0 failures; 0 errors; 0 skipped."
+      "summary": "102 tests; 0 failures; 0 errors; 0 skipped."
     },
     {
       "id": "reference-corpus",
@@ -18,7 +18,7 @@
     {
       "id": "browser-integration",
       "status": "passed",
-      "summary": "6 browser integration checks passed."
+      "summary": "10 browser integration checks passed."
     },
     {
       "id": "authorship-experiment",
@@ -30,12 +30,12 @@
     {
       "id": "independent-review",
       "status": "passed",
-      "summary": "Approved the corrected frozen experiment, text-bound score assembly, independently recounted diagnostic comparison, and intentionally blocked release integration. This is not product-accuracy approval. Independent model/metrics assessment is provided through its separate review slot."
+      "summary": "Approved the experimental multiline UI/API workflow after independent backend tests, browser regressions, and one real local GPU browser request. The unchanged prior experiment/report review remains applicable. This does not approve detector accuracy or human/AI/mixed classification; scientific gates remain blocked and model/metrics review is separate."
     },
     {
       "id": "model-metrics-review",
       "status": "passed",
-      "summary": "Scoped independent approval of inspected model-adapter integrity, metrics and diagnostic-report software. P2-001 and P2-002 resolved; 10 model and 22 metrics tests independently pass. Does not approve dataset/split independence or user-facing accuracy; scientific validation remains blocked."
+      "summary": "Scoped approval of unchanged audited model/metrics and experimental local wrapper/claim wording. Final implementation/input hashes verified. No user-facing accuracy or scientific validation approval; research gates remain blocked."
     }
   ],
   "open_gates": [
@@ -49,5 +49,6 @@
   "research_phase": "Two local models evaluated; neither approved for release.",
   "comparison_report": "evaluation/results/phase2-comparison.json",
   "results_summary": "research/phase2-results.md",
-  "next_work": "research/NEXT.md"
+  "next_work": "research/NEXT.md",
+  "experimental_detector_ui": "Available for local raw-score testing; unvalidated. Multiline input and truncation are explicit."
 }
