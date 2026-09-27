@@ -1,0 +1,12 @@
+# Optional local research environment; web app does not import these packages.
+-r requirements-dev.txt
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+threadpoolctl==3.7.0
+transformers==4.56.2
+safetensors==0.8.0
+huggingface-hub==0.36.2
+# Install PyTorch separately for your hardware; experiment used 2.6.0+cu124.
+# python -m pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124

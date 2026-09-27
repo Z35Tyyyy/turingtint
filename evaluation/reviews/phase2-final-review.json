@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "reviews": [
+    {
+      "slot": "independent-review",
+      "reviewer_id": "iteration_framework",
+      "independent": true,
+      "subject_sha256": "162fa6063d3277ce3a40a6fae11bf0069b3b11504711fb38ec38163d82472976",
+      "decision": "approve",
+      "summary": "Approved the corrected frozen experiment, text-bound score assembly, independently recounted diagnostic comparison, and intentionally blocked release integration. This is not product-accuracy approval. Independent model/metrics assessment is provided through its separate review slot.",
+      "evidence_paths": [
+        "evaluation/reviews/phase2-experiment-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "EXP-001",
+        "EXP-002",
+        "EXP-003"
+      ]
+    },
+    {
+      "slot": "model-metrics-review",
+      "reviewer_id": "plagiarism_research",
+      "independent": true,
+      "decision": "approve",
+      "subject_sha256": "162fa6063d3277ce3a40a6fae11bf0069b3b11504711fb38ec38163d82472976",
+      "summary": "Scoped independent approval of inspected model-adapter integrity, metrics and diagnostic-report software. P2-001 and P2-002 resolved; 10 model and 22 metrics tests independently pass. Does not approve dataset/split independence or user-facing accuracy; scientific validation remains blocked.",
+      "evidence_paths": [
+        "evaluation/reviews/phase2-model-metrics-audit.md"
+      ],
+      "findings": [],
+      "resolved_findings": [
+        "P2-001",
+        "P2-002"
+      ]
+    }
+  ]
+}

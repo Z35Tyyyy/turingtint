@@ -1,0 +1,1650 @@
+{
+  "version": 1,
+  "scope": "out-of-domain baseline comparison and external student diagnostic",
+  "product_approved": false,
+  "created_at": "2026-09-27T11:35:00.679286+00:00",
+  "corpora": {
+    "hc3": {
+      "omitted": {
+        "too_short_human": 133,
+        "too_short_ai": 16
+      },
+      "counts": {
+        "train:1": 493,
+        "train:0": 389,
+        "test:1": 166,
+        "test:0": 123,
+        "calibration:1": 167,
+        "calibration:0": 126
+      },
+      "split_units": 762,
+      "excerpt_kinds": {
+        "whole_short_document": 517,
+        "natural_paragraph": 702,
+        "first_250_word_excerpt_may_end_mid_sentence": 245
+      }
+    },
+    "aide": {
+      "omitted": {},
+      "counts": {
+        "external:0": 1375,
+        "external:1": 3
+      },
+      "split_units": 2,
+      "excerpt_kinds": {
+        "natural_paragraph": 1354,
+        "first_250_word_excerpt_may_end_mid_sentence": 24
+      }
+    }
+  },
+  "input_hashes": {
+    "hc3": "cf51486d8c8f57afb9d96890a753cac708e72ad9628adfbe7cc51f9d39754c7f",
+    "aide": "7bebfd4f335d458e31545e2e8683260d26ed9157494dd2a7b2f35f20632c8ccc",
+    "tfidf_predictions": "5469841063eed50b1dd0fb4f9adeff94f9a9258d8c4b56ac64b62787ce172891",
+    "mage_hc3_predictions": "8901b0607df9fff118347d53d8b489763f98a496260b64a2ec6ad425d0e0369f",
+    "mage_aide_predictions": "8f6fc991ff3b7342c8752fa550a735d2866a3df07c74704aa9acb9b9cf2d20c0",
+    "mage_manifest": "a02a9ca7bbfcecd50766e89fe55a53be260e3783fa85ff2d5870d078bb438494"
+  },
+  "models": {
+    "tfidf_logistic": {
+      "calibrated_test": {
+        "thresholds": {
+          "human_max": 0.3748099081460813,
+          "ai_min": 0.6359574963543734,
+          "selected_on": "calibration",
+          "calibration_sha256": "7e67e9915e1aa2341f03e7eee18ffdf723d9b03bdd709408f64472e566f43344"
+        },
+        "metrics": {
+          "counts": {
+            "records": 289,
+            "human": 123,
+            "ai": 166,
+            "human_source_groups": 123,
+            "ai_source_groups": 166,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 124,
+            "fp": 0,
+            "tn": 91,
+            "fn": 2,
+            "abstain_human": 32,
+            "abstain_ai": 40
+          },
+          "human_fpr": 0.0,
+          "answered_human_fpr": 0.0,
+          "false_human_rate": 0.012048192771084338,
+          "ai_recall": 0.7469879518072289,
+          "human_recall": 0.7398373983739838,
+          "ai_precision": 1.0,
+          "human_precision": 0.978494623655914,
+          "coverage": 0.7508650519031141,
+          "human_coverage": 0.7398373983739838,
+          "ai_coverage": 0.7590361445783133,
+          "ai_group_recall": 0.7469879518072289,
+          "brier": 0.10369552630149961,
+          "auroc": 0.9875110196885102,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 0,
+            "human_groups": 123,
+            "estimate": 0.0,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 0,
+              "total": 123,
+              "lower": 0.0,
+              "upper": 0.021522865100085338
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "passed",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "passed",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "blocked",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "passed",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 187,
+              "human": 80,
+              "ai": 107,
+              "human_source_groups": 80,
+              "ai_source_groups": 107,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 89,
+              "fp": 0,
+              "tn": 64,
+              "fn": 0,
+              "abstain_human": 16,
+              "abstain_ai": 18
+            },
+            "human_fpr": 0.0,
+            "answered_human_fpr": 0.0,
+            "false_human_rate": 0.0,
+            "ai_recall": 0.8317757009345794,
+            "human_recall": 0.8,
+            "ai_precision": 1.0,
+            "human_precision": 1.0,
+            "coverage": 0.8181818181818182,
+            "human_coverage": 0.8,
+            "ai_coverage": 0.8317757009345794,
+            "ai_group_recall": 0.8317757009345794,
+            "brier": 0.08693760993459777,
+            "auroc": 0.9960280373831776,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 0,
+              "human_groups": 80,
+              "estimate": 0.0,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 0,
+                "total": 80,
+                "lower": 0.0,
+                "upper": 0.032712963860724587
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 102,
+              "human": 43,
+              "ai": 59,
+              "human_source_groups": 43,
+              "ai_source_groups": 59,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 35,
+              "fp": 0,
+              "tn": 27,
+              "fn": 2,
+              "abstain_human": 16,
+              "abstain_ai": 22
+            },
+            "human_fpr": 0.0,
+            "answered_human_fpr": 0.0,
+            "false_human_rate": 0.03389830508474576,
+            "ai_recall": 0.5932203389830508,
+            "human_recall": 0.627906976744186,
+            "ai_precision": 1.0,
+            "human_precision": 0.9310344827586207,
+            "coverage": 0.6274509803921569,
+            "human_coverage": 0.627906976744186,
+            "ai_coverage": 0.6271186440677966,
+            "ai_group_recall": 0.5932203389830508,
+            "brier": 0.13441837297415296,
+            "auroc": 0.9653133622388648,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 0,
+              "human_groups": 43,
+              "estimate": 0.0,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 0,
+                "total": 43,
+                "lower": 0.0,
+                "upper": 0.05919508334503749
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "fixed_half_test": {
+        "thresholds": {
+          "human_max": 0.49999999999999994,
+          "ai_min": 0.5,
+          "selected_on": "predefined",
+          "calibration_sha256": null
+        },
+        "metrics": {
+          "counts": {
+            "records": 289,
+            "human": 123,
+            "ai": 166,
+            "human_source_groups": 123,
+            "ai_source_groups": 166,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 157,
+            "fp": 7,
+            "tn": 116,
+            "fn": 9,
+            "abstain_human": 0,
+            "abstain_ai": 0
+          },
+          "human_fpr": 0.056910569105691054,
+          "answered_human_fpr": 0.056910569105691054,
+          "false_human_rate": 0.05421686746987952,
+          "ai_recall": 0.9457831325301205,
+          "human_recall": 0.943089430894309,
+          "ai_precision": 0.9573170731707317,
+          "human_precision": 0.928,
+          "coverage": 1.0,
+          "human_coverage": 1.0,
+          "ai_coverage": 1.0,
+          "ai_group_recall": 0.9457831325301205,
+          "brier": 0.10369552630149961,
+          "auroc": 0.9875110196885102,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 7,
+            "human_groups": 123,
+            "estimate": 0.056910569105691054,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 7,
+              "total": 123,
+              "lower": 0.031146757261721322,
+              "upper": 0.10174748904648438
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "passed",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "blocked",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "blocked",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "passed",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "passed",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 187,
+              "human": 80,
+              "ai": 107,
+              "human_source_groups": 80,
+              "ai_source_groups": 107,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 104,
+              "fp": 4,
+              "tn": 76,
+              "fn": 3,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.05,
+            "answered_human_fpr": 0.05,
+            "false_human_rate": 0.028037383177570093,
+            "ai_recall": 0.9719626168224299,
+            "human_recall": 0.95,
+            "ai_precision": 0.9629629629629629,
+            "human_precision": 0.9620253164556962,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 0.9719626168224299,
+            "brier": 0.08693760993459777,
+            "auroc": 0.9960280373831776,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 4,
+              "human_groups": 80,
+              "estimate": 0.05,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 4,
+                "total": 80,
+                "lower": 0.022642707242597045,
+                "upper": 0.10679896023205507
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 102,
+              "human": 43,
+              "ai": 59,
+              "human_source_groups": 43,
+              "ai_source_groups": 59,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 53,
+              "fp": 3,
+              "tn": 40,
+              "fn": 6,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.06976744186046512,
+            "answered_human_fpr": 0.06976744186046512,
+            "false_human_rate": 0.1016949152542373,
+            "ai_recall": 0.8983050847457628,
+            "human_recall": 0.9302325581395349,
+            "ai_precision": 0.9464285714285714,
+            "human_precision": 0.8695652173913043,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 0.8983050847457628,
+            "brier": 0.13441837297415296,
+            "auroc": 0.9653133622388648,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 3,
+              "human_groups": 43,
+              "estimate": 0.06976744186046512,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 3,
+                "total": 43,
+                "lower": 0.02822495287677726,
+                "upper": 0.16224523511778988
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "external_calibrated_diagnostic": {
+        "thresholds": {
+          "human_max": 0.3748099081460813,
+          "ai_min": 0.6359574963543734,
+          "selected_on": "calibration",
+          "calibration_sha256": "7e67e9915e1aa2341f03e7eee18ffdf723d9b03bdd709408f64472e566f43344"
+        },
+        "metrics": {
+          "counts": {
+            "records": 1378,
+            "human": 1375,
+            "ai": 3,
+            "human_source_groups": 1375,
+            "ai_source_groups": 3,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 0,
+            "fp": 67,
+            "tn": 119,
+            "fn": 0,
+            "abstain_human": 1189,
+            "abstain_ai": 3
+          },
+          "human_fpr": 0.04872727272727273,
+          "answered_human_fpr": 0.3602150537634409,
+          "false_human_rate": 0.0,
+          "ai_recall": 0.0,
+          "human_recall": 0.08654545454545455,
+          "ai_precision": 0.0,
+          "human_precision": 1.0,
+          "coverage": 0.13497822931785197,
+          "human_coverage": 0.13527272727272727,
+          "ai_coverage": 0.0,
+          "ai_group_recall": 0.0,
+          "brier": 0.2518992223142324,
+          "auroc": 0.4581818181818182,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 67,
+            "human_groups": 1375,
+            "estimate": 0.04872727272727273,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 67,
+              "total": 1375,
+              "lower": 0.04003155168006123,
+              "upper": 0.05919541601534052
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "blocked",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "passed",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "passed",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "blocked",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "blocked",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 367,
+              "human": 364,
+              "ai": 3,
+              "human_source_groups": 364,
+              "ai_source_groups": 3,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 0,
+              "fp": 13,
+              "tn": 41,
+              "fn": 0,
+              "abstain_human": 310,
+              "abstain_ai": 3
+            },
+            "human_fpr": 0.03571428571428571,
+            "answered_human_fpr": 0.24074074074074073,
+            "false_human_rate": 0.0,
+            "ai_recall": 0.0,
+            "human_recall": 0.11263736263736264,
+            "ai_precision": 0.0,
+            "human_precision": 1.0,
+            "coverage": 0.14713896457765668,
+            "human_coverage": 0.14835164835164835,
+            "ai_coverage": 0.0,
+            "ai_group_recall": 0.0,
+            "brier": 0.23165326471321382,
+            "auroc": 0.5412087912087912,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 13,
+              "human_groups": 364,
+              "estimate": 0.03571428571428571,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 13,
+                "total": 364,
+                "lower": 0.022835715052461843,
+                "upper": 0.05544383093888147
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 1011,
+              "human": 1011,
+              "ai": 0,
+              "human_source_groups": 1011,
+              "ai_source_groups": 0,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 0,
+              "fp": 54,
+              "tn": 78,
+              "fn": 0,
+              "abstain_human": 879,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.05341246290801187,
+            "answered_human_fpr": 0.4090909090909091,
+            "false_human_rate": null,
+            "ai_recall": null,
+            "human_recall": 0.0771513353115727,
+            "ai_precision": 0.0,
+            "human_precision": 1.0,
+            "coverage": 0.13056379821958458,
+            "human_coverage": 0.13056379821958458,
+            "ai_coverage": null,
+            "ai_group_recall": null,
+            "brier": 0.25924864510312834,
+            "auroc": null,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 54,
+              "human_groups": 1011,
+              "estimate": 0.05341246290801187,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 54,
+                "total": 1011,
+                "lower": 0.042926959520872346,
+                "upper": 0.0662818182834572
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "external_fixed_half_diagnostic": {
+        "thresholds": {
+          "human_max": 0.49999999999999994,
+          "ai_min": 0.5,
+          "selected_on": "predefined",
+          "calibration_sha256": null
+        },
+        "metrics": {
+          "counts": {
+            "records": 1378,
+            "human": 1375,
+            "ai": 3,
+            "human_source_groups": 1375,
+            "ai_source_groups": 3,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 1,
+            "fp": 654,
+            "tn": 721,
+            "fn": 2,
+            "abstain_human": 0,
+            "abstain_ai": 0
+          },
+          "human_fpr": 0.47563636363636363,
+          "answered_human_fpr": 0.47563636363636363,
+          "false_human_rate": 0.6666666666666666,
+          "ai_recall": 0.3333333333333333,
+          "human_recall": 0.5243636363636364,
+          "ai_precision": 0.0015267175572519084,
+          "human_precision": 0.9972337482710927,
+          "coverage": 1.0,
+          "human_coverage": 1.0,
+          "ai_coverage": 1.0,
+          "ai_group_recall": 0.3333333333333333,
+          "brier": 0.2518992223142324,
+          "auroc": 0.4581818181818182,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 654,
+            "human_groups": 1375,
+            "estimate": 0.47563636363636363,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 654,
+              "total": 1375,
+              "lower": 0.45355306437046944,
+              "upper": 0.49781535370817037
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "blocked",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "blocked",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "passed",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "blocked",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 367,
+              "human": 364,
+              "ai": 3,
+              "human_source_groups": 364,
+              "ai_source_groups": 3,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 1,
+              "fp": 134,
+              "tn": 230,
+              "fn": 2,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.36813186813186816,
+            "answered_human_fpr": 0.36813186813186816,
+            "false_human_rate": 0.6666666666666666,
+            "ai_recall": 0.3333333333333333,
+            "human_recall": 0.6318681318681318,
+            "ai_precision": 0.007407407407407408,
+            "human_precision": 0.9913793103448276,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 0.3333333333333333,
+            "brier": 0.23165326471321382,
+            "auroc": 0.5412087912087912,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 134,
+              "human_groups": 364,
+              "estimate": 0.36813186813186816,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 134,
+                "total": 364,
+                "lower": 0.32766636760295426,
+                "upper": 0.41054320758985346
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 1011,
+              "human": 1011,
+              "ai": 0,
+              "human_source_groups": 1011,
+              "ai_source_groups": 0,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 0,
+              "fp": 520,
+              "tn": 491,
+              "fn": 0,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.5143422354104846,
+            "answered_human_fpr": 0.5143422354104846,
+            "false_human_rate": null,
+            "ai_recall": null,
+            "human_recall": 0.4856577645895153,
+            "ai_precision": 0.0,
+            "human_precision": 1.0,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": null,
+            "ai_group_recall": null,
+            "brier": 0.25924864510312834,
+            "auroc": null,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 520,
+              "human_groups": 1011,
+              "estimate": 0.5143422354104846,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 520,
+                "total": 1011,
+                "lower": 0.48848354938591637,
+                "upper": 0.54012436361926
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "resources": {
+        "training_rows": 882,
+        "fit_and_predict_seconds": 4.932794499909505,
+        "thread_limit": 2
+      }
+    },
+    "mage_raw_text_512": {
+      "calibrated_test": {
+        "thresholds": {
+          "human_max": 0.9998989105224609,
+          "ai_min": 0.9999876022338867,
+          "selected_on": "calibration",
+          "calibration_sha256": "d8b56656efb108a7bc9371cf60822f12523ded1b9b40b934abc57fb933b30032"
+        },
+        "metrics": {
+          "counts": {
+            "records": 289,
+            "human": 123,
+            "ai": 166,
+            "human_source_groups": 123,
+            "ai_source_groups": 166,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 113,
+            "fp": 1,
+            "tn": 87,
+            "fn": 3,
+            "abstain_human": 35,
+            "abstain_ai": 50
+          },
+          "human_fpr": 0.008130081300813009,
+          "answered_human_fpr": 0.011363636363636364,
+          "false_human_rate": 0.018072289156626505,
+          "ai_recall": 0.6807228915662651,
+          "human_recall": 0.7073170731707317,
+          "ai_precision": 0.9912280701754386,
+          "human_precision": 0.9666666666666667,
+          "coverage": 0.7058823529411765,
+          "human_coverage": 0.7154471544715447,
+          "ai_coverage": 0.6987951807228916,
+          "ai_group_recall": 0.6807228915662651,
+          "brier": 0.20737804741617522,
+          "auroc": 0.9773239298658046,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 1,
+            "human_groups": 123,
+            "estimate": 0.008130081300813009,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 1,
+              "total": 123,
+              "lower": 0.0018158524755966451,
+              "upper": 0.03561720993993446
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "passed",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "passed",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "blocked",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "passed",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 187,
+              "human": 80,
+              "ai": 107,
+              "human_source_groups": 80,
+              "ai_source_groups": 107,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 86,
+              "fp": 1,
+              "tn": 47,
+              "fn": 0,
+              "abstain_human": 32,
+              "abstain_ai": 21
+            },
+            "human_fpr": 0.0125,
+            "answered_human_fpr": 0.020833333333333332,
+            "false_human_rate": 0.0,
+            "ai_recall": 0.8037383177570093,
+            "human_recall": 0.5875,
+            "ai_precision": 0.9885057471264368,
+            "human_precision": 1.0,
+            "coverage": 0.7165775401069518,
+            "human_coverage": 0.6,
+            "ai_coverage": 0.8037383177570093,
+            "ai_group_recall": 0.8037383177570093,
+            "brier": 0.2620066729152582,
+            "auroc": 0.9876168224299066,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 1,
+              "human_groups": 80,
+              "estimate": 0.0125,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 1,
+                "total": 80,
+                "lower": 0.0027936104839833137,
+                "upper": 0.05410152928022316
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 102,
+              "human": 43,
+              "ai": 59,
+              "human_source_groups": 43,
+              "ai_source_groups": 59,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 27,
+              "fp": 0,
+              "tn": 40,
+              "fn": 3,
+              "abstain_human": 3,
+              "abstain_ai": 29
+            },
+            "human_fpr": 0.0,
+            "answered_human_fpr": 0.0,
+            "false_human_rate": 0.05084745762711865,
+            "ai_recall": 0.4576271186440678,
+            "human_recall": 0.9302325581395349,
+            "ai_precision": 1.0,
+            "human_precision": 0.9302325581395349,
+            "coverage": 0.6862745098039216,
+            "human_coverage": 0.9302325581395349,
+            "ai_coverage": 0.5084745762711864,
+            "ai_group_recall": 0.4576271186440678,
+            "brier": 0.10722556733452306,
+            "auroc": 0.9834450137958218,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 0,
+              "human_groups": 43,
+              "estimate": 0.0,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 0,
+                "total": 43,
+                "lower": 0.0,
+                "upper": 0.05919508334503749
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "fixed_half_test": {
+        "thresholds": {
+          "human_max": 0.49999999999999994,
+          "ai_min": 0.5,
+          "selected_on": "predefined",
+          "calibration_sha256": null
+        },
+        "metrics": {
+          "counts": {
+            "records": 289,
+            "human": 123,
+            "ai": 166,
+            "human_source_groups": 123,
+            "ai_source_groups": 166,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 165,
+            "fp": 60,
+            "tn": 63,
+            "fn": 1,
+            "abstain_human": 0,
+            "abstain_ai": 0
+          },
+          "human_fpr": 0.4878048780487805,
+          "answered_human_fpr": 0.4878048780487805,
+          "false_human_rate": 0.006024096385542169,
+          "ai_recall": 0.9939759036144579,
+          "human_recall": 0.5121951219512195,
+          "ai_precision": 0.7333333333333333,
+          "human_precision": 0.984375,
+          "coverage": 1.0,
+          "human_coverage": 1.0,
+          "ai_coverage": 1.0,
+          "ai_group_recall": 0.9939759036144579,
+          "brier": 0.20737804741617522,
+          "auroc": 0.9773239298658046,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 60,
+            "human_groups": 123,
+            "estimate": 0.4878048780487805,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 60,
+              "total": 123,
+              "lower": 0.41473533809319324,
+              "upper": 0.5613993659336382
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "passed",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "blocked",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "blocked",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "passed",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "passed",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 187,
+              "human": 80,
+              "ai": 107,
+              "human_source_groups": 80,
+              "ai_source_groups": 107,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 107,
+              "fp": 50,
+              "tn": 30,
+              "fn": 0,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.625,
+            "answered_human_fpr": 0.625,
+            "false_human_rate": 0.0,
+            "ai_recall": 1.0,
+            "human_recall": 0.375,
+            "ai_precision": 0.6815286624203821,
+            "human_precision": 1.0,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 1.0,
+            "brier": 0.2620066729152582,
+            "auroc": 0.9876168224299066,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 50,
+              "human_groups": 80,
+              "estimate": 0.625,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 50,
+                "total": 80,
+                "lower": 0.5332534679016283,
+                "upper": 0.7085682911331905
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 102,
+              "human": 43,
+              "ai": 59,
+              "human_source_groups": 43,
+              "ai_source_groups": 59,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 58,
+              "fp": 10,
+              "tn": 33,
+              "fn": 1,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.23255813953488372,
+            "answered_human_fpr": 0.23255813953488372,
+            "false_human_rate": 0.01694915254237288,
+            "ai_recall": 0.9830508474576272,
+            "human_recall": 0.7674418604651163,
+            "ai_precision": 0.8529411764705882,
+            "human_precision": 0.9705882352941176,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 0.9830508474576272,
+            "brier": 0.10722556733452306,
+            "auroc": 0.9834450137958218,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 10,
+              "human_groups": 43,
+              "estimate": 0.23255813953488372,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 10,
+                "total": 43,
+                "lower": 0.1443919695282281,
+                "upper": 0.35238679598190814
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "external_calibrated_diagnostic": {
+        "thresholds": {
+          "human_max": 0.9998989105224609,
+          "ai_min": 0.9999876022338867,
+          "selected_on": "calibration",
+          "calibration_sha256": "d8b56656efb108a7bc9371cf60822f12523ded1b9b40b934abc57fb933b30032"
+        },
+        "metrics": {
+          "counts": {
+            "records": 1378,
+            "human": 1375,
+            "ai": 3,
+            "human_source_groups": 1375,
+            "ai_source_groups": 3,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 1,
+            "fp": 27,
+            "tn": 1077,
+            "fn": 1,
+            "abstain_human": 271,
+            "abstain_ai": 1
+          },
+          "human_fpr": 0.019636363636363636,
+          "answered_human_fpr": 0.024456521739130436,
+          "false_human_rate": 0.3333333333333333,
+          "ai_recall": 0.3333333333333333,
+          "human_recall": 0.7832727272727272,
+          "ai_precision": 0.03571428571428571,
+          "human_precision": 0.9990723562152134,
+          "coverage": 0.8026124818577649,
+          "human_coverage": 0.8029090909090909,
+          "ai_coverage": 0.6666666666666666,
+          "ai_group_recall": 0.3333333333333333,
+          "brier": 0.4290045408076613,
+          "auroc": 0.7681212121212121,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 27,
+            "human_groups": 1375,
+            "estimate": 0.019636363636363636,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 27,
+              "total": 1375,
+              "lower": 0.014359202005151943,
+              "upper": 0.02680020518713306
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "blocked",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "passed",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "passed",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "blocked",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 367,
+              "human": 364,
+              "ai": 3,
+              "human_source_groups": 364,
+              "ai_source_groups": 3,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 1,
+              "fp": 3,
+              "tn": 316,
+              "fn": 1,
+              "abstain_human": 45,
+              "abstain_ai": 1
+            },
+            "human_fpr": 0.008241758241758242,
+            "answered_human_fpr": 0.009404388714733543,
+            "false_human_rate": 0.3333333333333333,
+            "ai_recall": 0.3333333333333333,
+            "human_recall": 0.8681318681318682,
+            "ai_precision": 0.25,
+            "human_precision": 0.9968454258675079,
+            "coverage": 0.8746594005449592,
+            "human_coverage": 0.8763736263736264,
+            "ai_coverage": 0.6666666666666666,
+            "ai_group_recall": 0.3333333333333333,
+            "brier": 0.2996243008754001,
+            "auroc": 0.8333333333333334,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 3,
+              "human_groups": 364,
+              "estimate": 0.008241758241758242,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 3,
+                "total": 364,
+                "lower": 0.0032984735063432084,
+                "upper": 0.020441400650168362
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 1011,
+              "human": 1011,
+              "ai": 0,
+              "human_source_groups": 1011,
+              "ai_source_groups": 0,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 0,
+              "fp": 24,
+              "tn": 761,
+              "fn": 0,
+              "abstain_human": 226,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.02373887240356083,
+            "answered_human_fpr": 0.030573248407643312,
+            "false_human_rate": null,
+            "ai_recall": null,
+            "human_recall": 0.7527200791295747,
+            "ai_precision": 0.0,
+            "human_precision": 1.0,
+            "coverage": 0.7764589515331355,
+            "human_coverage": 0.7764589515331355,
+            "ai_coverage": null,
+            "ai_group_recall": null,
+            "brier": 0.475970463710866,
+            "auroc": null,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 24,
+              "human_groups": 1011,
+              "estimate": 0.02373887240356083,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 24,
+                "total": 1011,
+                "lower": 0.017043196537074326,
+                "upper": 0.03297679573930368
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "external_fixed_half_diagnostic": {
+        "thresholds": {
+          "human_max": 0.49999999999999994,
+          "ai_min": 0.5,
+          "selected_on": "predefined",
+          "calibration_sha256": null
+        },
+        "metrics": {
+          "counts": {
+            "records": 1378,
+            "human": 1375,
+            "ai": 3,
+            "human_source_groups": 1375,
+            "ai_source_groups": 3,
+            "missing_source_groups": 0
+          },
+          "confusion": {
+            "tp": 2,
+            "fp": 598,
+            "tn": 777,
+            "fn": 1,
+            "abstain_human": 0,
+            "abstain_ai": 0
+          },
+          "human_fpr": 0.4349090909090909,
+          "answered_human_fpr": 0.4349090909090909,
+          "false_human_rate": 0.3333333333333333,
+          "ai_recall": 0.6666666666666666,
+          "human_recall": 0.5650909090909091,
+          "ai_precision": 0.0033333333333333335,
+          "human_precision": 0.9987146529562982,
+          "coverage": 1.0,
+          "human_coverage": 1.0,
+          "ai_coverage": 1.0,
+          "ai_group_recall": 0.6666666666666666,
+          "brier": 0.4290045408076613,
+          "auroc": 0.7681212121212121,
+          "human_group_fpr": {
+            "event": "at_least_one_false_ai_flag_per_human_source_family",
+            "false_positive_groups": 598,
+            "human_groups": 1375,
+            "estimate": 0.4349090909090909,
+            "bounds": {
+              "method": "wilson_one_sided",
+              "confidence": 0.95,
+              "successes": 598,
+              "total": 1375,
+              "lower": 0.4130676880593168,
+              "upper": 0.45700614531495964
+            },
+            "independence_is_assumed_not_inferred": true
+          }
+        },
+        "gates": [
+          {
+            "id": "test_split",
+            "status": "blocked",
+            "reason": "Release evidence must come from a test split."
+          },
+          {
+            "id": "calibration_provenance",
+            "status": "blocked",
+            "reason": "Thresholds must be frozen on separately declared calibration data."
+          },
+          {
+            "id": "independent_source_groups",
+            "status": "blocked",
+            "reason": "Known source-family identifiers and external independence evidence are required."
+          },
+          {
+            "id": "minimum_human_groups",
+            "status": "passed",
+            "reason": "At least 300 distinct human source families are required."
+          },
+          {
+            "id": "minimum_ai_groups",
+            "status": "blocked",
+            "reason": "At least 100 distinct pure-AI source families are required."
+          },
+          {
+            "id": "human_fpr_upper_95",
+            "status": "blocked",
+            "reason": "Human-row FPR and the one-sided 95% Wilson upper human-family false-AI rate must each be <= 1%."
+          },
+          {
+            "id": "ai_recall",
+            "status": "blocked",
+            "reason": "AI row recall and all-variants-correct family recall must be >= 80%, counting abstentions as misses."
+          },
+          {
+            "id": "coverage",
+            "status": "passed",
+            "reason": "Conclusive paragraph coverage must be >= 60%."
+          },
+          {
+            "id": "unseen_generator_evidence",
+            "status": "blocked",
+            "reason": "Each identified unseen generator requires >= 100 known AI source families and >= 80% row and all-variants-correct family recall, plus external evidence and complete generator metadata."
+          }
+        ],
+        "product_approved": false,
+        "length_subgroups": {
+          "150-250": {
+            "counts": {
+              "records": 367,
+              "human": 364,
+              "ai": 3,
+              "human_source_groups": 364,
+              "ai_source_groups": 3,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 2,
+              "fp": 112,
+              "tn": 252,
+              "fn": 1,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.3076923076923077,
+            "answered_human_fpr": 0.3076923076923077,
+            "false_human_rate": 0.3333333333333333,
+            "ai_recall": 0.6666666666666666,
+            "human_recall": 0.6923076923076923,
+            "ai_precision": 0.017543859649122806,
+            "human_precision": 0.9960474308300395,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": 1.0,
+            "ai_group_recall": 0.6666666666666666,
+            "brier": 0.2996243008754001,
+            "auroc": 0.8333333333333334,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 112,
+              "human_groups": 364,
+              "estimate": 0.3076923076923077,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 112,
+                "total": 364,
+                "lower": 0.2694418626697404,
+                "upper": 0.3487804344864374
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          },
+          "80-149": {
+            "counts": {
+              "records": 1011,
+              "human": 1011,
+              "ai": 0,
+              "human_source_groups": 1011,
+              "ai_source_groups": 0,
+              "missing_source_groups": 0
+            },
+            "confusion": {
+              "tp": 0,
+              "fp": 486,
+              "tn": 525,
+              "fn": 0,
+              "abstain_human": 0,
+              "abstain_ai": 0
+            },
+            "human_fpr": 0.4807121661721068,
+            "answered_human_fpr": 0.4807121661721068,
+            "false_human_rate": null,
+            "ai_recall": null,
+            "human_recall": 0.5192878338278932,
+            "ai_precision": 0.0,
+            "human_precision": 1.0,
+            "coverage": 1.0,
+            "human_coverage": 1.0,
+            "ai_coverage": null,
+            "ai_group_recall": null,
+            "brier": 0.475970463710866,
+            "auroc": null,
+            "human_group_fpr": {
+              "event": "at_least_one_false_ai_flag_per_human_source_family",
+              "false_positive_groups": 486,
+              "human_groups": 1011,
+              "estimate": 0.4807121661721068,
+              "bounds": {
+                "method": "wilson_one_sided",
+                "confidence": 0.95,
+                "successes": 486,
+                "total": 1011,
+                "lower": 0.45495181206437624,
+                "upper": 0.5065754773424553
+              },
+              "independence_is_assumed_not_inferred": true
+            }
+          }
+        }
+      },
+      "resources": {
+        "revision": "0d82ca0fdf6ebef5babb813cc11bd8eb2552c846",
+        "max_tokens": 512,
+        "license": "Apache-2.0",
+        "truncated_hc3": 0,
+        "truncated_aide": 0,
+        "summed_per_record_model_forward_seconds": 155.316282,
+        "timing_scope": "Sum of recorded forward-pass times; excludes loading/tokenization and repeats batch time for batches larger than one. This experiment used CLI batch size one.",
+        "devices": [
+          "cuda"
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "HC3 is Wikipedia QA, not English student writing.",
+    "AIDE has only three AI essays and unknown author/generator identities.",
+    "Model pretraining overlap, author independence and near-duplicate independence are unverified.",
+    "One excerpt per document; clipped excerpts are not sentence localization evidence.",
+    "Raw scores and selected thresholds are not calibrated authorship probabilities.",
+    "Fixed half threshold is a diagnostic convention, not the upstream MAGE decision rule.",
+    "MAGE may have seen HC3 or other benchmark text during training; no independent held-out claim for MAGE.",
+    "MAGE raw-text preprocessing and a 512-token cap differ from its upstream deployment recipe.",
+    "Neither model is installed as a user-facing authorship decision service."
+  ]
+}

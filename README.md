@@ -11,6 +11,12 @@ an external service or save it in the reference library.
 scores, not simulated probabilities. Source overlap is not proof of plagiarism,
 and no match means none was found in the local library.
 
+The second phase adds licensed corpus acquisition, frozen training/calibration
+splits, a trained local baseline and a pinned pretrained detector comparison.
+See the [experiment instructions](detector_eval/README.md) and
+[measured results](research/phase2-results.md). These diagnostics do not
+yet justify enabling authorship labels.
+
 ## Run locally
 
 Python 3.12+ is required, including for bounded Windows subprocess handling.
@@ -50,6 +56,12 @@ is a separate result. Exit codes: 0 promotes within the configured protocol,
 1 records blockers, 2 reports invalid configuration. Reviews are bound to code,
 input and configuration hashes; changing them invalidates old approval.
 
+The phase 2 protocol also requires the local research artifacts described in
+[experiment setup](detector_eval/README.md). A fresh web-only installation can
+run the web app without downloading models; it cannot reproduce that full
+research protocol until those inputs exist. Research tests involving tensors
+need the optional PyTorch installation.
+
 See [runner documentation](iteration/README.md),
 [implementation rules](AGENTS.md), and [next iterations](research/NEXT.md).
 Use one bounded sweep by default; rerun after changes or new evidence.
@@ -61,6 +73,9 @@ Use one bounded sweep by default; rerun after changes or new evidence.
 | `web/` | Accessible static interface; no external fonts or frontend services |
 | `turingtint/` | Local API, SQLite corpus, bounded lexical source matching |
 | `corpus_tools/` | License-filtered academic reference acquisition |
+| `authorship_data/` | Provenance-checked AIDE and licensed HC3 subset acquisition |
+| `detector_models/` | Pinned offline MAGE inference and artifact verification |
+| `detector_eval/` | Frozen experiments, calibration, metrics and comparison reports |
 | `iteration/` | Bounded checks, fingerprints, issue ledger and review gates |
 | `evaluation/` | Software, real-browser and provenance checks; review evidence |
 | `tests/` | Meaningful backend, parser and iteration regression tests |
