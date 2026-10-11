@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "kind": "turingtint-render-public-demo",
+  "created_at": "2026-10-11T14:08:17.689633+00:00",
+  "plan": "free",
+  "product_approved": false,
+  "corpus_rows_sha256": "c0678da322ba743e1c3cd3e8351214336ee798ad0d53ab3229d98944328af44a",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 83,
+      "sha256": "14dd5176e98ccec0b8fb240f16e0d464b22adbad7ef1e63c1aa1f902263459a1"
+    },
+    {
+      "path": ".python-version",
+      "bytes": 5,
+      "sha256": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d"
+    },
+    {
+      "path": "ATTRIBUTION.md",
+      "bytes": 7224,
+      "sha256": "dc14d00ebcb146cdecff05155576e89de5084e20fcb0170ed8cca550ea64f0f5"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5057,
+      "sha256": "6c231c9c84b5be0a278e648ba9b0b88465254c387e748ff7a3db734328c07b0a"
+    },
+    {
+      "path": "data/reference.sqlite",
+      "bytes": 147456,
+      "sha256": "f04217e900ebea638400f5e34068b202dcf5162c224bffaa972347e2146a6e16"
+    },
+    {
+      "path": "evaluation/fixtures/demo-cases.json",
+      "bytes": 14474,
+      "sha256": "5702d534abcc1fd4d956a8126afb6dd31cf9ef4f6d9f48b2a247ac097983e139"
+    },
+    {
+      "path": "render.yaml",
+      "bytes": 350,
+      "sha256": "93071c6a9252e94cd18497bb333d9b26245a19282956c75eb9297d27b6944485"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 47,
+      "sha256": "6f439e9b19e8ff19766f205bf80741890186965b0ce10adebcc0838fde9e005b"
+    },
+    {
+      "path": "turingtint/__init__.py",
+      "bytes": 97,
+      "sha256": "b812d3d3fb97098e4f65de52ee24b76faf1d6dc838f737637d638ccf0749fe6a"
+    },
+    {
+      "path": "turingtint/app.py",
+      "bytes": 15227,
+      "sha256": "e1501a7878a700380a9977e429ee35435a3dab63f00f3e0d16ec4d9261c6c3fa"
+    },
+    {
+      "path": "turingtint/coach_profiles.py",
+      "bytes": 1009,
+      "sha256": "ef5cbd1e43f40fc07552209e6fcb30963d224c036a9f5fc9c3ebd2dc140b0af3"
+    },
+    {
+      "path": "turingtint/coaching.py",
+      "bytes": 22648,
+      "sha256": "61122488bb15c84ab09e75b003c2f0fad46bfcfc59e005abd946f45d093d5fda"
+    },
+    {
+      "path": "turingtint/corpus.py",
+      "bytes": 7256,
+      "sha256": "f380548f02bbacee4587398c8c5460a0a0ac84e21979fcfc130d47d409b7d779"
+    },
+    {
+      "path": "turingtint/examples.py",
+      "bytes": 1272,
+      "sha256": "b64dd1c22c69a2b019f6a9666c7798c63915dd9fe8151c55f0afe0ad17eba097"
+    },
+    {
+      "path": "turingtint/guidance.py",
+      "bytes": 2086,
+      "sha256": "d9b521f7a3a11b1f5fa37798c36a174f09e1a44bd2b62b2cdc25e88d1a503d98"
+    },
+    {
+      "path": "turingtint/matching.py",
+      "bytes": 12621,
+      "sha256": "49d911c300af4bf25b6631419fc43de91cb8f9c974584c51867a254afe85da40"
+    },
+    {
+      "path": "turingtint/render_coaching.py",
+      "bytes": 5305,
+      "sha256": "0febed5bf11f8276bad540513c73eefbefdacf8362a29f001c26dde540d10c37"
+    },
+    {
+      "path": "turingtint/render_server.py",
+      "bytes": 438,
+      "sha256": "a66ab3dbe42024ef7e63f25cb8863bae4d75347361a5dd3041a7996eff6c1326"
+    },
+    {
+      "path": "turingtint/research.py",
+      "bytes": 4003,
+      "sha256": "50c9f5466153378f8b666c25e02369af5a2d34f57f2852dcbb33aaba00d59740"
+    },
+    {
+      "path": "turingtint/runtime.py",
+      "bytes": 1536,
+      "sha256": "6cdd2dcebb2a263155821277bb1f85ee2770e7b6b3c24b7d165f05b013ce87ce"
+    },
+    {
+      "path": "turingtint/text.py",
+      "bytes": 1429,
+      "sha256": "42fe9fe03b3411a9505112a2630945d42faaf6a962a2b65e893f066a73091598"
+    },
+    {
+      "path": "turingtint/workbench.py",
+      "bytes": 26668,
+      "sha256": "7fbc1b9287c16a9f19cce318a51401c0c38b8c18ae69e7fdaa04293d783851a3"
+    },
+    {
+      "path": "web/app.js",
+      "bytes": 44334,
+      "sha256": "8a1d774158b522e692d26122ddbe1091303369e928d9cfeb28da8879808a037d"
+    },
+    {
+      "path": "web/index.html",
+      "bytes": 11237,
+      "sha256": "0201c85ac554619c905d24b4fd0e82839fb7e189616b839fc7846c914d360961"
+    },
+    {
+      "path": "web/styles.css",
+      "bytes": 23644,
+      "sha256": "ecd5e229511d2925ae9dd49a06d59f4ba170a84d1979613733ff0b3eb19627a7"
+    }
+  ],
+  "manifest_scope": "All deployment files except this self-referential manifest."
+}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: turingtint
+    runtime: python
+    plan: free
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: python -m turingtint.render_server
+    healthCheckPath: /api/health
+    envVars:
+      - key: TURINGTINT_DEPLOYMENT
+        value: render
+      - key: PYTHONUNBUFFERED
+        value: "1"

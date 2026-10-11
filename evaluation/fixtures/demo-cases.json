@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "selection_policy": "First lexicographically sorted paired HC3 test family with complete 90-220-word excerpts; first eligible AIDE human record/paragraph. Original AI challenge retained. No score-based selection.",
+  "examples": [
+    {
+      "id": "hc3-human",
+      "title": "Published human explanation",
+      "text": "Inductive logic programming (ILP) is a subfield of symbolic artificial intelligence  which uses logic programming as a uniform representation for examples, background knowledge and hypotheses. Given an encoding of the known background knowledge and a set of examples represented as a logical database of facts, an ILP system will derive a hypothesised logic program which entails all the positive and none of the negative examples.\nInductive logic programming is particularly useful in bioinformatics and natural language processing. Gordon Plotkin and Ehud Shapiro laid the initial theoretical foundation for inductive machine learning in a logical setting. Shapiro built their first implementation (Model Inference System) in 1981: a Prolog program that inductively inferred logic programs from positive and negative examples. The first full first-order implementation of inductive logic programming was Theorist in 1986.[citation needed] The term Inductive Logic Programming was first introduced in a paper by Stephen Muggleton in 1991. Muggleton also founded the annual international conference on Inductive Logic Programming, introduced the theoretical ideas of Predicate Invention, Inverse resolution, and Inverse entailment.[10] Muggleton implemented Inverse entailment first in the PROGOL system. The term \"inductive\" here refers to philosophical (i.e. suggesting a theory to explain observed facts) rather than mathematical (i.e. proving a property for all members of a well-ordered set) induction.",
+      "text_sha256": "9bfd66b3beefdba6d05fbffc2be9f7cdb07a8078a45f7499accf927c96677a91",
+      "provenance": {
+        "kind": "documented_human",
+        "description": "HC3 labels this excerpt as a Wikipedia human answer.",
+        "record_id": "HC3:wiki_csai:question:024fa8dfedd03ec3847b4de7647f8a4032e5d67001a09c6e671c514a657d44ec:human:119:0",
+        "url": "https://huggingface.co/datasets/Hello-SimpleAI/HC3",
+        "license": "CC-BY-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Guo et al. (2023), How Close is ChatGPT to Human Experts? HC3 wiki_csai; human answers sourced from Wikipedia.",
+        "modification": "Unchanged frozen excerpt."
+      },
+      "purpose": "Compare two independently labeled answers to the same question.",
+      "expected_behavior": "Run the detector before comparing its result with the documented origin. This is a demo from an already-observed diagnostic set, not a new accuracy test."
+    },
+    {
+      "id": "hc3-ai",
+      "title": "Documented ChatGPT explanation",
+      "text": "Inductive logic programming (ILP) is a subfield of artificial intelligence and machine learning that focuses on the development of algorithms and systems that can automatically construct logical rules and models from data.\n\n\n\nIn ILP, the goal is to learn logical rules that can be used to make predictions or classify examples based on a set of input features. These rules are typically represented in a logical language, such as first-order logic or propositional logic, and are learned from examples or training data using an inductive process.\n\n\n\nThe key idea behind ILP is to use logical reasoning and induction to learn rules from data. Induction is the process of inferring general principles or patterns from specific observations or examples. In the context of ILP, this means using a set of training examples to learn a set of logical rules that can be used to make predictions or classify new examples.\n\n\n\nILP has been applied to a wide range of tasks, including natural language processing, biomedical informatics, and robotics. It has also been used to build expert systems and knowledge-based systems in domains such as medicine and biology.",
+      "text_sha256": "f01968759d3befd23ae609db0f08c8260e7cffc5274ca61cbd801639baabbedc",
+      "provenance": {
+        "kind": "documented_ai",
+        "description": "HC3 records this as a ChatGPT answer; exact model version is unknown.",
+        "record_id": "HC3:wiki_csai:question:024fa8dfedd03ec3847b4de7647f8a4032e5d67001a09c6e671c514a657d44ec:ai:119:0",
+        "url": "https://huggingface.co/datasets/Hello-SimpleAI/HC3",
+        "license": "CC-BY-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Guo et al. (2023), How Close is ChatGPT to Human Experts? HC3 wiki_csai; human answers sourced from Wikipedia.",
+        "modification": "Unchanged frozen excerpt."
+      },
+      "purpose": "Compare two independently labeled answers to the same question.",
+      "expected_behavior": "Run the detector before comparing its result with the documented origin. This is a demo from an already-observed diagnostic set, not a new accuracy test."
+    },
+    {
+      "id": "student-human",
+      "title": "Human-labeled student writing",
+      "text": "In like matter of this, article, \"In German Suburb, Life Goes On Without Cars,\" by Elizabeth Rosenthal states, how automobiles are the linchpin of suburbs, where middle class families from either Shanghai or Chicago tend to make their homes. Experts say how this is a huge impediment to current efforts to reduce greenhouse gas emissions from tailpipe. Passenger cars are responsible for 12 percent of greenhouse gas emissions in Europe...and up to 50 percent in some carintensive areas in the United States. Cars are the main reason for the greenhouse gas emissions because of a lot of people driving them around all the time getting where they need to go. Article, \"Paris bans driving due to smog,\" by Robert Duffer says, how Paris, after days of nearrecord pollution, enforced a partial driving ban to clear the air of the global city. It also says, how on Monday, motorist with evennumbered license plates were ordered to leave their cars at home or be fined a 22euro fine 31. The same order would be applied to oddnumbered plates the following day. Cars are the reason for polluting entire cities like Paris. This shows how bad cars can be because, of all the pollution that they can cause to an entire city.",
+      "text_sha256": "134016b45f3a515406e8357ca28b608457c38d663d70f58a13aa95e463478c86",
+      "provenance": {
+        "kind": "documented_human",
+        "description": "The public AIDE release labels this student essay as human. Student identity and author independence are not established.",
+        "record_id": "AIDE:0059830c",
+        "url": "https://www.kaggle.com/datasets/lburleigh/tla-lab-ai-detection-for-essays-aide-dataset",
+        "license": "CC-BY-4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "AIDE (2024), The Learning Agency Lab; distributed by L Burleigh, Kaggle.",
+        "modification": "One complete paragraph extracted without rewriting."
+      },
+      "purpose": "Check how the detector handles student grammar, quotations and argumentation.",
+      "expected_behavior": "A false AI flag here is a diagnostic failure worth recording; a human result on one example is not an accuracy guarantee."
+    },
+    {
+      "id": "constructed-mixed",
+      "title": "Constructed human + AI passage",
+      "text": "Inductive logic programming (ILP) is a subfield of symbolic artificial intelligence  which uses logic programming as a uniform representation for examples, background knowledge and hypotheses. Given an encoding of the known background knowledge and a set of examples represented as a logical database of facts, an ILP system will derive a hypothesised logic program which entails all the positive and none of the negative examples.\nInductive logic programming is particularly useful in bioinformatics and natural language processing. Gordon Plotkin and Ehud Shapiro laid the initial theoretical foundation for inductive machine learning in a logical setting. Shapiro built their first implementation (Model Inference System) in 1981: a Prolog program that inductively inferred logic programs from positive and negative examples. The first full first-order implementation of inductive logic programming was Theorist in 1986.[citation needed] The term Inductive Logic Programming was first introduced in a paper by Stephen Muggleton in 1991. Muggleton also founded the annual international conference on Inductive Logic Programming, introduced the theoretical ideas of Predicate Invention, Inverse resolution, and Inverse entailment.[10] Muggleton implemented Inverse entailment first in the PROGOL system. The term \"inductive\" here refers to philosophical (i.e. suggesting a theory to explain observed facts) rather than mathematical (i.e. proving a property for all members of a well-ordered set) induction.\n\nInductive logic programming (ILP) is a subfield of artificial intelligence and machine learning that focuses on the development of algorithms and systems that can automatically construct logical rules and models from data.\n\n\n\nIn ILP, the goal is to learn logical rules that can be used to make predictions or classify examples based on a set of input features. These rules are typically represented in a logical language, such as first-order logic or propositional logic, and are learned from examples or training data using an inductive process.\n\n\n\nThe key idea behind ILP is to use logical reasoning and induction to learn rules from data. Induction is the process of inferring general principles or patterns from specific observations or examples. In the context of ILP, this means using a set of training examples to learn a set of logical rules that can be used to make predictions or classify new examples.\n\n\n\nILP has been applied to a wide range of tasks, including natural language processing, biomedical informatics, and robotics. It has also been used to build expert systems and knowledge-based systems in domains such as medicine and biology.",
+      "text_sha256": "b198b0ab222688abac3185c164c706fc02169dbcc8eba93e6e3b54f2ce5af50c",
+      "provenance": {
+        "kind": "synthetic_mixed",
+        "description": "Constructed by placing the human explanation above the ChatGPT explanation. This is not a real human-editing workflow.",
+        "record_ids": [
+          "HC3:wiki_csai:question:024fa8dfedd03ec3847b4de7647f8a4032e5d67001a09c6e671c514a657d44ec:human:119:0",
+          "HC3:wiki_csai:question:024fa8dfedd03ec3847b4de7647f8a4032e5d67001a09c6e671c514a657d44ec:ai:119:0"
+        ],
+        "url": "https://huggingface.co/datasets/Hello-SimpleAI/HC3",
+        "license": "CC-BY-SA-4.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "attribution": "Guo et al. (2023), How Close is ChatGPT to Human Experts? HC3 wiki_csai; human answers sourced from Wikipedia.",
+        "modification": "Two unchanged excerpts concatenated with a blank line."
+      },
+      "purpose": "Inspect changing context-block signals and whether the entire passage was analyzed.",
+      "expected_behavior": "Block signals may vary. The application must not claim that disagreement establishes mixed authorship or exact sentence provenance."
+    },
+    {
+      "id": "assistant-challenge",
+      "title": "AI-generated challenge passage",
+      "text": "Urban green spaces can contribute to student wellbeing by providing accessible places for exercise, social interaction, and quiet reflection. Trees and vegetation may also reduce local heat and improve the comfort of outdoor study areas. However, the benefits of a new park depend on its location, maintenance, and accessibility. A space that is difficult to reach or feels unsafe may be used less often, even if its design is attractive. Universities should therefore combine environmental planning with consultation among students and nearby residents. Evaluating patterns of use before and after a change would help determine whether the space meets the needs of its community. These observations should be supported with local evidence rather than assumed to apply equally across all campuses.",
+      "text_sha256": "695452093e928666c4e44006f534b73a1961e2a014cfcf98be30dff8f12167f6",
+      "provenance": {
+        "kind": "documented_ai",
+        "description": "Generated by the project assistant for the earlier demo. Retained even when detector results are uncertain.",
+        "attribution": "TuringTint project assistant."
+      },
+      "purpose": "Check a known AI example that the earlier build could not classify conclusively.",
+      "expected_behavior": "Known origin is shown as fixture information only. The detector receives the text, not this label, and may still return inconclusive."
+    },
+    {
+      "id": "revision-practice",
+      "title": "Revision practice: clarity and evidence",
+      "text": "In my personal opinion, I think that students should plan ahead in advance before they begin studying. Our survey included 120 students, and 36 reported sleeping fewer than 6 hours. This small survey proves that every student learns better online. The results of the survey were collected together and combined into a single summary. These observations describe the surveyed group; they do not establish what caused the reported sleep patterns. The report should distinguish observations from explanations, preserve the sample size, and state which claims require additional evidence.",
+      "text_sha256": "45e209641268c988915c8f649b98ee7c0984866dfa89f1d1d94c98f4895cfa1f",
+      "provenance": {
+        "kind": "writing_fixture",
+        "description": "Synthetic editing exercise written by the project assistant, with deliberately redundant and overstated sentences.",
+        "attribution": "TuringTint project assistant; all study details are fictional test data."
+      },
+      "purpose": "Try the writing coach, preview a proposed edit, apply it and compare the revised analysis.",
+      "expected_behavior": "Useful edits shorten redundancy or soften the unsupported causal claim while preserving 120 students, 36 responses and 6 hours. Authorship scores need not improve."
+    }
+  ]
+}
