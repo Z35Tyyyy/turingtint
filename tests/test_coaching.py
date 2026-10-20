@@ -17,6 +17,15 @@ def answer(sentence_id="s1"):
 
 
 class CoachingTests(unittest.TestCase):
+    @patch.dict(os.environ, {"TURINGTINT_COACH_PROFILE": "compact"})
+    def test_compact_cpu_profile_uses_separate_pinned_identity(self):
+        coach = WritingCoach(local_factory=lambda: lambda text: json.dumps(answer()))
+        self.assertEqual(coach.status()["local"]["model"], "Qwen/Qwen3-0.6B")
+        review = coach.review("vague claim")
+        self.assertEqual(review["profile"], "compact")
+        self.assertEqual(review["status"], "complete")
+        self.assertEqual(review["authorship_opinion"], "not_provided")
+
     def test_only_suggestions_schema_and_system_count_summary(self):
         value = answer()
         result = validate_output(json.dumps(value), "vague claim")

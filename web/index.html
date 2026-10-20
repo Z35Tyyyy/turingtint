@@ -44,9 +44,9 @@
       </div>
       <aside class="overview-panel">
         <span class="eyebrow">WHAT YOU WILL SEE</span>
-        <h2>Two opinions.<br>A clearer picture.</h2>
+        <h2>See the signals.<br>Review your writing.</h2>
         <div class="signal-item"><span class="signal-icon">1</span><div><h3>Compare the signals</h3><p>Each detector gives its own score. Different scores can mean an inconclusive result.</p></div></div>
-        <div class="signal-item"><span class="signal-icon">2</span><div><h3>Check what was read</h3><p>We show whether both models read your whole text.</p></div></div>
+        <div class="signal-item"><span class="signal-icon">2</span><div><h3>Inspect each sentence</h3><p>Select a pastel highlight to see both scores and any context limits.</p></div></div>
         <p class="simple-caveat">AI detectors can be wrong. A score cannot prove who wrote a passage.</p>
         <details class="library-details"><summary>Other tools available</summary><p id="detector-ready">Checking earlier models</p><p id="corpus-count">Checking source library</p></details>
       </aside>
@@ -55,6 +55,13 @@
       <div class="result-heading"><span class="eyebrow">YOUR RESULT</span><h2 id="hybrid-heading">Ready when you are.</h2></div>
       <p id="hybrid-status" role="status" aria-live="polite">Paste a passage above and choose Check text.</p>
       <div id="hybrid-results"></div>
+    </section>
+    <section id="simple-coach" class="check-result" aria-labelledby="simple-coach-heading">
+      <div class="result-heading"><span class="eyebrow">WRITING FEEDBACK</span><h2 id="simple-coach-heading">Make your wording clearer.</h2></div>
+      <p class="score-explanation">A separate local writing model can suggest up to two edits. Review their meaning and facts before using them.</p>
+      <button id="coach-run" class="secondary-button" type="button" disabled>Get writing feedback</button>
+      <p id="simple-coach-status" role="status" aria-live="polite">Checking local coach availability...</p>
+      <div id="simple-coach-results"></div>
     </section>
     <section id="comparison" class="comparison-panel" hidden aria-labelledby="comparison-heading"><div class="comparison-heading"><div><span class="eyebrow">REVISION CHECK</span><h2 id="comparison-heading">Original → revised</h2></div><button id="reset-comparison" class="text-button" type="button">Clear comparison</button></div><p id="comparison-status" class="muted-copy"></p><table class="comparison-counts"><thead><tr><th scope="col">Text size</th><th scope="col">Original</th><th scope="col">Revised</th></tr></thead><tbody><tr><th scope="row">Characters</th><td id="comparison-original-characters"></td><td id="comparison-revised-characters"></td></tr><tr><th scope="row" title="Whitespace-separated words">Words</th><td id="comparison-original-words"></td><td id="comparison-revised-words"></td></tr></tbody></table><div id="comparison-signals"></div><p class="comparison-note">Signals can change after an edit without proving authorship. Versions stay in this page's memory until you clear them or leave.</p><details><summary>Read both versions</summary><div class="version-texts"><div><h3>Original</h3><p id="comparison-original-text"></p></div><div><h3>Revised</h3><p id="comparison-revised-text"></p></div></div></details></section>
     <section id="results" class="results" hidden aria-label="Writing analysis results">

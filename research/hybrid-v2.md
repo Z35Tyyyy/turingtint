@@ -23,6 +23,36 @@ DistilBERT/ModernBERT artifacts. Inference is CPU by default and runs offline.
 The first request verifies hashes and loads both models; later requests reuse
 them. Submitted web text is neither saved nor sent to an external model service.
 
+## Optional local writing coach
+
+`scripts/setup-coach-cpu.ps1` installs the pinned Qwen3-0.6B compact profile
+(about 1.52 GB of artifacts) and its guided-decoding dependencies. Restart with
+`scripts/start.ps1`; it selects the installed compact profile unless an explicit
+`TURINGTINT_COACH_PROFILE` is already set. On other launch paths, set
+`TURINGTINT_COACH_PROFILE=compact` before starting the server.
+
+**Get writing feedback** is a separate local action and does not call the old
+detector. It produces up to two anchored suggestions, with **Show this sentence**
+selecting the original wording. Proposed wording is displayed for review, never
+applied automatically. The model selects issue types and rewrites; explanation
+text comes from fixed editorial guidance. Edited input clears stale feedback.
+The existing input, generation-time, numeric-protection and output-validation
+limits still apply. A small local model can make poor suggestions, so this is
+editing assistance, not fact verification or an authorship assessment.
+
+Run `evaluation/check_coach_browser.py` after installation to test actual local
+coach inference and its browser controls with synthetic wording. No paid API,
+new training, or external submission of the input is required.
+
+Verified on 2026-10-21: 181 unit/integration tests, 18 existing browser checks,
+and the real hybrid browser smoke passed. The real compact-coach browser smoke
+also passed: it returned a shorter rewrite retaining the synthetic fixture's
+rain cause and postponement outcome, selected the quoted sentence, preserved
+the editor text and cleared feedback after edits. The request took about 49
+seconds on this CPU. Earlier prompt attempts misclassified the sentence or
+dropped its cause; the final compact prompt includes a causal editing example.
+This is a targeted smoke check, not an independent evaluation of editing quality.
+
 ## Models and policy
 
 | Member | Context limit | Output recipe |

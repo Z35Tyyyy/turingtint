@@ -21,6 +21,14 @@ def main():
     profile = PROFILES[args.profile]
     model, revision = profile["model_id"], profile["revision"]
     destination = ROOT / profile["directory"]
+    if args.profile == "compact":
+        # Stream and verify the bounded large artifact directly. The Hub client
+        # then reuses it while acquiring the small metadata/tokenizer files.
+        from detector_models.mage import _download
+        destination.mkdir(parents=True, exist_ok=True)
+        _download(f"https://huggingface.co/{model}/resolve/{revision}/model.safetensors",
+                  destination / "model.safetensors", expected_size=profile["weights_bytes"],
+                  expected_sha256=profile["weights_sha256"])
     snapshot_download(model, revision=revision, local_dir=destination,
                       allow_patterns=list(profile["files"]), token=False, max_workers=2)
     files = []

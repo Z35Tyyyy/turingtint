@@ -5,6 +5,7 @@ const LABELS = {ai_leaning: 'AI-leaning model signal', human_leaning: 'Human-lea
 const CLASS_NAMES = {ai_leaning: 'lean-ai', human_leaning: 'lean-human', inconclusive: 'lean-inconclusive'};
 const SAMPLE = 'Urban green spaces can contribute to student wellbeing by providing accessible places for exercise, social interaction, and quiet reflection. Trees and vegetation may also reduce local heat and improve the comfort of outdoor study areas. However, the benefits of a new park depend on its location, maintenance, and accessibility. A space that is difficult to reach or feels unsafe may be used less often, even if its design is attractive. Universities should therefore combine environmental planning with consultation among students and nearby residents. Evaluating patterns of use before and after a change would help determine whether the space meets the needs of its community. These observations should be supported with local evidence rather than assumed to apply equally across all campuses.';
 let hybridRunning = false;
+let simpleCoachRunning = false;
 let revision = 0;
 let sequence = 0;
 let currentRun = null;
@@ -145,8 +146,10 @@ function updateInput(options = {}) {
   $('annotated-text').replaceChildren(); $('revision-cards').replaceChildren(); $('model-cards').replaceChildren(); $('model-signals').replaceChildren();
   const {words, characters} = textCounts(passage.value);
   $('word-count').textContent = `${words.toLocaleString()} words · ${characters.toLocaleString()} characters`;
-  $('analyze').disabled = !words || hybridRunning;
-  $('hybrid-run').disabled = !words || hybridRunning;
+  $('analyze').disabled = !words || hybridRunning || simpleCoachRunning || capabilities?.detector?.available !== true;
+  $('hybrid-run').disabled = !words || hybridRunning || simpleCoachRunning;
+  $('simple-coach-results').replaceChildren();
+  refreshSimpleCoach();
   $('hybrid-results').replaceChildren();
   $('hybrid-heading').textContent = 'Ready when you are.';
   $('hybrid-status').textContent = hybridRunning ? 'The earlier check is finishing. Check your edited text once it is done.' : 'Paste a passage above and choose Check text.';
@@ -166,11 +169,12 @@ async function loadCapabilities() {
     if (!response.ok) throw new Error('Status unavailable');
     capabilities = await response.json();
     $('detector-ready').textContent = capabilities.detector?.available ? 'Local models available' : 'Detector unavailable';
+    $('analyze').title = capabilities.detector?.available ? '' : 'Earlier MAGE/TF-IDF files are missing. Use Check text above.';
     if (capabilities.coaching?.openai?.available === true) {
       const option = node('option', 'OpenAI · sends passage to OpenAI'); option.value = 'openai'; $('coach-provider').append(option);
     }
   } catch (_) { $('detector-ready').textContent = 'Availability unknown'; }
-  refreshPrivacy();
+  refreshPrivacy(); refreshSimpleCoach();
 }
 async function loadCorpus() {
   try {
@@ -371,7 +375,8 @@ async function component(run, name, path, timeoutMs, render, extra = {}) {
   } finally { clearTimeout(timeout); delete run.controllers[name]; }
 }
 $('analyze').addEventListener('click', async () => {
-  if (hybridRunning || !passage.value.trim() || (currentRun && currentRun.running)) return;
+  if (hybridRunning || simpleCoachRunning || !passage.value.trim() || (currentRun && currentRun.running)) return;
+  if (capabilities?.detector?.available !== true) { message('notice', 'The earlier detector is not installed. Use Check text for the hybrid detector.'); return; }
   const provider = $('coach-provider').value;
   const includeFeedback = $('include-feedback').checked;
   if (includeFeedback && provider === 'openai' && capabilities?.coaching?.openai?.available !== true) { message('notice', 'OpenAI coaching is not configured. Select the local coach.'); return; }
@@ -493,9 +498,10 @@ function renderHybrid(result, text) {
 }
 
 $('hybrid-run').addEventListener('click', async () => {
-  if (hybridRunning || (currentRun && currentRun.running) || !passage.value.trim()) return;
+  if (hybridRunning || simpleCoachRunning || (currentRun && currentRun.running) || !passage.value.trim()) return;
   const text = passage.value, inputRevision = revision, requestId = `hybrid-${Date.now()}-${++sequence}`;
   hybridRunning = true; $('hybrid-run').disabled = true; $('analyze').disabled = true;
+  refreshSimpleCoach();
   $('hybrid-results').replaceChildren(); $('hybrid-heading').textContent = 'Checking your text…';
   $('hybrid-status').textContent = 'Two local models are reading your passage. First use may take a little longer.';
   $('hybrid-run').textContent = 'Checking…'; $('hybrid-panel').setAttribute('aria-busy', 'true');
@@ -519,7 +525,57 @@ $('hybrid-run').addEventListener('click', async () => {
     clearTimeout(timeout); hybridRunning = false;
     $('hybrid-run').textContent = 'Check text'; $('hybrid-panel').setAttribute('aria-busy', 'false');
     $('hybrid-run').disabled = !passage.value.trim();
-    $('analyze').disabled = !passage.value.trim() || Boolean(currentRun && currentRun.running);
+    $('analyze').disabled = !passage.value.trim() || Boolean(currentRun && currentRun.running) || capabilities?.detector?.available !== true;
+    refreshSimpleCoach();
+  }
+});
+function refreshSimpleCoach() {
+  const available = capabilities?.coaching?.local?.available === true;
+  $('coach-run').disabled = !available || !passage.value.trim() || hybridRunning || simpleCoachRunning || Boolean(currentRun && currentRun.running);
+  if (simpleCoachRunning) $('simple-coach-status').textContent = 'The local coach is reviewing your text. This may take up to two minutes.';
+  else if (!$('simple-coach-results').childElementCount) $('simple-coach-status').textContent = !capabilities
+    ? 'Checking local coach availability...'
+    : available ? 'Local coach ready. Your text stays on this computer.'
+    : 'Local writing model is not installed. Run scripts/setup-coach-cpu.ps1 and restart the app.';
+}
+
+$('coach-run').addEventListener('click', async () => {
+  if ($('coach-run').disabled || hybridRunning || simpleCoachRunning) return;
+  const text = passage.value, inputRevision = revision, requestId = `coach-${Date.now()}-${++sequence}`;
+  simpleCoachRunning = true; refreshSimpleCoach(); $('hybrid-run').disabled = true; $('analyze').disabled = true;
+  $('simple-coach-results').replaceChildren();
+  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 180000);
+  try {
+    const response = await fetch('/api/coach/review', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({text, provider: 'local', request_id: requestId}), signal: controller.signal});
+    const result = await response.json();
+    if (revision !== inputRevision || passage.value !== text) return;
+    if (!response.ok || result.status !== 'complete') throw new Error(result.reason || result.detail || 'The writing review could not finish.');
+    if (result.request_id !== requestId || !Array.isArray(result.suggestions) || result.authorship_opinion !== 'not_provided') throw new Error('Invalid writing feedback.');
+    const target = $('simple-coach-results');
+    $('simple-coach-status').textContent = result.suggestions.length ? `${result.suggestions.length} ${result.suggestions.length === 1 ? 'suggestion' : 'suggestions'} to review.` : 'No specific edits returned for this passage.';
+    target.append(node('p', 'The model selects issues and proposed wording. Explanations below use fixed editorial guidance.', 'score-explanation'));
+    for (const suggestion of result.suggestions) {
+      if (!validRange(suggestion, text, 'quote')) continue;
+      const card = node('article', undefined, 'revision-card');
+      card.append(node('h3', suggestion.issue), node('blockquote', suggestion.quote), node('p', suggestion.why), node('p', suggestion.suggestion));
+      const locate = node('button', 'Show this sentence', 'secondary-button'); locate.type = 'button';
+      locate.addEventListener('click', () => { if (passage.value === text) { passage.focus(); passage.setSelectionRange(suggestion.start, suggestion.end); passage.scrollIntoView({block: 'center', behavior: 'smooth'}); } });
+      card.append(locate);
+      if (suggestion.rewrite) card.append(node('h4', 'Suggested wording'), node('blockquote', suggestion.rewrite));
+      target.append(card);
+    }
+    const limits = node('details', undefined, 'score-details'); limits.append(node('summary', 'Coach details and limits'), node('p', result.model));
+    const items = node('ul'); strings(result.limitations).forEach(value => items.append(node('li', value))); limits.append(items); target.append(limits);
+  } catch (error) {
+    if (revision === inputRevision) {
+      $('simple-coach-status').textContent = 'Writing feedback unavailable.';
+      $('simple-coach-results').append(node('p', error.name === 'AbortError' ? 'The server may still be working. Wait before retrying.' : error.message, 'notice'));
+    }
+  } finally {
+    clearTimeout(timer); simpleCoachRunning = false; refreshSimpleCoach();
+    $('hybrid-run').disabled = !passage.value.trim() || hybridRunning;
+    $('analyze').disabled = !passage.value.trim() || hybridRunning || capabilities?.detector?.available !== true;
   }
 });
 loadCapabilities(); loadCorpus(); loadExamples(); updateInput();

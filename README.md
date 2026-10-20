@@ -8,6 +8,11 @@ ModernBERT without training or the historical research artifacts. It shows
 individual scores, disagreement and truncation; authorship remains unverified.
 See [setup, optional Desklib and verification](research/hybrid-v2.md).
 
+For the separate **Get writing feedback** button, install the compact local CPU
+coach with `scripts/setup-coach-cpu.ps1`, then restart using `scripts/start.ps1`.
+Sentence highlights and writing feedback work without the historical MAGE/TF-IDF
+artifacts. Unavailable historical analysis controls stay disabled.
+
 **Analyze writing** runs two local machine-learning classifiers and a language
 model review. The main report shows experimental model leanings, highlights the
 context blocks that were scored, and provides specific revision suggestions with
