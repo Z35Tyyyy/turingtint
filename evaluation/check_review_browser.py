@@ -51,7 +51,7 @@ def run():
     base = f'http://127.0.0.1:{port}'
     server = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'turingtint.app:app', '--host', '127.0.0.1', '--port', str(port)],
                               cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    checks, errors, external = [], [], []
+    checks, errors, external, api_requests = [], [], [], []
     try:
         for _ in range(100):
             try:
@@ -63,8 +63,10 @@ def run():
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             page = browser.new_page(viewport={'width': 1440, 'height': 1000})
+            page.add_init_script("Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: async text => {window.copiedText = text;}}});")
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.on('request', lambda request: external.append(request.url) if not request.url.startswith(base + '/') else None)
+            page.on('request', lambda request: api_requests.append(request.url) if '/api/' in request.url else None)
             state = dict(available=True, hold=None, pending=[], error=None, calls=[])
 
             def status(route):
@@ -92,7 +94,7 @@ def run():
             def fresh():
                 state.update(hold=None, pending=[], error=None, calls=[])
                 page.goto(base)
-                expect(page.locator('#review-model-status')).to_contain_text('ready' if state['available'] else 'unavailable')
+                expect(page.locator('#review-model-status')).to_contain_text('Ready' if state['available'] else 'Unavailable')
                 page.locator('#passage').fill(TEXT)
 
             def finish_pending():
@@ -109,7 +111,7 @@ def run():
             assert not page.locator('#hybrid-results details').evaluate('(el) => el.open')
             page.locator('.sentence-mark').first.focus(); page.keyboard.press('Enter')
             expect(page.locator('#sentence-feedback')).to_be_focused()
-            expect(page.locator('.sentence-detail')).to_contain_text('Models disagree')
+            expect(page.locator('#sentence-feedback')).to_contain_text('Models disagree')
             expect(page.locator('#sentence-feedback')).to_contain_text('when it is ready')
             finish_pending()
             expect(page.locator('#sentence-feedback .revision-card')).to_have_count(1)
@@ -185,17 +187,18 @@ def run():
             page.locator('#hybrid-run').click()
             expect(page.locator('#writing-stage')).to_have_attribute('data-state', 'skipped')
             assert state['calls'] == ['signals']
-            expect(page.locator('#simple-coach-status')).to_contain_text('Settings')
+            expect(page.locator('#simple-coach-status')).to_contain_text('unavailable')
             checks.append('Missing local coach does not block signal review')
 
             state['available'] = True; fresh()
-            page.locator('#open-settings').click()
-            assert page.locator('#advanced-tools').evaluate('(el) => el.open')
+            assert page.locator('#advanced-tools').count() == 0
+            assert page.locator('#open-settings').count() == 0
+            expect(page.locator('.check-actions #review-coaching')).to_be_visible()
             page.locator('#review-coaching').uncheck()
             page.locator('#hybrid-run').click()
             expect(page.locator('#writing-stage')).to_have_attribute('data-state', 'skipped')
             assert state['calls'] == ['signals']
-            checks.append('Settings can skip coaching without changing detector behavior')
+            checks.append('No Settings or legacy controls; the visible feedback toggle skips coaching')
 
             fresh(); page.locator('#hybrid-run').click()
             expect(page.locator('.suggestion-link')).to_have_count(1)
@@ -210,9 +213,67 @@ def run():
             expect(page.locator('#sentence-feedback')).to_be_empty()
             page.locator('#passage').fill('A fresh document.')
             expect(page.locator('#hybrid-run')).to_have_text('Review text')
-            checks.append('Mobile has no overflow, sentence selection reveals feedback, and New writing resets the view')
+            checks.append('Mobile has no overflow, sentence selection reveals feedback, and Clear text resets the view')
+
+            # New sweep: entry, copying, reversible clearing and sentence navigation.
+            page.set_viewport_size({'width': 1440, 'height': 1000})
+            fresh()
+            assert page.locator('#analyze, #coach-provider, #example-case').count() == 0
+            assert page.locator('#hybrid-panel').is_hidden()
+            page.locator('#new-writing').click()
+            expect(page.locator('#undo-edit')).to_have_text('Restore text')
+            page.locator('#undo-edit').click()
+            expect(page.locator('#passage')).to_have_value(TEXT)
+            page.locator('#new-writing').click()
+            page.locator('#passage').fill('Replacement draft.')
+            expect(page.locator('#undo-edit')).to_be_hidden()
+            checks.append('Clear text is reversible until new typing; no hidden legacy controls in the main page')
+
+            page.locator('#new-writing').click()
+            page.screenshot(path=str(out / 'sweep-empty.png'), full_page=True)
+            page.locator('#try-sample').click()
+            expect(page.locator('#notice')).to_contain_text('AI-generated practice sample')
+            assert state['calls'] == []
+            expect(page.locator('#empty-actions')).to_be_hidden()
+            expect(page.locator('#try-sample')).to_be_hidden()
+            checks.append('Sample loading is explicit, labeled AI-generated, and never auto-submits or overwrites a draft')
+
+            page.locator('#passage').fill(TEXT)
+            page.locator('#copy-text').click()
+            expect(page.locator('#copy-text')).to_have_text('Copied')
+            assert page.evaluate('window.copiedText') == TEXT
+            assert state['calls'] == []
+            page.evaluate("() => {navigator.clipboard.writeText = async () => {throw new Error('Fixture blocked');};}")
+            page.locator('#copy-text').click()
+            expect(page.locator('#copy-status')).to_contain_text('press Ctrl+C')
+            assert page.locator('#passage').evaluate('(el) => el.value.slice(el.selectionStart, el.selectionEnd)') == TEXT
+            checks.append('Copy preserves exact text without analysis; denied clipboard access offers manual copying')
+
+            fresh()
+            page.locator('#review-coaching').uncheck()
+            page.locator('#passage').focus(); page.keyboard.press('Control+Enter')
+            expect(page.locator('#signal-stage')).to_have_attribute('data-state', 'done')
+            expect(page.locator('#sentence-position')).to_have_text('Sentence 1 of 2')
+            expect(page.locator('#previous-sentence')).to_be_disabled()
+            page.locator('#next-sentence').click()
+            expect(page.locator('#sentence-position')).to_have_text('Sentence 2 of 2')
+            expect(page.locator('#next-sentence')).to_be_disabled()
+            expect(page.locator('.sentence-mark').last).to_have_attribute('aria-pressed', 'true')
+            page.locator('#back-to-passage').click()
+            expect(page.locator('.sentence-mark').last).to_be_focused()
+            page.locator('#previous-sentence').click()
+            expect(page.locator('#sentence-position')).to_have_text('Sentence 1 of 2')
+            assert state['calls'] == ['signals']
+            checks.append('Ctrl+Enter reviews; Previous/Next respect bounds and Back to sentence restores keyboard focus')
+
+            page.set_viewport_size({'width': 320, 'height': 780})
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+            assert page.locator('.review-sidebar').evaluate('(el) => el.scrollHeight <= el.clientHeight + 1')
+            page.screenshot(path=str(out / 'sweep-narrow.png'), full_page=True)
+            checks.append('320px layout fits without horizontal overflow or a nested sidebar scroll area')
             browser.close()
         assert not errors and not external, (errors, external)
+        assert not any(url.endswith(('/api/corpus', '/api/examples', '/api/analyze', '/api/workbench/analyze')) for url in api_requests)
         report = dict(status='passed', evidence='Chromium with deterministic API fixtures; no accuracy claims.', checks=checks,
                       browser_errors=errors, external_requests=external)
         (out / 'review-browser.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')

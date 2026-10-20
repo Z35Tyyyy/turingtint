@@ -38,7 +38,7 @@ def run():
             text = 'Due to the fact that the weather was rainy, the event was postponed until a later date in the future.'
             page.locator('#passage').fill(text)
             expect(page.locator('#hybrid-run')).to_be_enabled()
-            expect(page.locator('#analyze')).to_be_disabled()  # Missing historical MAGE never blocks the coach.
+            expect(page.locator('#analyze')).to_have_count(0)  # Historical tools are absent from the main workspace.
             with page.expect_response(lambda response: response.url.endswith('/api/coach/review'), timeout=180000) as pending:
                 page.locator('#hybrid-run').click()
                 expect(page.locator('#hybrid-run')).to_be_disabled()

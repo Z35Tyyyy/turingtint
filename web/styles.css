@@ -124,3 +124,66 @@
 @media(max-width:950px){.simple-checker .workspace{grid-template-columns:minmax(0,1fr) 310px}.simple-checker .editor-panel,.review-sidebar{padding:22px}}
 @media(max-width:760px){.simple-checker .workspace{grid-template-columns:1fr}.review-sidebar{border-left:0;border-top:1px solid var(--line);border-radius:0 0 12px 12px;position:static;max-height:none;overflow:visible}.simple-checker textarea{min-height:260px}.sentence-excerpt{min-height:220px}.simple-checker .topbar{gap:20px}.simple-checker .topbar nav{display:flex;margin-left:auto}.simple-checker nav a:first-child{display:none}.local-badge{display:none}.advanced-tools{padding:18px}.review-sidebar .simple-models{grid-template-columns:1fr 1fr}.simple-checker .intro>p{font-size:14px}.view-switch button{padding:10px 12px}.review-sidebar .suggestion-link{padding:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Focused writing workspace; historical controls live on their own page. */
+.simple-checker .topbar{min-height:76px;gap:28px}
+.help-link{margin-left:auto;font-size:12px;text-decoration:none;color:var(--sub)}
+.simple-checker .local-badge{margin-left:0}
+.simple-checker .intro{padding:30px 0 24px}
+.simple-checker .intro h1{font-size:clamp(28px,3.4vw,38px);letter-spacing:-1.1px}
+.simple-checker .intro>p{font-size:14px}
+.simple-checker .workspace{grid-template-columns:minmax(0,1fr) 370px;overflow:clip;align-items:stretch}
+.review-overview{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:28px;padding:22px 28px;border-bottom:1px solid var(--line);background:#f4f6ef}
+.review-overview h2{font-size:20px;margin:9px 0}
+.review-overview #hybrid-status{margin:0;max-width:600px}
+.review-overview .coverage-note{font-size:12px;margin:0;padding:8px 10px}
+.review-overview .score-details{margin-top:10px;padding-top:8px}
+.review-overview .simple-models{grid-template-columns:1fr;gap:8px;margin-top:12px}
+.review-overview .simple-model{padding:12px;background:var(--white)}
+.review-overview .simple-model h3,.review-overview .signal-score{font-size:14px;display:inline-block;margin:0 12px 0 0}
+.review-overview .simple-model p{margin:4px 0;font-size:12px}
+.simple-checker .editor-panel{align-self:start}
+.simple-checker textarea{min-height:270px;margin-top:14px;font-size:16px}
+.simple-checker .sentence-excerpt{min-height:250px;font-size:16px;line-height:2}
+.simple-checker .review-sidebar{position:static;max-height:none;overflow:visible;align-self:stretch;padding:26px;border-radius:0 0 12px 0;background:#f4f6ef}
+.simple-checker .review-sidebar #simple-coach{border:0;margin:0;padding:0}
+.simple-checker .review-sidebar h2{font-size:20px;margin:10px 0}
+.view-toolbar{gap:8px;margin-top:16px}
+.text-tools{display:flex;gap:16px;align-items:center}
+.text-tools .text-button,.panel-heading>.text-button{min-height:44px}
+#empty-actions{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:12px;color:var(--sub)}
+#empty-actions .text-button{font-weight:600}
+.editor-meta{flex-wrap:wrap;gap:8px}
+#text-limit{font-size:11px}
+.check-actions{margin-top:18px;gap:14px}
+.check-actions .primary-button{min-height:46px;min-width:146px;font-size:14px}
+.coach-option{min-width:0}
+.coach-option .review-setting{padding:0;gap:8px;line-height:1.5;cursor:pointer}
+.coach-option input{width:17px;height:17px;accent-color:var(--green)}
+.coach-option>span{display:block;font-size:11px;color:var(--sub);margin:4px 0 0 27px;line-height:1.5}
+.action-hints{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:10px;color:var(--sub);margin-top:13px;line-height:1.7}
+.copy-status{font-size:12px;line-height:1.6;color:var(--green);margin:12px 0 0}
+.copy-status:empty{display:none}
+.review-empty{padding:32px 10px;color:var(--sub);font-size:13px}
+.empty-glyph{display:inline-block;font:italic 42px var(--serif);color:#668273;padding:15px 20px;background:#e6ecde;border-radius:15px;transform:rotate(-5deg)}
+.review-empty>p{font-weight:600;color:var(--ink);margin-top:24px}
+.review-empty ol{padding-left:18px;line-height:2.3}
+.sentence-navigation{display:flex;justify-content:space-between;align-items:center;gap:7px;margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.sentence-navigation button{min-height:44px;font-size:12px}
+#sentence-position{font-size:11px;color:var(--sub);white-space:nowrap}
+.sentence-detail{margin-top:16px;background:transparent;padding:12px 0;border:0;border-top:1px solid var(--line);border-radius:0}
+.sentence-detail>summary{font-size:12px;cursor:pointer;color:var(--green)}
+.review-sidebar .revision-card{border:0;margin-top:12px;padding:0}
+.review-sidebar .revision-card h3{margin:12px 0 8px;font-size:14px}
+.review-sidebar .revision-card h4{margin-top:12px}
+.review-sidebar .revision-card blockquote{margin:6px 0 12px}
+.review-sidebar .revision-card .primary-button{width:100%;justify-content:center;min-height:44px;margin-top:14px}
+.suggestion-link{padding:10px 12px;margin:8px 0}
+.suggestion-link strong{font-size:12px;line-height:1.5;font-weight:500}
+#back-to-passage{margin-top:8px;min-height:40px}
+#coach-info .score-details{font-size:11px}
+.simple-checker .simple-method{margin:28px 0}
+.simple-checker .simple-method h2{font-size:18px}
+.legacy-workbench .workspace{grid-template-columns:1fr}
+@media(max-width:950px){.simple-checker main{padding:0 24px}.simple-checker .workspace{grid-template-columns:minmax(0,1fr) 310px}.simple-checker .editor-panel,.simple-checker .review-sidebar{padding:20px}.review-overview{padding:20px;grid-template-columns:minmax(0,1fr) 265px;gap:20px}.check-actions{align-items:stretch;flex-direction:column}.check-actions .primary-button{width:100%;justify-content:center}.view-toolbar{align-items:flex-start}.text-tools{gap:14px}.action-hints{gap:8px}}
+@media(max-width:760px){.simple-checker .workspace,.review-overview{grid-template-columns:1fr}.review-overview{gap:14px}.simple-checker main{padding:0 16px}.simple-checker .topbar{padding:0 16px;min-height:65px;gap:16px}.simple-checker .brand{font-size:19px;gap:8px}.simple-checker .local-badge{display:flex;font-size:10px}.help-link{display:none}.simple-checker .local-badge{margin-left:auto}.simple-checker .intro{padding:24px 0 20px}.simple-checker .intro h1{font-size:29px}.simple-checker textarea{min-height:230px}.simple-checker .sentence-excerpt{min-height:180px}.simple-checker .review-sidebar{border-top:1px solid var(--line);border-left:0;border-radius:0 0 12px 12px}.text-tools{flex-wrap:wrap;gap:10px}.view-switch button{padding:9px 10px}.review-empty{padding:15px 6px}.empty-glyph{display:none}.review-empty>p{margin-top:0}.review-empty ol{line-height:2}.review-progress{padding:12px}.simple-checker footer{padding:20px 16px}}

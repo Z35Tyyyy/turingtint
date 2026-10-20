@@ -1,6 +1,24 @@
-# Test the local writing workbench
+# Test the local writing workspace
 
 Open **http://127.0.0.1:8765**. If an older page is open, refresh with **Ctrl+F5**.
+
+1. Paste text or use **Try a sample**. The sample is identified as AI-generated
+   and is not submitted until you start a review.
+2. Choose whether to include **Writing feedback** beside **Review text**, then
+   review (or press Ctrl/Command + Enter). Signals arrive before optional coaching.
+3. Select a highlight or use **Previous / Next** to inspect a sentence. Compare
+   original and proposed wording before **Apply suggestion**. **Undo change** is
+   available until you type again; edits invalidate the old review.
+4. Use **Copy text** to take your draft elsewhere. **Clear text** offers
+   **Restore text** until you type again. Nothing is saved automatically.
+
+Main workspace checks: `evaluation/check_review_browser.py` uses deterministic
+API fixtures for state transitions and clipboard behavior;
+`evaluation/check_coach_browser.py` exercises the actual installed models.
+
+## Historical research cases
+
+Open **http://127.0.0.1:8765/static/legacy.html** for the older reference tools.
 
 1. Choose a case beside **Load case**, then load it. The description identifies
    where the text came from; those labels are not sent to either model.
@@ -31,8 +49,8 @@ scored in bounded context blocks, with analyzed and unscored coverage reported.
 If the application is stopped, use this PowerShell command sequence:
 
 ```powershell
-Set-Location -LiteralPath "C:\Users\Asus\emdash\worktrees\turingtint\emdash\model-training-w5xd0"
-.\.venv\Scripts\python.exe -m turingtint --port 8765
+Set-Location -LiteralPath "C:\Users\Asus\Documents\turingtint"
+powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
 Local inference requires no API key. The installed model stays on this machine.

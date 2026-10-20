@@ -135,7 +135,7 @@ def run():
             page.route('**/api/workbench/status', status_route)
             page.route('**/api/workbench/analyze', model_route)
             page.route('**/api/coach/review', coach_route)
-            page.goto(base, wait_until='networkidle')
+            page.goto(base + '/static/legacy.html', wait_until='networkidle')
             page.locator('#advanced-tools > summary').click()
             assert page.locator('#coach-provider').input_value() == 'local'
             assert page.locator('#coach-provider option[value="openai"]').count() == 0

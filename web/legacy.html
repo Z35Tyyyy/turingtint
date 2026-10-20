@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TuringTint - Research workbench</title><link rel="stylesheet" href="/static/styles.css"><script src="/static/legacy.js" defer></script></head>
+<body class="legacy-workbench"><header class="topbar"><a class="brand" href="/">TuringTint</a><a href="/">Return to writing workspace</a><span id="privacy-badge" class="local-badge">Local by default</span></header>
+<main><section class="intro"><h1>Research workbench</h1><p>Historical models, reference cases and source matching. Separate model artifacts may be required.</p></section>
+<section id="workspace" class="workspace"><div class="editor-panel"><div class="panel-heading"><h2>Your writing</h2><button id="new-writing" class="text-button" type="button">New writing</button></div>
+<label class="sr-only" for="passage">Your writing</label><textarea id="passage" maxlength="30000"></textarea><div class="editor-meta"><span id="word-count"></span></div>
+        <details id="advanced-tools" class="advanced-tools">
+          <summary>Reference tools</summary>
+<p class="advanced-description">Optional reference cases and the earlier analysis workflow.</p>
+          <p class="experiment-note">The earlier analysis uses MAGE as its primary signal and TF-IDF as a comparison. Its highlights and writing suggestions are experimental and do not prove authorship.</p>
+        <details class="library-details"><summary>Model setup &amp; availability</summary><p id="detector-ready"></p><p id="corpus-count"></p><p id="review-model-status">Checking local writing model...</p><p>For local writing feedback, run <code>scripts/setup-coach-cpu.ps1</code> and restart with <code>scripts/start.ps1</code>.</p></details><div class="case-picker"><label for="example-case">Reference case</label><select id="example-case" disabled><option>Loading cases…</option></select><button id="example" class="secondary-button" type="button" disabled>Load case</button></div>
+        <div id="case-info" class="case-info" hidden><span id="case-kind" class="pill muted"></span><strong id="case-title"></strong><p id="case-purpose"></p><details><summary>Provenance and what to observe</summary><p id="case-description"></p><p id="case-expectation"></p><div id="case-source"></div><p>These labels describe how the reference case was collected or constructed, not the detector's result.</p></details></div>
+        <div class="feedback-setting"><label><input id="include-feedback" type="checkbox" checked> Include writing feedback</label><span id="feedback-mode">Detector, sources, and explained revisions</span></div>
+        <div class="editor-settings"><label for="coach-provider">Revision coach</label><select id="coach-provider"><option value="local">Local model</option></select><span id="coach-availability">Checking availability…</span></div>
+        <div class="editor-actions"><p id="privacy-note"><span class="small-dot"></span>Your writing stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze writing <span>↗</span></button></div>
+        </details>
+<div id="notice" class="notice" role="status" hidden></div></div></section>    <section id="comparison" class="comparison-panel" hidden aria-labelledby="comparison-heading"><div class="comparison-heading"><div><span class="eyebrow">REVISION CHECK</span><h2 id="comparison-heading">Original → revised</h2></div><button id="reset-comparison" class="text-button" type="button">Clear comparison</button></div><p id="comparison-status" class="muted-copy"></p><table class="comparison-counts"><thead><tr><th scope="col">Text size</th><th scope="col">Original</th><th scope="col">Revised</th></tr></thead><tbody><tr><th scope="row">Characters</th><td id="comparison-original-characters"></td><td id="comparison-revised-characters"></td></tr><tr><th scope="row" title="Whitespace-separated words">Words</th><td id="comparison-original-words"></td><td id="comparison-revised-words"></td></tr></tbody></table><div id="comparison-signals"></div><p class="comparison-note">Signals can change after an edit without proving authorship. Versions stay in this page's memory until you clear them or leave.</p><details><summary>Read both versions</summary><div class="version-texts"><div><h3>Original</h3><p id="comparison-original-text"></p></div><div><h3>Revised</h3><p id="comparison-revised-text"></p></div></div></details></section>
+    <section id="results" class="results" hidden aria-label="Writing analysis results">
+      <div class="results-title"><div><span class="eyebrow">YOUR WRITING, EXAMINED</span><h2>Understand. Then revise.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>
+      <div class="analysis-layout">
+        <div class="detector-column">
+          <section class="assessment-card" aria-labelledby="assessment-label" aria-live="polite">
+            <div class="section-kicker"><span>MODEL ASSESSMENT</span><span id="detector-status" class="pill muted">Queued</span></div>
+            <h3 id="assessment-label">Checking your writing…</h3><p id="assessment-summary">Local detector signals will appear here first.</p><p id="length-note" class="notice" role="status" hidden></p><div id="model-signals" class="model-signals"></div><p id="detector-error" class="notice" role="status" hidden></p>
+          </section>
+          <section class="annotated-panel" aria-labelledby="passage-view-heading">
+            <div class="annotation-header"><h3 id="passage-view-heading">Context block signals</h3><span id="block-count" class="muted-copy"></span></div>
+            <div class="block-legend"><span><i class="lean-ai"></i>AI-leaning</span><span><i class="lean-human"></i>Human-leaning</span><span><i class="lean-inconclusive"></i>Inconclusive</span></div>
+            <div id="annotated-text" class="annotated-text"></div><section id="revision-preview" class="revision-preview" hidden aria-labelledby="preview-heading"><div class="preview-heading"><h4 id="preview-heading">Review this change</h4><button id="close-preview" class="text-button" type="button">Close</button></div><span class="tiny-label">ORIGINAL QUOTE · SELECTED ABOVE</span><blockquote id="preview-original"></blockquote><span class="tiny-label">PROPOSED WORDING</span><p id="preview-proposed"></p><p id="preview-reason" class="muted-copy"></p><button id="apply-revision" class="secondary-button" type="button">Use this revision</button></section><div id="block-detail" class="block-detail" hidden><strong id="block-label"></strong><p id="block-reason"></p></div><p id="coverage-note" class="notice" hidden></p>
+          </section>
+          <details id="model-diagnostics" class="diagnostics"><summary>Model details and raw scores</summary><p class="muted-copy">Raw scores are uncalibrated outputs, not percentages of AI-written text. No authorship is proved by a score.</p><div id="model-cards"></div><p id="input-details" class="muted-copy"></p><ul id="detector-limitations"></ul></details>
+        </div>
+        <section id="coach-panel" class="coach-panel" aria-labelledby="coach-heading">
+          <div class="section-kicker"><span>WRITING COACH</span><span id="coach-status" class="pill muted">Queued</span></div>
+          <h3 id="coach-heading">What to improve, and why.</h3><p id="coach-progress" class="muted-copy">The coach starts after the detector, then suggestions appear here.</p><p id="coach-error" class="notice" role="status" hidden></p>
+          <p id="coach-summary" class="coach-summary"></p><p id="revision-review-note" class="muted-copy" hidden>Review facts and any [placeholders] before applying a revision.</p><div id="revision-cards"></div>
+          <details id="coach-details" class="diagnostics" hidden><summary>Coaching details and limits</summary><p id="coach-model"></p><ul id="coach-limitations"></ul></details>
+        </section>
+      </div>
+      <details id="source-section" class="source-section"><summary><span>Source matching <span id="match-count" class="count-badge">—</span></span><span id="source-status" class="muted-copy">Checking local library…</span></summary>
+        <p id="source-error" class="notice" role="status" hidden></p><p id="component-warning" class="notice" role="status" hidden></p>
+        <div class="source-tools"><p id="report-summary" class="muted-copy">This comparison covers the installed reference library.</p><button id="source-example" class="text-button" type="button">Load a reference example ↗</button></div>
+        <div class="source-grid"><div id="source-annotated-text" class="annotated-text"></div><div id="source-cards"></div></div><div id="source-suggestions"></div>
+      </details>
+    </section>
+</main></body></html>

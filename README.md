@@ -11,14 +11,23 @@ See [setup, optional Desklib and verification](research/hybrid-v2.md).
 To include writing suggestions in the same review, install the compact local CPU
 coach with `scripts/setup-coach-cpu.ps1`, then restart using `scripts/start.ps1`.
 Sentence highlights and writing feedback work without the historical MAGE/TF-IDF
-artifacts. Unavailable historical analysis controls stay disabled.
+artifacts. The **Writing feedback** toggle beside **Review text** controls whether
+the local coach runs; signal checks remain available without it.
 
 Switch between **Edit text** and **Highlights** in one passage view. Select a
 sentence for its signal and writing suggestions in the side panel. **Apply
 suggestion** updates the passage; **Undo change** restores it until the next
 manual edit. Changes invalidate the review and offer **Review changes**.
 Signals appear before coaching finishes; you can keep editing while it runs.
-Model details and the earlier tools live under **Settings**.
+Use **Previous / Next** to move through sentences and **Back to this sentence**
+to return to its highlight. **Copy text** copies the current draft. **Clear text**
+offers **Restore text** until you type again. **Ctrl/Command + Enter** starts a
+review. **Try a sample** loads an identified AI-generated practice passage without
+submitting it. Model scores stay in collapsed details; there is no Settings panel.
+
+Historical tools are available separately at
+http://127.0.0.1:8765/static/legacy.html. The main workspace does not load their
+controls, scripts, reference cases or corpus requests.
 
 The earlier **Analyze writing** tool runs two local machine-learning classifiers and a language
 model review. The main report shows experimental model leanings, highlights the
@@ -46,7 +55,7 @@ See the [experiment instructions](detector_eval/README.md) and
 yet justify validated authorship claims. No model score or suggested rewrite
 proves that writing is human or guarantees a lower detector score.
 
-## Run locally
+## Run the historical research workbench
 
 Python 3.12+ is required, including for bounded Windows subprocess handling.
 
@@ -56,7 +65,7 @@ powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
-Open http://127.0.0.1:8765. The first corpus command downloads a small selection
+Open http://127.0.0.1:8765/static/legacy.html. The first corpus command downloads a small selection
 of PLOS abstracts through Europe PMC, verifies article-level CC BY evidence,
 and records provenance. Use **Load case** for the six writing examples, or
 **Load a reference example** in the source panel to test source matching.

@@ -14,7 +14,7 @@ function signalScore(value) {
   return value.toFixed(3);
 }
 function currentReview(run = reviewRun) { return run && run === reviewRun && run.revision === revision && run.text === passage.value; }
-function reviewBusy() { return Boolean(reviewRun?.running || currentRun?.running); }
+function reviewBusy() { return Boolean(reviewRun?.running); }
 function setPassageView(highlights, focus = false) {
   highlights = highlights && currentReview() && Boolean(reviewRun.segments?.length);
   passage.hidden = Boolean(highlights);
@@ -27,13 +27,19 @@ function refreshReviewControls() {
   const busy = reviewBusy(), hasText = Boolean(passage.value.trim());
   $('hybrid-run').disabled = !hasText || busy;
   $('hybrid-run').textContent = busy ? 'Reviewing…' : reviewOutdated ? 'Review changes' : 'Review text';
-  $('analyze').disabled = !hasText || busy || capabilities?.detector?.available !== true;
   $('highlight-view').disabled = !currentReview() || !reviewRun.segments?.length;
   $('undo-edit').hidden = !undoEdit || undoEdit.after !== passage.value;
+  $('undo-edit').textContent = undoEdit?.kind === 'clear' ? 'Restore text' : 'Undo change';
+  $('copy-text').disabled = !hasText;
+  $('new-writing').disabled = !passage.value;
+  $('empty-actions').hidden = Boolean(passage.value);
   const available = capabilities?.coaching?.local?.available === true;
+  $('review-coaching').disabled = busy || !available;
   $('coach-run').disabled = !available || !hasText || busy || !currentReview();
-  $('review-model-status').textContent = !capabilities ? 'Writing model availability unknown.' : available
-    ? 'Local writing model ready. Text stays on this computer.' : 'The local writing model is unavailable. Signal checks still work.';
+  $('review-model-status').textContent = !capabilities ? 'Availability unknown. Signals still work.' : available
+    ? $('review-coaching').checked ? 'Ready · may take about a minute' : 'Off · review signals only'
+    : 'Unavailable · review signals only';
+  $('review-empty').hidden = Boolean(reviewOutdated || (currentReview() && reviewRun.segments?.length) || busy);
 }
 function reviewInputChanged(options = {}) {
   if (!options.preserveUndo) undoEdit = null;
@@ -45,11 +51,14 @@ function reviewInputChanged(options = {}) {
   $('hybrid-results').replaceChildren();
   $('sentence-feedback').replaceChildren();
   $('simple-coach-results').replaceChildren();
+  $('coach-info').replaceChildren();
+  $('sentence-navigation').hidden = true; $('back-to-passage').hidden = true;
   $('coach-run').hidden = true;
   setPassageView(false);
+  $('hybrid-panel').hidden = !reviewOutdated;
   $('hybrid-heading').textContent = reviewOutdated ? 'Your text has changed.' : 'Ready when you are.';
   $('hybrid-status').textContent = reviewOutdated ? 'Previous signals are outdated. Review changes to check this version.' : 'Paste a passage and choose Review text. Signals appear first, followed by writing suggestions.';
-  $('simple-coach-status').textContent = reviewOutdated ? 'Review this version for fresh suggestions.' : 'Select a sentence after reviewing your text.';
+  $('simple-coach-status').textContent = reviewOutdated ? 'Review this version for fresh suggestions.' : 'Review your text to see what each sentence suggests.';
   $('review-progress').hidden = !reviewRun?.running;
   if (reviewRun?.running) $('review-progress-copy').textContent = 'Finishing the previous request. You can keep editing; its results will not replace your changes.';
   refreshReviewControls();
@@ -99,7 +108,7 @@ function renderPassage(run) {
   refreshReviewControls();
 }
 function selectSentence(run, index, focus = false) {
-  if (!currentReview(run)) return;
+  if (!currentReview(run) || !run.segments[index]) return;
   selectedSentence = index;
   document.querySelectorAll('.sentence-mark').forEach(mark => mark.setAttribute('aria-pressed', String(Number(mark.dataset.sentence) === index)));
   renderSentenceFeedback(run);
@@ -108,13 +117,17 @@ function selectSentence(run, index, focus = false) {
 function renderSentenceFeedback(run) {
   if (!currentReview(run)) return;
   const target = $('sentence-feedback'); target.replaceChildren();
-  if (selectedSentence === null) { target.append(node('p', 'Choose a sentence in Highlights, or open a suggestion below.', 'feedback-empty')); return; }
+  if (selectedSentence === null) { target.append(node('p', 'Choose a sentence in Highlights, or open a suggestion above.', 'feedback-empty')); return; }
   const segment = run.segments[selectedSentence];
+  $('sentence-navigation').hidden = false; $('back-to-passage').hidden = false;
+  $('sentence-position').textContent = `Sentence ${selectedSentence + 1} of ${run.segments.length}`;
+  $('previous-sentence').disabled = selectedSentence === 0;
+  $('next-sentence').disabled = selectedSentence === run.segments.length - 1;
   const suggestions = (run.coach?.suggestions || []).filter(item => item.start < segment.end && item.end > segment.start);
-  target.append(node('h3', `Sentence ${selectedSentence + 1}`));
+  target.append(node('strong', SIGNAL_LABELS[segment.label], `signal-label sentence-${segment.label}`));
   if (!suggestions.length) target.append(node('blockquote', run.text.slice(segment.start, segment.end), 'selected-quote'));
-  const detail = node('div', undefined, 'sentence-detail');
-  detail.append(node('strong', SIGNAL_LABELS[segment.label], `signal-label sentence-${segment.label}`));
+  const detail = node('details', undefined, 'sentence-detail');
+  detail.append(node('summary', 'Why this signal?'));
   const explanations = {stronger: 'Both models found stronger AI-like patterns in this sentence.', weaker: 'Both models found weaker AI-like patterns in this sentence.', disagree: 'The models read this sentence differently. Treat its signal as inconclusive.', uncertain: 'The scores do not give a clear signal.', unscored: 'There is not enough usable model evidence to color this sentence.'};
   detail.append(node('p', explanations[segment.label]));
   if (segment.low_context) detail.append(node('p', 'Limited context: short sentence.', 'context-hint'));
@@ -122,8 +135,7 @@ function renderSentenceFeedback(run) {
   if (segment.reason) scores.append(node('p', segment.reason));
   (segment.scores || []).forEach(score => scores.append(node('p', `${score.model}: ${signalScore(score.score_ai)}`)));
   scores.append(node('p', 'Scores are model signals, not authorship probabilities. Short context can make them unstable.')); detail.append(scores);
-  target.append(detail);
-  if (!suggestions.length) target.append(node('p', run.coachState === 'running' || run.coachState === 'waiting' ? 'Writing feedback will appear here when it is ready.' : run.coachState === 'done' ? 'No writing suggestion for this sentence.' : 'Writing feedback is unavailable for this review.', 'feedback-empty'));
+  if (!suggestions.length && ['waiting', 'running', 'done'].includes(run.coachState)) target.append(node('p', run.coachState === 'done' ? 'No writing suggestion for this sentence.' : 'Writing feedback will appear here when it is ready.', 'feedback-empty'));
   suggestions.forEach(suggestion => {
     const card = node('article', undefined, 'revision-card');
     card.append(node('h3', suggestion.issue), node('p', suggestion.why));
@@ -135,6 +147,7 @@ function renderSentenceFeedback(run) {
     } else card.append(node('p', suggestion.suggestion));
     target.append(card);
   });
+  target.append(detail);
 }
 function applySuggestion(run, suggestion) {
   if (!currentReview(run) || !validRange(suggestion, passage.value, 'quote') || typeof suggestion.rewrite !== 'string' || !suggestion.rewrite.trim()) return;
@@ -151,7 +164,8 @@ function renderCoachSuggestions(run) {
   $('simple-coach-status').textContent = suggestions.length ? `${suggestions.length} ${suggestions.length === 1 ? 'suggestion' : 'suggestions'} to explore.` : 'No specific edits suggested.';
   suggestions.forEach((suggestion, index) => {
     const item = node('button', undefined, 'suggestion-link'); item.type = 'button';
-    item.append(node('strong', `${index + 1}. ${suggestion.issue}`));
+    const sentence = run.segments.findIndex(segment => suggestion.start < segment.end && suggestion.end > segment.start);
+    item.append(node('strong', `Sentence ${sentence + 1}: ${suggestion.issue}`));
     item.addEventListener('click', () => {
       const sentence = run.segments.findIndex(segment => suggestion.start < segment.end && suggestion.end > segment.start);
       if (sentence >= 0) { setPassageView(true); selectSentence(run, sentence, true); }
@@ -159,7 +173,7 @@ function renderCoachSuggestions(run) {
     target.append(item);
   });
   const details = node('details', undefined, 'score-details'); details.append(node('summary', 'About writing feedback'), node('p', run.coach.model));
-  const limits = node('ul'); strings(run.coach.limitations).forEach(value => limits.append(node('li', value))); details.append(limits); target.append(details);
+  const limits = node('ul'); strings(run.coach.limitations).forEach(value => limits.append(node('li', value))); details.append(limits); $('coach-info').replaceChildren(details);
   renderSentenceFeedback(run);
 }
 function renderHybrid(result, run) {
@@ -181,7 +195,7 @@ function renderHybrid(result, run) {
   });
   details.append(cards, node('p', `Experimental average: ${rawScore(result.score_ai)}. This is not a percentage of AI-written text.`));
   const limits = node('ul'); strings(result.limitations).forEach(value => limits.append(node('li', value))); details.append(limits); container.append(details);
-  run.segments = segments; renderPassage(run); renderSentenceFeedback(run);
+  run.segments = segments; renderPassage(run); selectSentence(run, 0);
   // Leave the editor available if the user has started typing or explicitly chosen it.
   if (!run.keepEditing) setPassageView(true);
 }
@@ -201,10 +215,10 @@ async function runWritingReview(run) {
   if (!run.includeCoach || capabilities?.coaching?.local?.available !== true) {
     run.coachState = 'skipped';
     stage(run, 'writing', 'skipped', 'Signal review finished. Writing feedback is skipped.');
-    $('simple-coach-status').textContent = run.includeCoach ? 'Writing feedback is unavailable. See Settings for local model setup.' : 'Writing suggestions are off in Settings.';
+    $('simple-coach-status').textContent = run.includeCoach ? 'Writing feedback is unavailable. Your sentence signals are ready to explore.' : 'Signals only. Writing feedback was off for this review.';
     renderSentenceFeedback(run); return;
   }
-  simpleCoachRunning = true; run.coachState = 'running';
+  run.coachState = 'running';
   stage(run, 'writing', 'running', 'Reviewing wording locally. This took about 50 seconds in our CPU check. You can explore highlights or keep editing.');
   $('simple-coach-status').textContent = 'Reviewing wording. Suggestions will appear here.';
   $('coach-run').hidden = true;
@@ -220,17 +234,19 @@ async function runWritingReview(run) {
       run.coachState = 'error'; stage(run, 'writing', 'error', run.signalsState === 'done' ? 'Writing feedback could not finish. Your signal results are still available.' : 'The review could not finish. You can retry.');
       $('simple-coach-status').textContent = reviewError(error); $('coach-run').hidden = false; renderSentenceFeedback(run);
     }
-  } finally { simpleCoachRunning = false; }
+  }
 }
 async function startReview() {
   if (reviewBusy() || !passage.value.trim()) return;
   const run = {id: `${Date.now()}-${++sequence}`, text: passage.value, revision, running: true, includeCoach: $('review-coaching').checked, coachState: 'waiting', segments: null, keepEditing: false};
-  reviewRun = run; reviewOutdated = false; selectedSentence = null; hybridRunning = true;
+  reviewRun = run; reviewOutdated = false; selectedSentence = null;
   $('hybrid-results').replaceChildren(); $('passage-preview').replaceChildren(); $('sentence-feedback').replaceChildren(); $('simple-coach-results').replaceChildren();
+  $('coach-info').replaceChildren(); $('sentence-navigation').hidden = true; $('back-to-passage').hidden = true;
+  $('hybrid-panel').hidden = false;
   $('coach-run').hidden = true; setPassageView(false); refreshReviewControls(); message('notice', '');
   $('hybrid-heading').textContent = 'Checking your text…';
   $('hybrid-status').textContent = 'Checking the passage and its sentences with two local detectors. First use includes loading the models.';
-  $('simple-coach-status').textContent = run.includeCoach ? 'Writing feedback follows the signal check.' : 'Writing suggestions are off in Settings.';
+  $('simple-coach-status').textContent = run.includeCoach ? 'Writing feedback follows the signal check.' : 'Signals only. Writing feedback is off.';
   $('review-progress').hidden = false;
   stage(run, 'signals', 'running', 'Checking signals locally. You can continue editing while you wait.'); stage(run, 'writing', 'waiting');
   try {
@@ -242,13 +258,12 @@ async function startReview() {
     } catch (error) {
       if (!currentReview(run)) return;
       $('hybrid-heading').textContent = 'Signals are unavailable.'; $('hybrid-status').textContent = reviewError(error);
-      stage(run, 'signals', 'error'); run.segments = validSegments(null, run.text); renderPassage(run);
+      stage(run, 'signals', 'error'); run.segments = validSegments(null, run.text); renderPassage(run); selectSentence(run, 0);
     }
-    hybridRunning = false;
     await capabilitiesReady;
     if (currentReview(run)) await runWritingReview(run);
   } finally {
-    run.running = false; hybridRunning = false; simpleCoachRunning = false;
+    run.running = false;
     if (!currentReview(run)) { $('review-progress').hidden = true; }
     refreshReviewControls();
   }
@@ -258,14 +273,50 @@ $('edit-view').addEventListener('click', () => { if (reviewRun) reviewRun.keepEd
 $('highlight-view').addEventListener('click', () => setPassageView(true));
 $('undo-edit').addEventListener('click', () => {
   if (!undoEdit || passage.value !== undoEdit.after) return;
+  const restored = undoEdit.kind === 'clear';
   passage.value = undoEdit.before; undoEdit = null; updateInput(); setPassageView(false, true);
-  message('notice', 'Change undone. Review changes to refresh the signals.');
+  message('notice', restored ? 'Your text is restored.' : 'Change undone. Review changes to refresh the signals.');
 });
 $('coach-run').addEventListener('click', async () => {
   if (reviewBusy() || !currentReview()) return;
   const run = reviewRun; run.running = true; run.includeCoach = true; refreshReviewControls();
   try { await runWritingReview(run); } finally { run.running = false; refreshReviewControls(); }
 });
-$('open-settings').addEventListener('click', () => { $('advanced-tools').open = true; });
+$('review-coaching').addEventListener('change', refreshReviewControls);
+$('previous-sentence').addEventListener('click', () => selectSentence(reviewRun, selectedSentence - 1, true));
+$('next-sentence').addEventListener('click', () => selectSentence(reviewRun, selectedSentence + 1, true));
+$('back-to-passage').addEventListener('click', () => {
+  if (!currentReview()) return;
+  setPassageView(true);
+  const mark = document.querySelector(`.sentence-mark[data-sentence="${selectedSentence}"]`);
+  if (mark) { mark.focus({preventScroll: true}); mark.scrollIntoView({block: 'center', behavior: 'smooth'}); }
+});
+$('new-writing').addEventListener('click', () => {
+  if (!passage.value) return;
+  undoEdit = {before: passage.value, after: '', kind: 'clear'};
+  passage.value = ''; updateInput({preserveUndo: true}); setPassageView(false, true);
+  message('notice', 'Text cleared. Use Restore text above to bring it back.');
+});
+$('try-sample').addEventListener('click', () => {
+  if (passage.value) return;
+  passage.value = SAMPLE; updateInput(); passage.focus();
+  message('notice', 'AI-generated practice sample loaded. Choose Review text to explore it.');
+});
+$('copy-text').addEventListener('click', async () => {
+  const text = passage.value, inputRevision = revision;
+  if (!text.trim()) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    if (revision !== inputRevision) return;
+    $('copy-text').textContent = 'Copied'; $('copy-status').textContent = 'Text copied to your clipboard.';
+  } catch (_) {
+    if (revision !== inputRevision) return;
+    setPassageView(false, true); passage.select();
+    $('copy-status').textContent = 'Clipboard access is unavailable. Your text is selected; press Ctrl+C or ⌘C to copy.';
+  }
+});
+document.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); startReview(); }
+});
 const capabilitiesReady = loadCapabilities();
-loadCorpus(); loadExamples(); updateInput();
+updateInput();

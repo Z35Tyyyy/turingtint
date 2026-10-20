@@ -36,11 +36,11 @@ def run():
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.on('request', lambda request: external.append(request.url) if not request.url.startswith(base + '/') else None)
             page.goto(base)
-            assert not page.locator('#advanced-tools').evaluate('(el) => el.open')
+            assert page.locator('#advanced-tools').count() == 0
             text = 'This deliberately constructed paragraph checks local model execution. It is a software fixture, not a sample for measuring detector accuracy.'
             page.locator('#passage').fill(text)
             page.locator('#hybrid-run').click()
-            expect(page.locator('#analyze')).to_be_disabled()
+            expect(page.locator('#hybrid-run')).to_be_disabled()
             expect(page.locator('#hybrid-heading')).to_have_text('The models give similar scores.', timeout=120000)
             expect(page.locator('.simple-model').first).to_contain_text('DistilBERT')
             expect(page.locator('.simple-model').last).to_contain_text('ModernBERT')
@@ -49,6 +49,7 @@ def run():
             page.locator('.sentence-mark').first.focus()
             page.keyboard.press('Enter')
             expect(page.locator('.sentence-detail')).to_contain_text('Limited context')
+            page.locator('.sentence-detail > summary').click()
             page.locator('.sentence-scores summary').click()
             expect(page.locator('.sentence-detail')).to_contain_text('distilbert:')
             out = ROOT / 'outputs/hybrid'
@@ -86,8 +87,8 @@ def run():
         assert not external and not errors, (external, errors)
         report = dict(status='passed', real='Chromium, local server, and first hybrid inference with pinned weights.',
                       mocked='Disagreement/truncation fixture and final 503 error response.', external_requests=external, browser_errors=errors,
-                      checks=['real component scores rendered', 'concurrent analysis button disabled', 'edited text invalidates results',
-                              'advanced tools and technical averages collapsed by default', 'plain-language disagreement and truncation',
+                      checks=['real component scores rendered', 'duplicate review disabled', 'edited text invalidates results',
+                              'legacy controls absent and technical averages collapsed by default', 'plain-language disagreement and truncation',
                               'mobile viewport has no horizontal overflow', '503 error displayed',
                               'real sentence highlights preserve text and expose scores with keyboard selection'],
                       rendered_result=rendered, accuracy_evidence=False)

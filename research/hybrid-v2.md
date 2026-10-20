@@ -14,8 +14,8 @@ powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
 Open http://127.0.0.1:8765, enter text and click **Review text**.
-Under **Settings & reference tools**, **Analyze writing** still uses the historical MAGE/TF-IDF
-workflow and needs its separate model artifacts. The new hybrid panel works
+The separate `/static/legacy.html` research page retains **Analyze writing**, which
+uses the historical MAGE/TF-IDF workflow and needs its own model artifacts. The new hybrid panel works
 without those artifacts or a source corpus.
 
 Setup installs pinned dependencies and downloads approximately 571 MB of
@@ -39,7 +39,7 @@ the previous text until a manual edit. Proposed wording is never applied
 automatically. The model selects issue types and rewrites; explanation text
 comes from fixed editorial guidance. Edited input clears stale feedback and
 offers **Review changes**. Late responses cannot attach to an edited passage.
-Writing suggestions can be switched off in Settings. Missing coaching or a
+Writing suggestions can be switched off beside **Review text**. Missing coaching or a
 failed review component does not hide the other component's results. A failed
 coach request can be retried without rerunning detection.
 The existing input, generation-time, numeric-protection and output-validation
@@ -60,10 +60,12 @@ dropped its cause; the final compact prompt includes a causal editing example.
 This is a targeted smoke check, not an independent evaluation of editing quality.
 
 The unified workspace was also checked with both actual model services in
-Chromium, including Apply/Undo. `evaluation/check_review_browser.py` covers ten
+Chromium, including Apply/Undo. `evaluation/check_review_browser.py` covers fifteen
 deterministic browser scenarios: sequential results, exact Unicode offsets,
-safe edits, late responses, isolated failures/retry, missing coaching, Settings,
-and mobile navigation. All 18 historical browser checks and the real hybrid
+safe edits, late responses, isolated failures/retry, missing coaching, the visible
+feedback toggle, copying/fallback, clear/restore, sample loading, keyboard sentence
+navigation and a 320px layout without nested scrolling. All 18 historical browser
+checks (on the separate research page) and the real hybrid
 browser smoke passed. Desktop/mobile screenshots and receipts are stored under
 ignored `outputs/hybrid/`. No model training or accuracy claims changed.
 
