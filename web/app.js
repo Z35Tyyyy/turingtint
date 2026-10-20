@@ -148,7 +148,8 @@ function updateInput(options = {}) {
   $('analyze').disabled = !words || hybridRunning;
   $('hybrid-run').disabled = !words || hybridRunning;
   $('hybrid-results').replaceChildren();
-  $('hybrid-status').textContent = hybridRunning ? 'Comparison running; results for edited text will be discarded.' : '';
+  $('hybrid-heading').textContent = 'Ready when you are.';
+  $('hybrid-status').textContent = hybridRunning ? 'The earlier check is finishing. Check your edited text once it is done.' : 'Paste a passage above and choose Check text.';
   $('analyze').replaceChildren(document.createTextNode('Analyze writing '), node('span', '↗'));
   $('workspace').setAttribute('aria-busy', 'false');
   message('notice', staleNotice ? 'The input changed. Analyze again to refresh the assessment and revisions.' : '');
@@ -410,11 +411,53 @@ $('export').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([JSON.stringify(lastReport, null, 2)], {type: 'application/json'}));
   const link = node('a'); link.href = url; link.download = 'turingtint-writing-report.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
+function signalScore(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1) throw new Error('Invalid model score.');
+  if (value > 0 && value < 0.001) return '<0.001';
+  if (value < 1 && value > 0.999) return '>0.999';
+  return value.toFixed(3);
+}
+
+function renderHybrid(result) {
+  if (typeof result.disagreement !== 'boolean' || typeof result.coverage_complete !== 'boolean') throw new Error('Incomplete comparison.');
+  // Validate all scores before adding any part of the result to the page.
+  signalScore(result.score_ai); signalScore(result.score_spread);
+  result.components.forEach(component => signalScore(component.score_ai));
+  $('hybrid-heading').textContent = result.disagreement ? 'The models disagree.' : 'The models give similar scores.';
+  $('hybrid-status').textContent = result.disagreement
+    ? 'Treat this check as inconclusive. The detectors gave different signals for the same text.'
+    : 'Agreement is one observation. It still cannot confirm who wrote this text.';
+  const container = $('hybrid-results');
+  container.append(node('p', result.coverage_complete ? 'Both models read your full text.' : 'At least one model read only the beginning. This check does not cover the full text in every model.',
+    result.coverage_complete ? 'coverage-note complete' : 'coverage-note partial'));
+  container.append(node('p', 'Scores run from 0 to 1. A higher value means a stronger AI-pattern signal. These scores are not authorship probabilities.', 'score-explanation'));
+  const cards = node('div', undefined, 'simple-models');
+  const details = node('details', undefined, 'score-details');
+  details.append(node('summary', 'Technical details & limitations'));
+  for (const component of result.components) {
+    const name = component.member === 'distilbert' ? 'DistilBERT' : component.member === 'modernbert' ? 'ModernBERT' : component.model_id;
+    const card = node('article', undefined, 'simple-model');
+    const heading = node('div', undefined, 'simple-model-heading');
+    heading.append(node('h3', name), node('strong', signalScore(component.score_ai), 'signal-score'));
+    const meter = node('meter'); meter.min = 0; meter.max = 1; meter.value = component.score_ai;
+    meter.setAttribute('aria-label', `${name} AI-pattern signal: ${component.score_ai}`);
+    const scale = node('div', undefined, 'signal-scale'); scale.append(node('span', 'Lower AI signal'), node('span', 'Higher AI signal'));
+    card.append(heading, meter, scale, node('p', component.truncated ? 'Only the beginning was checked.' : 'Full text checked.', 'model-coverage'));
+    cards.append(card);
+    details.append(node('h4', component.model_id), node('p', `Exact score: ${rawScore(component.score_ai)}. ${component.input_tokens} of ${component.original_tokens} tokens read; limit ${component.max_tokens}.`));
+  }
+  details.append(node('p', `Experimental average: ${rawScore(result.score_ai)}. Score difference: ${rawScore(result.score_spread)}. The average is not a percentage of AI-written text.`));
+  const limits = node('ul'); strings(result.limitations).forEach(value => limits.append(node('li', value))); details.append(limits);
+  container.append(cards, details);
+}
+
 $('hybrid-run').addEventListener('click', async () => {
   if (hybridRunning || (currentRun && currentRun.running) || !passage.value.trim()) return;
   const text = passage.value, inputRevision = revision, requestId = `hybrid-${Date.now()}-${++sequence}`;
   hybridRunning = true; $('hybrid-run').disabled = true; $('analyze').disabled = true;
-  $('hybrid-results').replaceChildren(); $('hybrid-status').textContent = 'Comparing pretrained models locally. First use loads the checkpoints.';
+  $('hybrid-results').replaceChildren(); $('hybrid-heading').textContent = 'Checking your text…';
+  $('hybrid-status').textContent = 'Two local models are reading your passage. First use may take a little longer.';
+  $('hybrid-run').textContent = 'Checking…'; $('hybrid-panel').setAttribute('aria-busy', 'true');
   const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 300000);
   try {
     const response = await fetch('/api/research/hybrid', {method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -424,22 +467,16 @@ $('hybrid-run').addEventListener('click', async () => {
     if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Hybrid comparison failed.');
     if (result.request_id !== requestId || result.product_approved !== false || result.status !== 'experimental'
         || !Array.isArray(result.components) || result.components.length < 2) throw new Error('Unexpected hybrid result.');
-    $('hybrid-status').textContent = 'Comparison complete. Authorship remains unverified.';
-    const container = $('hybrid-results');
-    container.append(node('p', `Experimental mean: ${rawScore(result.score_ai)}. Score spread: ${rawScore(result.score_spread)}.`));
-    container.append(node('p', `Disagreement: ${result.disagreement ? 'yes' : 'no'}. Every model covered the full passage: ${result.coverage_complete ? 'yes' : 'no'}.`));
-    for (const component of result.components) {
-      const card = node('article', undefined, 'model-card');
-      card.append(node('h3', component.model_id), node('p', `Model score: ${rawScore(component.score_ai)}`),
-        node('p', `${component.input_tokens} of ${component.original_tokens} tokens; limit ${component.max_tokens}. ${component.truncated ? 'Truncated: only the beginning was scored.' : 'Full passage fitted.'}`));
-      container.append(card);
-    }
-    const limits = node('ul'); strings(result.limitations).forEach(value => limits.append(node('li', value))); container.append(limits);
+    renderHybrid(result);
   } catch (error) {
-    if (revision === inputRevision) $('hybrid-status').textContent = error.name === 'AbortError'
-      ? 'Request timed out; the server may still be processing. Wait before retrying.' : error.message;
+    if (revision === inputRevision) {
+      $('hybrid-heading').textContent = 'The check could not finish.';
+      $('hybrid-status').textContent = error.name === 'AbortError'
+        ? 'The server may still be processing. Wait a moment before trying again.' : error.message;
+    }
   } finally {
     clearTimeout(timeout); hybridRunning = false;
+    $('hybrid-run').textContent = 'Check text'; $('hybrid-panel').setAttribute('aria-busy', 'false');
     $('hybrid-run').disabled = !passage.value.trim();
     $('analyze').disabled = !passage.value.trim() || Boolean(currentRun && currentRun.running);
   }

@@ -13,8 +13,8 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-hybrid.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
-Open http://127.0.0.1:8765, enter text and click **Compare pretrained models**.
-The existing **Analyze writing** button still uses the historical MAGE/TF-IDF
+Open http://127.0.0.1:8765, enter text and click **Check text**.
+Under **More tools & sample texts**, **Analyze writing** still uses the historical MAGE/TF-IDF
 workflow and needs its separate model artifacts. The new hybrid panel works
 without those artifacts or a source corpus.
 

@@ -4,48 +4,56 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Explore AI-writing signals and get explained revisions in a local writing workspace.">
-  <title>TuringTint · Writing workbench</title>
+  <title>TuringTint - Check your text</title>
   <link rel="stylesheet" href="/static/styles.css">
   <script src="/static/app.js" defer></script>
 </head>
-<body>
+<body class="simple-checker">
   <header class="topbar">
     <a class="brand" href="/" aria-label="TuringTint home"><span class="brand-mark">t<span>.</span></span><span>TuringTint</span></a>
-    <nav aria-label="Main"><a class="active" href="#workspace">Workbench</a><a href="#method">How it works</a></nav>
+    <nav aria-label="Main"><a class="active" href="#workspace">Check text</a><a href="#method">How it works</a></nav>
     <span id="privacy-badge" class="local-badge"><i></i> Local by default</span>
   </header>
   <main>
     <section class="intro">
-      <div class="eyebrow">THE WRITING LABORATORY <span class="edition">EXPERIMENTAL WORKBENCH</span></div>
-      <h1>AI signals.<br><em>Better writing.</em></h1>
-      <p>Explore highlighted passages and get specific revisions<br class="desktop-break"> with explanations for what to change and why.</p>
+      <div class="eyebrow">LOCAL TEXT CHECKER</div>
+      <h1>Check for AI-writing signals.</h1>
+      <p>Paste your text. Compare two detectors. Understand where they agree.</p>
     </section>
     <section id="workspace" class="workspace" aria-label="Writing analysis">
       <div class="editor-panel">
         <div class="panel-heading"><div><span class="step">01</span><h2>Your writing</h2></div><button id="new-writing" class="text-button" type="button">New writing</button></div>
+        <label for="passage" class="sr-only">Paste English academic or student writing, including multiple paragraphs</label>
+        <textarea id="passage" maxlength="30000" placeholder="Paste the text you want to check..." spellcheck="false"></textarea>
+        <div class="editor-meta"><span id="word-count">0 words · 0 characters</span><span>English text</span></div>
+        <div class="check-actions">
+          <p>Processed on this computer. Your text is not saved.</p>
+          <button id="hybrid-run" class="primary-button" type="button" disabled>Check text <span aria-hidden="true">&#8594;</span></button>
+        </div>
+        <details id="advanced-tools" class="advanced-tools">
+          <summary>More tools &amp; sample texts</summary>
+          <p class="advanced-description">Sample texts, the earlier detector, writing feedback and source matching. The earlier detector and coach need their own model setup.</p>
+          <p class="experiment-note">The earlier analysis uses MAGE as its primary signal and TF-IDF as a comparison. Its highlights and writing suggestions are experimental and do not prove authorship.</p>
         <div class="case-picker"><label for="example-case">Reference case</label><select id="example-case" disabled><option>Loading cases…</option></select><button id="example" class="secondary-button" type="button" disabled>Load case</button></div>
         <div id="case-info" class="case-info" hidden><span id="case-kind" class="pill muted"></span><strong id="case-title"></strong><p id="case-purpose"></p><details><summary>Provenance and what to observe</summary><p id="case-description"></p><p id="case-expectation"></p><div id="case-source"></div><p>These labels describe how the reference case was collected or constructed, not the detector's result.</p></details></div>
-        <label for="passage" class="sr-only">Paste English academic or student writing, including multiple paragraphs</label>
-        <textarea id="passage" maxlength="30000" placeholder="Paste your paragraph or essay excerpt here. Line breaks are preserved." spellcheck="false"></textarea>
-        <div class="editor-meta"><span id="word-count">0 words · 0 characters</span><span>English academic &amp; student writing</span></div>
         <div class="feedback-setting"><label><input id="include-feedback" type="checkbox" checked> Include writing feedback</label><span id="feedback-mode">Detector, sources, and explained revisions</span></div>
         <div class="editor-settings"><label for="coach-provider">Revision coach</label><select id="coach-provider"><option value="local">Local model</option></select><span id="coach-availability">Checking availability…</span></div>
         <div class="editor-actions"><p id="privacy-note"><span class="small-dot"></span>Your writing stays on this machine.</p><button id="analyze" class="primary-button" type="button" disabled>Analyze writing <span>↗</span></button></div>
+        </details>
         <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
       </div>
       <aside class="overview-panel">
-        <span class="step">ONE ANALYSIS</span><h2>Signals to action.</h2>
-        <div class="signal-item"><span class="signal-icon">∴</span><div><h3>Model assessment</h3><p>Compare detector signals and inspect the context blocks behind them.</p><span id="detector-ready" class="pill muted">Checking local models</span></div></div>
-        <div class="signal-item"><span class="signal-icon">↗</span><div><h3>Explained revisions</h3><p>A writing coach suggests specific changes, reasons, and optional rewrites.</p></div></div>
-        <div class="signal-item"><span class="signal-icon">≋</span><div><h3>Source evidence</h3><p>Shared wording is checked against your local reference library.</p><span id="corpus-count" class="pill muted">Checking library</span></div></div>
+        <span class="eyebrow">WHAT YOU WILL SEE</span>
+        <h2>Two opinions.<br>A clearer picture.</h2>
+        <div class="signal-item"><span class="signal-icon">1</span><div><h3>Compare the signals</h3><p>Each detector gives its own score. Different scores can mean an inconclusive result.</p></div></div>
+        <div class="signal-item"><span class="signal-icon">2</span><div><h3>Check what was read</h3><p>We show whether both models read your whole text.</p></div></div>
+        <p class="simple-caveat">AI detectors can be wrong. A score cannot prove who wrote a passage.</p>
+        <details class="library-details"><summary>Other tools available</summary><p id="detector-ready">Checking earlier models</p><p id="corpus-count">Checking source library</p></details>
       </aside>
     </section>
-    <p class="experiment-note"><strong>Experimental.</strong> Model signals and writing suggestions can be wrong. MAGE supplies the primary signal; TF-IDF provides a separate comparison. Highlights do not prove authorship.</p>
-    <section class="diagnostics" id="hybrid-panel" aria-labelledby="hybrid-heading">
-      <h2 id="hybrid-heading">Pretrained hybrid comparison</h2>
-      <p>Compare DistilBERT and ModernBERT locally, with no training. Scores are experimental signals, not proof of authorship.</p>
-      <button id="hybrid-run" class="secondary-button" type="button" disabled>Compare pretrained models</button>
-      <p id="hybrid-status" role="status" aria-live="polite"></p>
+    <section id="hybrid-panel" class="check-result" aria-labelledby="hybrid-heading">
+      <div class="result-heading"><span class="eyebrow">YOUR RESULT</span><h2 id="hybrid-heading">Ready when you are.</h2></div>
+      <p id="hybrid-status" role="status" aria-live="polite">Paste a passage above and choose Check text.</p>
       <div id="hybrid-results"></div>
     </section>
     <section id="comparison" class="comparison-panel" hidden aria-labelledby="comparison-heading"><div class="comparison-heading"><div><span class="eyebrow">REVISION CHECK</span><h2 id="comparison-heading">Original → revised</h2></div><button id="reset-comparison" class="text-button" type="button">Clear comparison</button></div><p id="comparison-status" class="muted-copy"></p><table class="comparison-counts"><thead><tr><th scope="col">Text size</th><th scope="col">Original</th><th scope="col">Revised</th></tr></thead><tbody><tr><th scope="row">Characters</th><td id="comparison-original-characters"></td><td id="comparison-revised-characters"></td></tr><tr><th scope="row" title="Whitespace-separated words">Words</th><td id="comparison-original-words"></td><td id="comparison-revised-words"></td></tr></tbody></table><div id="comparison-signals"></div><p class="comparison-note">Signals can change after an edit without proving authorship. Versions stay in this page's memory until you clear them or leave.</p><details><summary>Read both versions</summary><div class="version-texts"><div><h3>Original</h3><p id="comparison-original-text"></p></div><div><h3>Revised</h3><p id="comparison-revised-text"></p></div></div></details></section>
@@ -77,8 +85,11 @@
         <div class="source-grid"><div id="source-annotated-text" class="annotated-text"></div><div id="source-cards"></div></div><div id="source-suggestions"></div>
       </details>
     </section>
-    <section id="method" class="method"><div><span class="eyebrow">HOW IT WORKS</span><h2>One passage.<br>Three perspectives.</h2></div><div class="method-grid"><article><span>01 / DETECTORS</span><h3>Compare model signals</h3><p>Local classifiers estimate how your writing resembles their training examples. Disagreement remains visible.</p></article><article><span>02 / REVISIONS</span><h3>Make considered changes</h3><p>The coach explains its suggestions. Review each rewrite, preserve your facts and citations, then analyze again.</p></article><article><span>03 / SOURCES</span><h3>Check the actual evidence</h3><p>Source matches show shared wording in your local library. Matching text alone does not establish plagiarism.</p></article></div></section>
+    <section id="method" class="simple-method">
+      <h2>How to use the result</h2>
+      <div><article><h3>Compare, then question</h3><p>Different models can give different answers to the same text. Disagreement is a reason to be cautious.</p></article><article><h3>Look beyond the score</h3><p>Use drafts, sources and context when reviewing writing. A detector result alone does not establish authorship.</p></article></div>
+    </section>
   </main>
-  <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>EXPERIMENTAL WRITING WORKBENCH</span></footer>
+  <footer><span class="brand-small">TuringTint</span><span>Built for thoughtful writing.</span><span>LOCAL / EXPERIMENTAL</span></footer>
 </body>
 </html>

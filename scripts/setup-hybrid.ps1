@@ -15,4 +15,4 @@ if (Get-Command uv -ErrorAction SilentlyContinue) {
 if ($LASTEXITCODE -ne 0) { throw 'Hybrid dependency installation failed.' }
 & $pythonPath -m detector_models.hybrid download
 if ($LASTEXITCODE -ne 0) { throw 'Pinned model acquisition failed.' }
-Write-Output 'Hybrid ready. Start scripts/start.ps1 and use Compare pretrained models.'
+Write-Output 'Hybrid ready. Start scripts/start.ps1 and use Check text.'

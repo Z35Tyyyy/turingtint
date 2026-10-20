@@ -136,6 +136,7 @@ def run():
             page.route('**/api/workbench/analyze', model_route)
             page.route('**/api/coach/review', coach_route)
             page.goto(base, wait_until='networkidle')
+            page.locator('#advanced-tools > summary').click()
             assert page.locator('#coach-provider').input_value() == 'local'
             assert page.locator('#coach-provider option[value="openai"]').count() == 0
             assert page.locator('#research-analyze').count() == 0
@@ -440,6 +441,7 @@ def run():
 
             mode['openai'] = True
             page.reload(wait_until='networkidle')
+            page.locator('#advanced-tools > summary').click()
             count_before = len(calls['coach'])
             assert page.locator('#coach-provider').input_value() == 'local'
             page.locator('#passage').fill(multiline)

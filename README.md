@@ -3,7 +3,7 @@
 A local writing-analysis workspace for English academic and student prose.
 
 **Pretrained hybrid v2:** run `scripts/setup-hybrid.ps1`, then `scripts/start.ps1`
-and use **Compare pretrained models**. This combines local DistilBERT and
+and use **Check text**. This combines local DistilBERT and
 ModernBERT without training or the historical research artifacts. It shows
 individual scores, disagreement and truncation; authorship remains unverified.
 See [setup, optional Desklib and verification](research/hybrid-v2.md).
