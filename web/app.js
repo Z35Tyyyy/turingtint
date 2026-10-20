@@ -147,16 +147,10 @@ function updateInput(options = {}) {
   const {words, characters} = textCounts(passage.value);
   $('word-count').textContent = `${words.toLocaleString()} words · ${characters.toLocaleString()} characters`;
   $('analyze').disabled = !words || hybridRunning || simpleCoachRunning || capabilities?.detector?.available !== true;
-  $('hybrid-run').disabled = !words || hybridRunning || simpleCoachRunning;
-  $('simple-coach-results').replaceChildren();
-  refreshSimpleCoach();
-  $('hybrid-results').replaceChildren();
-  $('hybrid-heading').textContent = 'Ready when you are.';
-  $('hybrid-status').textContent = hybridRunning ? 'The earlier check is finishing. Check your edited text once it is done.' : 'Paste a passage above and choose Check text.';
   $('analyze').replaceChildren(document.createTextNode('Analyze writing '), node('span', '↗'));
   $('workspace').setAttribute('aria-busy', 'false');
   message('notice', staleNotice ? 'The input changed. Analyze again to refresh the assessment and revisions.' : '');
-  refreshCase(); renderComparison();
+  refreshCase(); renderComparison(); reviewInputChanged(options);
 }
 passage.addEventListener('input', updateInput);
 $('coach-provider').addEventListener('change', () => { updateInput(); refreshPrivacy(); });
@@ -169,12 +163,12 @@ async function loadCapabilities() {
     if (!response.ok) throw new Error('Status unavailable');
     capabilities = await response.json();
     $('detector-ready').textContent = capabilities.detector?.available ? 'Local models available' : 'Detector unavailable';
-    $('analyze').title = capabilities.detector?.available ? '' : 'Earlier MAGE/TF-IDF files are missing. Use Check text above.';
+    $('analyze').title = capabilities.detector?.available ? '' : 'Earlier MAGE/TF-IDF files are missing. Use Review text above.';
     if (capabilities.coaching?.openai?.available === true) {
       const option = node('option', 'OpenAI · sends passage to OpenAI'); option.value = 'openai'; $('coach-provider').append(option);
     }
   } catch (_) { $('detector-ready').textContent = 'Availability unknown'; }
-  refreshPrivacy(); refreshSimpleCoach();
+  refreshPrivacy(); refreshReviewControls();
 }
 async function loadCorpus() {
   try {
@@ -375,8 +369,8 @@ async function component(run, name, path, timeoutMs, render, extra = {}) {
   } finally { clearTimeout(timeout); delete run.controllers[name]; }
 }
 $('analyze').addEventListener('click', async () => {
-  if (hybridRunning || simpleCoachRunning || !passage.value.trim() || (currentRun && currentRun.running)) return;
-  if (capabilities?.detector?.available !== true) { message('notice', 'The earlier detector is not installed. Use Check text for the hybrid detector.'); return; }
+  if (reviewBusy() || hybridRunning || simpleCoachRunning || !passage.value.trim()) return;
+  if (capabilities?.detector?.available !== true) { message('notice', 'The earlier detector is not installed. Use Review text for the hybrid detector.'); return; }
   const provider = $('coach-provider').value;
   const includeFeedback = $('include-feedback').checked;
   if (includeFeedback && provider === 'openai' && capabilities?.coaching?.openai?.available !== true) { message('notice', 'OpenAI coaching is not configured. Select the local coach.'); return; }
@@ -384,7 +378,7 @@ $('analyze').addEventListener('click', async () => {
   run.report = {request_id: run.id, created_at: new Date().toISOString(), text: run.text, include_writing_feedback: includeFeedback, coaching_provider: includeFeedback ? provider : null, experimental: true, product_approved: false,
     reference_case: selectedExample ? {id: selectedExample.id, title: selectedExample.title, provenance: selectedExample.provenance, modified: selectedExample.text !== run.text} : null,
     workbench: null, coaching: null, source: null, comparison: null, errors: {}, component_status: {workbench: 'queued', coaching: includeFeedback ? 'queued' : 'skipped', source: 'queued'}};
-  currentRun = run; lastReport = run.report; staleNotice = false;
+  currentRun = run; lastReport = run.report; staleNotice = false; refreshReviewControls();
   $('analyze').disabled = true; $('analyze').textContent = 'Analyzing writing…'; $('workspace').setAttribute('aria-busy', 'true'); message('notice', ''); prepareResults(run);
   const source = component(run, 'source', '/api/analyze', 60000, renderSource);
   const modelsThenCoach = (async () => {
@@ -394,7 +388,7 @@ $('analyze').addEventListener('click', async () => {
     await component(run, 'coaching', '/api/coach/review', 180000, renderCoach, {provider});
   })();
   await Promise.allSettled([source, modelsThenCoach]);
-  if (isCurrent(run)) { run.running = false; $('analyze').disabled = false; $('analyze').replaceChildren(document.createTextNode('Analyze writing '), node('span', '↗')); $('workspace').setAttribute('aria-busy', 'false'); }
+  if (isCurrent(run)) { run.running = false; $('analyze').disabled = false; $('analyze').replaceChildren(document.createTextNode('Analyze writing '), node('span', '↗')); $('workspace').setAttribute('aria-busy', 'false'); refreshReviewControls(); }
 });
 $('example').addEventListener('click', () => {
   const example = examples.find(item => item.id === $('example-case').value); if (!example) return;
@@ -416,166 +410,3 @@ $('export').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([JSON.stringify(lastReport, null, 2)], {type: 'application/json'}));
   const link = node('a'); link.href = url; link.download = 'turingtint-writing-report.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
-function signalScore(value) {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1) throw new Error('Invalid model score.');
-  if (value > 0 && value < 0.001) return '<0.001';
-  if (value < 1 && value > 0.999) return '>0.999';
-  return value.toFixed(3);
-}
-
-function renderSentenceSignals(data, text, container) {
-  if (!data) return;
-  const labels = {stronger: 'Stronger AI signal', weaker: 'Weaker AI signal', disagree: 'Models disagree', uncertain: 'Uncertain signal', unscored: 'Not scored'};
-  if (data.offset_encoding !== 'utf-16' || !Array.isArray(data.segments)) throw new Error('Invalid sentence offsets.');
-  let previous = 0;
-  for (const segment of data.segments) {
-    if (!Number.isInteger(segment.start) || !Number.isInteger(segment.end) || segment.start < previous || segment.end <= segment.start || segment.end > text.length || !labels[segment.label]) throw new Error('Invalid sentence coverage.');
-    previous = segment.end;
-  }
-  const section = node('section', undefined, 'sentence-signals');
-  section.append(node('h3', 'Signals in your text'), node('p', 'Select a sentence to inspect its scores. Short sentences have limited context; colors do not prove authorship.', 'score-explanation'));
-  const legend = node('div', undefined, 'sentence-legend');
-  for (const [key, label] of Object.entries(labels)) legend.append(node('span', label, `sentence-${key}`));
-  const excerpt = node('div', undefined, 'sentence-excerpt');
-  const detail = node('p', 'Select a highlighted sentence for details.', 'sentence-detail');
-  detail.setAttribute('aria-live', 'polite');
-  let cursor = 0;
-  for (const segment of data.segments) {
-    excerpt.append(document.createTextNode(text.slice(cursor, segment.start)));
-    const mark = node('span', text.slice(segment.start, segment.end), `sentence-mark sentence-${segment.label}`);
-    mark.tabIndex = 0; mark.setAttribute('role', 'button');
-    const warning = segment.low_context ? ' Limited context: fewer than 40 words.' : '';
-    mark.setAttribute('aria-label', `${labels[segment.label]}.${warning} ${text.slice(segment.start, segment.end)}`);
-    const show = () => {
-      const scores = Array.isArray(segment.scores) ? segment.scores.map(c => `${c.model}: ${signalScore(c.score_ai)}`).join(' · ') : '';
-      detail.textContent = `${labels[segment.label]}. ${scores ? scores + '.' : ''}${warning} ${segment.reason || ''}`;
-      excerpt.querySelectorAll('[aria-pressed]').forEach(el => el.setAttribute('aria-pressed', 'false'));
-      mark.setAttribute('aria-pressed', 'true');
-    };
-    mark.setAttribute('aria-pressed', 'false');
-    mark.addEventListener('click', show);
-    mark.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); show(); } });
-    excerpt.append(mark); cursor = segment.end;
-  }
-  excerpt.append(document.createTextNode(text.slice(cursor)));
-  section.append(legend, excerpt, detail);
-  if (!data.complete) section.append(node('p', 'Some text could not be scored and remains neutral. Select it to see why.', 'score-explanation'));
-  container.append(section);
-}
-
-function renderHybrid(result, text) {
-  if (typeof result.disagreement !== 'boolean' || typeof result.coverage_complete !== 'boolean') throw new Error('Incomplete comparison.');
-  // Validate all scores before adding any part of the result to the page.
-  signalScore(result.score_ai); signalScore(result.score_spread);
-  result.components.forEach(component => signalScore(component.score_ai));
-  $('hybrid-heading').textContent = result.disagreement ? 'The models disagree.' : 'The models give similar scores.';
-  $('hybrid-status').textContent = result.disagreement
-    ? 'Treat this check as inconclusive. The detectors gave different signals for the same text.'
-    : 'Agreement is one observation. It still cannot confirm who wrote this text.';
-  const container = $('hybrid-results');
-  container.append(node('p', result.coverage_complete ? 'Both models read your full text.' : 'At least one model read only the beginning. This check does not cover the full text in every model.',
-    result.coverage_complete ? 'coverage-note complete' : 'coverage-note partial'));
-  renderSentenceSignals(result.sentence_signals, text, container);
-  container.append(node('p', 'Scores run from 0 to 1. A higher value means a stronger AI-pattern signal. These scores are not authorship probabilities.', 'score-explanation'));
-  const cards = node('div', undefined, 'simple-models');
-  const details = node('details', undefined, 'score-details');
-  details.append(node('summary', 'Technical details & limitations'));
-  for (const component of result.components) {
-    const name = component.member === 'distilbert' ? 'DistilBERT' : component.member === 'modernbert' ? 'ModernBERT' : component.model_id;
-    const card = node('article', undefined, 'simple-model');
-    const heading = node('div', undefined, 'simple-model-heading');
-    heading.append(node('h3', name), node('strong', signalScore(component.score_ai), 'signal-score'));
-    const meter = node('meter'); meter.min = 0; meter.max = 1; meter.value = component.score_ai;
-    meter.setAttribute('aria-label', `${name} AI-pattern signal: ${component.score_ai}`);
-    const scale = node('div', undefined, 'signal-scale'); scale.append(node('span', 'Lower AI signal'), node('span', 'Higher AI signal'));
-    card.append(heading, meter, scale, node('p', component.truncated ? 'Only the beginning was checked.' : 'Full text checked.', 'model-coverage'));
-    cards.append(card);
-    details.append(node('h4', component.model_id), node('p', `Exact score: ${rawScore(component.score_ai)}. ${component.input_tokens} of ${component.original_tokens} tokens read; limit ${component.max_tokens}.`));
-  }
-  details.append(node('p', `Experimental average: ${rawScore(result.score_ai)}. Score difference: ${rawScore(result.score_spread)}. The average is not a percentage of AI-written text.`));
-  const limits = node('ul'); strings(result.limitations).forEach(value => limits.append(node('li', value))); details.append(limits);
-  container.append(cards, details);
-}
-
-$('hybrid-run').addEventListener('click', async () => {
-  if (hybridRunning || simpleCoachRunning || (currentRun && currentRun.running) || !passage.value.trim()) return;
-  const text = passage.value, inputRevision = revision, requestId = `hybrid-${Date.now()}-${++sequence}`;
-  hybridRunning = true; $('hybrid-run').disabled = true; $('analyze').disabled = true;
-  refreshSimpleCoach();
-  $('hybrid-results').replaceChildren(); $('hybrid-heading').textContent = 'Checking your text…';
-  $('hybrid-status').textContent = 'Two local models are reading your passage. First use may take a little longer.';
-  $('hybrid-run').textContent = 'Checking…'; $('hybrid-panel').setAttribute('aria-busy', 'true');
-  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 300000);
-  try {
-    const response = await fetch('/api/research/hybrid', {method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({text, request_id: requestId}), signal: controller.signal});
-    const result = await response.json();
-    if (revision !== inputRevision || passage.value !== text) return;
-    if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Hybrid comparison failed.');
-    if (result.request_id !== requestId || result.product_approved !== false || result.status !== 'experimental'
-        || !Array.isArray(result.components) || result.components.length < 2) throw new Error('Unexpected hybrid result.');
-    renderHybrid(result, text);
-  } catch (error) {
-    if (revision === inputRevision) {
-      $('hybrid-heading').textContent = 'The check could not finish.';
-      $('hybrid-status').textContent = error.name === 'AbortError'
-        ? 'The server may still be processing. Wait a moment before trying again.' : error.message;
-    }
-  } finally {
-    clearTimeout(timeout); hybridRunning = false;
-    $('hybrid-run').textContent = 'Check text'; $('hybrid-panel').setAttribute('aria-busy', 'false');
-    $('hybrid-run').disabled = !passage.value.trim();
-    $('analyze').disabled = !passage.value.trim() || Boolean(currentRun && currentRun.running) || capabilities?.detector?.available !== true;
-    refreshSimpleCoach();
-  }
-});
-function refreshSimpleCoach() {
-  const available = capabilities?.coaching?.local?.available === true;
-  $('coach-run').disabled = !available || !passage.value.trim() || hybridRunning || simpleCoachRunning || Boolean(currentRun && currentRun.running);
-  if (simpleCoachRunning) $('simple-coach-status').textContent = 'The local coach is reviewing your text. This may take up to two minutes.';
-  else if (!$('simple-coach-results').childElementCount) $('simple-coach-status').textContent = !capabilities
-    ? 'Checking local coach availability...'
-    : available ? 'Local coach ready. Your text stays on this computer.'
-    : 'Local writing model is not installed. Run scripts/setup-coach-cpu.ps1 and restart the app.';
-}
-
-$('coach-run').addEventListener('click', async () => {
-  if ($('coach-run').disabled || hybridRunning || simpleCoachRunning) return;
-  const text = passage.value, inputRevision = revision, requestId = `coach-${Date.now()}-${++sequence}`;
-  simpleCoachRunning = true; refreshSimpleCoach(); $('hybrid-run').disabled = true; $('analyze').disabled = true;
-  $('simple-coach-results').replaceChildren();
-  const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 180000);
-  try {
-    const response = await fetch('/api/coach/review', {method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({text, provider: 'local', request_id: requestId}), signal: controller.signal});
-    const result = await response.json();
-    if (revision !== inputRevision || passage.value !== text) return;
-    if (!response.ok || result.status !== 'complete') throw new Error(result.reason || result.detail || 'The writing review could not finish.');
-    if (result.request_id !== requestId || !Array.isArray(result.suggestions) || result.authorship_opinion !== 'not_provided') throw new Error('Invalid writing feedback.');
-    const target = $('simple-coach-results');
-    $('simple-coach-status').textContent = result.suggestions.length ? `${result.suggestions.length} ${result.suggestions.length === 1 ? 'suggestion' : 'suggestions'} to review.` : 'No specific edits returned for this passage.';
-    target.append(node('p', 'The model selects issues and proposed wording. Explanations below use fixed editorial guidance.', 'score-explanation'));
-    for (const suggestion of result.suggestions) {
-      if (!validRange(suggestion, text, 'quote')) continue;
-      const card = node('article', undefined, 'revision-card');
-      card.append(node('h3', suggestion.issue), node('blockquote', suggestion.quote), node('p', suggestion.why), node('p', suggestion.suggestion));
-      const locate = node('button', 'Show this sentence', 'secondary-button'); locate.type = 'button';
-      locate.addEventListener('click', () => { if (passage.value === text) { passage.focus(); passage.setSelectionRange(suggestion.start, suggestion.end); passage.scrollIntoView({block: 'center', behavior: 'smooth'}); } });
-      card.append(locate);
-      if (suggestion.rewrite) card.append(node('h4', 'Suggested wording'), node('blockquote', suggestion.rewrite));
-      target.append(card);
-    }
-    const limits = node('details', undefined, 'score-details'); limits.append(node('summary', 'Coach details and limits'), node('p', result.model));
-    const items = node('ul'); strings(result.limitations).forEach(value => items.append(node('li', value))); limits.append(items); target.append(limits);
-  } catch (error) {
-    if (revision === inputRevision) {
-      $('simple-coach-status').textContent = 'Writing feedback unavailable.';
-      $('simple-coach-results').append(node('p', error.name === 'AbortError' ? 'The server may still be working. Wait before retrying.' : error.message, 'notice'));
-    }
-  } finally {
-    clearTimeout(timer); simpleCoachRunning = false; refreshSimpleCoach();
-    $('hybrid-run').disabled = !passage.value.trim() || hybridRunning;
-    $('analyze').disabled = !passage.value.trim() || hybridRunning || capabilities?.detector?.available !== true;
-  }
-});
-loadCapabilities(); loadCorpus(); loadExamples(); updateInput();

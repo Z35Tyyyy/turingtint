@@ -49,13 +49,15 @@ def run():
             page.locator('.sentence-mark').first.focus()
             page.keyboard.press('Enter')
             expect(page.locator('.sentence-detail')).to_contain_text('Limited context')
+            page.locator('.sentence-scores summary').click()
             expect(page.locator('.sentence-detail')).to_contain_text('distilbert:')
             out = ROOT / 'outputs/hybrid'
             out.mkdir(parents=True, exist_ok=True)
             page.locator('#hybrid-panel').screenshot(path=str(out / 'browser.png'))
             rendered = page.locator('#hybrid-results').inner_text()
-            assert not page.locator('.score-details').evaluate('(el) => el.open')
+            assert not page.locator('#hybrid-results .score-details').evaluate('(el) => el.open')
             page.screenshot(path=str(out / 'simple-desktop.png'), full_page=True)
+            page.locator('#edit-view').click()
             page.locator('#passage').fill('Different text.')
             expect(page.locator('#hybrid-results')).to_be_empty()
             def disagreement(route):

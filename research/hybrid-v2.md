@@ -13,8 +13,8 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-hybrid.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start.ps1
 ```
 
-Open http://127.0.0.1:8765, enter text and click **Check text**.
-Under **More tools & sample texts**, **Analyze writing** still uses the historical MAGE/TF-IDF
+Open http://127.0.0.1:8765, enter text and click **Review text**.
+Under **Settings & reference tools**, **Analyze writing** still uses the historical MAGE/TF-IDF
 workflow and needs its separate model artifacts. The new hybrid panel works
 without those artifacts or a source corpus.
 
@@ -31,11 +31,17 @@ them. Submitted web text is neither saved nor sent to an external model service.
 `TURINGTINT_COACH_PROFILE` is already set. On other launch paths, set
 `TURINGTINT_COACH_PROFILE=compact` before starting the server.
 
-**Get writing feedback** is a separate local action and does not call the old
-detector. It produces up to two anchored suggestions, with **Show this sentence**
-selecting the original wording. Proposed wording is displayed for review, never
-applied automatically. The model selects issue types and rewrites; explanation
-text comes from fixed editorial guidance. Edited input clears stale feedback.
+**Review text** runs the hybrid check first, then the installed local coach.
+It produces up to two anchored suggestions. Select a sentence in **Highlights**
+or open a suggestion to see its signal, original wording and proposed edit
+together. **Apply suggestion** changes that exact quote; **Undo change** restores
+the previous text until a manual edit. Proposed wording is never applied
+automatically. The model selects issue types and rewrites; explanation text
+comes from fixed editorial guidance. Edited input clears stale feedback and
+offers **Review changes**. Late responses cannot attach to an edited passage.
+Writing suggestions can be switched off in Settings. Missing coaching or a
+failed review component does not hide the other component's results. A failed
+coach request can be retried without rerunning detection.
 The existing input, generation-time, numeric-protection and output-validation
 limits still apply. A small local model can make poor suggestions, so this is
 editing assistance, not fact verification or an authorship assessment.
@@ -52,6 +58,14 @@ the editor text and cleared feedback after edits. The request took about 49
 seconds on this CPU. Earlier prompt attempts misclassified the sentence or
 dropped its cause; the final compact prompt includes a causal editing example.
 This is a targeted smoke check, not an independent evaluation of editing quality.
+
+The unified workspace was also checked with both actual model services in
+Chromium, including Apply/Undo. `evaluation/check_review_browser.py` covers ten
+deterministic browser scenarios: sequential results, exact Unicode offsets,
+safe edits, late responses, isolated failures/retry, missing coaching, Settings,
+and mobile navigation. All 18 historical browser checks and the real hybrid
+browser smoke passed. Desktop/mobile screenshots and receipts are stored under
+ignored `outputs/hybrid/`. No model training or accuracy claims changed.
 
 ## Models and policy
 

@@ -3,17 +3,24 @@
 A local writing-analysis workspace for English academic and student prose.
 
 **Pretrained hybrid v2:** run `scripts/setup-hybrid.ps1`, then `scripts/start.ps1`
-and use **Check text**. This combines local DistilBERT and
+and use **Review text**. This combines local DistilBERT and
 ModernBERT without training or the historical research artifacts. It shows
 individual scores, disagreement and truncation; authorship remains unverified.
 See [setup, optional Desklib and verification](research/hybrid-v2.md).
 
-For the separate **Get writing feedback** button, install the compact local CPU
+To include writing suggestions in the same review, install the compact local CPU
 coach with `scripts/setup-coach-cpu.ps1`, then restart using `scripts/start.ps1`.
 Sentence highlights and writing feedback work without the historical MAGE/TF-IDF
 artifacts. Unavailable historical analysis controls stay disabled.
 
-**Analyze writing** runs two local machine-learning classifiers and a language
+Switch between **Edit text** and **Highlights** in one passage view. Select a
+sentence for its signal and writing suggestions in the side panel. **Apply
+suggestion** updates the passage; **Undo change** restores it until the next
+manual edit. Changes invalidate the review and offer **Review changes**.
+Signals appear before coaching finishes; you can keep editing while it runs.
+Model details and the earlier tools live under **Settings**.
+
+The earlier **Analyze writing** tool runs two local machine-learning classifiers and a language
 model review. The main report shows experimental model leanings, highlights the
 context blocks that were scored, and provides specific revision suggestions with
 the original wording, a reason and a proposed edit. A secondary source panel

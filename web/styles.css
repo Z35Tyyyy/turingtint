@@ -67,3 +67,60 @@
 .sentence-mark{cursor:pointer;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:2px 0}.sentence-mark:focus-visible,.sentence-mark[aria-pressed=true]{outline:2px solid #536f65;outline-offset:2px}
 .sentence-stronger{background:#f7dfd1;color:#583c30}.sentence-weaker{background:#deeee2;color:#2c4b36}.sentence-disagree{background:#e9e0f4;color:#4d3e65}.sentence-uncertain{background:#f4edcf;color:#5c532c}.sentence-unscored{background:transparent;color:inherit;text-decoration:underline dotted #9aa59e;text-underline-offset:4px}
 .sentence-detail{font-size:13px;line-height:1.8;padding:12px 14px;background:#f0f3ef;border-radius:6px;overflow-wrap:anywhere}
+
+/* One passage, with its review beside it. */
+[hidden]{display:none!important}
+.simple-checker .workspace{grid-template-columns:minmax(0,1fr) 360px;align-items:start;overflow:visible}
+.simple-checker .editor-panel{min-width:0;padding:28px}
+.simple-checker textarea{min-height:360px;line-height:1.9;padding:12px;border:1px solid transparent;border-radius:8px}
+.simple-checker textarea:focus-visible{outline:2px solid #88a77c;outline-offset:0}
+.view-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+.view-switch{display:flex;padding:4px;background:#f0f2eb;border:1px solid var(--line);border-radius:8px;gap:4px}
+.view-switch button{border:0;background:transparent;color:var(--sub);font-size:13px;padding:9px 15px;border-radius:5px}
+.view-switch button[aria-pressed=true]{background:var(--white);color:var(--ink);box-shadow:0 1px 4px #233b3412}
+.review-sidebar{padding:28px;background:#f4f6ef;border-left:1px solid var(--line);border-radius:0 12px 12px 0;min-width:0;align-self:start;position:sticky;top:16px;max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-width:thin}
+.review-sidebar h2{font-size:21px;line-height:1.4;margin:12px 0}
+.review-sidebar h3{font-size:15px;line-height:1.5}
+.review-sidebar p,#hybrid-status{font-size:13px;line-height:1.75}
+.review-sidebar #simple-coach{border-top:1px solid var(--line);margin-top:25px;padding-top:25px}
+.review-sidebar .score-details{margin-top:15px;padding-top:12px}
+.review-sidebar .simple-models{grid-template-columns:1fr;margin-top:15px;gap:8px}
+.review-sidebar .simple-model{background:var(--white);padding:12px;display:grid;grid-template-columns:1fr auto;gap:6px}
+.review-sidebar .simple-model h3{margin:0;font-size:13px}
+.review-sidebar .simple-model p{grid-column:1/-1;margin:0;font-size:12px}
+.review-sidebar .signal-score{font-size:17px}
+.review-sidebar .coverage-note{padding:10px;margin:12px 0}
+.sentence-excerpt{font-size:17px;line-height:2.15;min-height:300px;border:0;padding:16px 4px}
+.sentence-legend{margin:20px 0 0;gap:7px;font-size:11px}
+.sentence-mark{padding:3px 0;scroll-margin-top:20px}
+.sentence-mark:hover{box-shadow:0 2px 0 #768e80}
+.selected-quote{font-size:13px;line-height:1.85;margin:12px 0;padding:0 0 0 12px;border-left:3px solid #bdccba;overflow-wrap:anywhere}
+.sentence-detail{background:var(--white);border:1px solid var(--line);padding:14px}
+.sentence-detail p{margin:10px 0 0}.sentence-detail .context-hint{font-size:11px;color:var(--sub)}
+.signal-label{display:inline-block;font-size:12px;border-radius:5px;padding:4px 8px}
+.sentence-scores{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+.sentence-scores summary{cursor:pointer}
+.feedback-empty{color:var(--sub);padding:12px 0}
+.review-sidebar .revision-card{padding:18px 0;border-top:1px solid var(--line);margin-top:20px}
+.review-sidebar .revision-card blockquote{margin:8px 0 18px;padding:10px 12px;font-size:13px;line-height:1.8;background:var(--white);border-left:2px solid #b9c8b6;overflow-wrap:anywhere}
+.review-sidebar .revision-card .suggested-wording{background:#e6eedf}
+.review-sidebar .revision-card h4{font:600 11px var(--sans);letter-spacing:.6px;text-transform:uppercase;margin:16px 0 0}
+.review-sidebar .revision-card .primary-button{font-size:13px;padding:11px 16px}
+.suggestion-link{display:block;width:100%;text-align:left;background:var(--white);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:13px;margin:12px 0}
+.suggestion-link:hover{border-color:#8ea58c}
+.suggestion-link strong{display:block;font-size:13px}
+.suggestion-link span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.7;margin-top:6px;color:var(--sub);overflow-wrap:anywhere}
+.review-progress{margin-top:22px;padding:16px;background:#f3f5ee;border-radius:8px;font-size:12px}
+.review-progress ol{padding:0;margin:0;list-style:none;display:flex;flex-wrap:wrap;gap:12px 22px;color:var(--sub)}
+.review-progress li[data-state=running]{font-weight:650;color:var(--green)}
+.review-progress li[data-state=running]::before{content:'';display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:6px}
+.review-progress li[data-state=done]{color:var(--green)}
+.review-progress li[data-state=error]{color:#87552c}
+.review-progress p{margin:10px 0 0;line-height:1.7;color:var(--sub)}
+.review-setting{display:flex;align-items:center;gap:10px;padding:18px 0 8px;font-size:13px}
+.advanced-tools{padding:20px 24px;border:1px solid var(--line);border-radius:10px;background:#f1f3ec;margin:24px 0}
+.advanced-tools>summary{font-size:13px}
+#sentence-feedback:focus{outline:2px solid #88a77c;outline-offset:5px;border-radius:4px}
+@media(max-width:950px){.simple-checker .workspace{grid-template-columns:minmax(0,1fr) 310px}.simple-checker .editor-panel,.review-sidebar{padding:22px}}
+@media(max-width:760px){.simple-checker .workspace{grid-template-columns:1fr}.review-sidebar{border-left:0;border-top:1px solid var(--line);border-radius:0 0 12px 12px;position:static;max-height:none;overflow:visible}.simple-checker textarea{min-height:260px}.sentence-excerpt{min-height:220px}.simple-checker .topbar{gap:20px}.simple-checker .topbar nav{display:flex;margin-left:auto}.simple-checker nav a:first-child{display:none}.local-badge{display:none}.advanced-tools{padding:18px}.review-sidebar .simple-models{grid-template-columns:1fr 1fr}.simple-checker .intro>p{font-size:14px}.view-switch button{padding:10px 12px}.review-sidebar .suggestion-link{padding:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

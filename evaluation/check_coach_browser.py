@@ -37,10 +37,10 @@ def run():
             page.goto(base)
             text = 'Due to the fact that the weather was rainy, the event was postponed until a later date in the future.'
             page.locator('#passage').fill(text)
-            expect(page.locator('#coach-run')).to_be_enabled()
+            expect(page.locator('#hybrid-run')).to_be_enabled()
             expect(page.locator('#analyze')).to_be_disabled()  # Missing historical MAGE never blocks the coach.
             with page.expect_response(lambda response: response.url.endswith('/api/coach/review'), timeout=180000) as pending:
-                page.locator('#coach-run').click()
+                page.locator('#hybrid-run').click()
                 expect(page.locator('#hybrid-run')).to_be_disabled()
             result = pending.value.json()
             assert result['status'] == 'complete', result.get('reason')
@@ -50,20 +50,23 @@ def run():
                        for item in result['suggestions']), 'The wordiness fixture needs an actual shorter rewrite, not an unrelated issue.'
             assert any('rain' in item['rewrite'].lower() and 'postpon' in item['rewrite'].lower()
                        for item in result['suggestions']), 'The rewrite must retain the cause and outcome: ' + repr(result['suggestions'])
-            expect(page.locator('#simple-coach-results .revision-card')).to_have_count(len(result['suggestions']))
-            page.locator('#simple-coach-results .revision-card button').first.click()
-            selection = page.locator('#passage').evaluate('(el) => el.value.slice(el.selectionStart, el.selectionEnd)')
-            assert selection == result['suggestions'][0]['quote']
+            expect(page.locator('#simple-coach-results .suggestion-link')).to_have_count(len(result['suggestions']))
+            page.locator('#simple-coach-results .suggestion-link').first.click()
+            expect(page.locator('#sentence-feedback')).to_contain_text(result['suggestions'][0]['quote'])
             assert page.locator('#passage').input_value() == text
             out = ROOT / 'outputs/hybrid'; out.mkdir(parents=True, exist_ok=True)
             page.locator('#simple-coach').screenshot(path=str(out / 'coach-browser.png'))
+            page.locator('#sentence-feedback .primary-button').first.click()
+            assert page.locator('#passage').input_value() != text
+            page.locator('#undo-edit').click()
+            assert page.locator('#passage').input_value() == text
             page.locator('#passage').fill('New text.')
             expect(page.locator('#simple-coach-results')).to_be_empty()
             browser.close()
         assert not external and not errors, (external, errors)
         report = dict(status='passed', actual='Local compact Qwen model and Chromium; no mocked coach response.',
-                      checks=['works without historical detector', 'anchored suggestions rendered', 'sentence selection',
-                              'original wording preserved', 'edited text clears feedback', 'no external browser requests'],
+                      checks=['one action runs both real model services', 'works without historical detector', 'anchored suggestions rendered', 'sentence selection',
+                              'original wording preserved until apply', 'apply and undo', 'edited text clears feedback', 'no external browser requests'],
                       review=result, browser_errors=errors, external_requests=external)
         (out / 'coach-browser.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
         print(json.dumps({k: v for k, v in report.items() if k != 'review'}))
