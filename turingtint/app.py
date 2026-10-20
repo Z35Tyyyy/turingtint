@@ -21,6 +21,7 @@ from . import __version__
 from .corpus import ROOT, corpus_summary, default_corpus_path, open_readonly
 from .matching import MAX_QUERY_TOKENS, analyze_sources, suggestions_for
 from .research import ResearchBusy, ResearchDetector, ResearchUnavailable
+from .hybrid import HybridResearch
 from .coaching import WritingCoach
 from .examples import demo_cases
 from .workbench import WorkbenchDetector
@@ -123,12 +124,14 @@ class LocalRequestMiddleware:
 
 
 def create_app(corpus_path: str | Path | None = None, web_path: str | Path | None = None, *, research_detector: ResearchDetector | None = None,
-               workbench_detector: WorkbenchDetector | None = None, writing_coach: WritingCoach | None = None) -> FastAPI:
+               workbench_detector: WorkbenchDetector | None = None, writing_coach: WritingCoach | None = None,
+               hybrid_detector: HybridResearch | None = None) -> FastAPI:
     path = Path(corpus_path) if corpus_path is not None else default_corpus_path()
     frontend = Path(web_path) if web_path is not None else ROOT / "web"
     app = FastAPI(title="TuringTint Local", version=__version__, docs_url=None, redoc_url=None, openapi_url=None)
     scan_slots = threading.BoundedSemaphore(2)
     research = research_detector if research_detector is not None else ResearchDetector()
+    hybrid = hybrid_detector if hybrid_detector is not None else HybridResearch()
     workbench = workbench_detector if workbench_detector is not None else WorkbenchDetector(research_detector=research)
     coach = writing_coach if writing_coach is not None else WritingCoach()
     app.add_middleware(LocalRequestMiddleware)
@@ -191,6 +194,16 @@ def create_app(corpus_path: str | Path | None = None, web_path: str | Path | Non
         except ResearchUnavailable as error:
             raise HTTPException(status_code=503, detail=str(error)) from None
         return {"request_id": payload.request_id or str(uuid.uuid4()), **result}
+
+    @app.post("/api/research/hybrid")
+    def hybrid_analyze(payload: AnalyzeInput):
+        try:
+            result = hybrid.analyze(payload.text)
+        except ResearchBusy as error:
+            raise HTTPException(status_code=409, detail=str(error)) from None
+        except ResearchUnavailable as error:
+            raise HTTPException(status_code=503, detail=str(error)) from None
+        return {**result, "request_id": payload.request_id or str(uuid.uuid4())}
 
     @app.get("/api/example")
     def example():

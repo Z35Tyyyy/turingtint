@@ -1,0 +1,5 @@
+# Standalone pretrained CPU comparison; no training or historical research data needed.
+-r requirements.txt
+torch==2.6.0
+transformers==4.56.2
+safetensors==0.8.0

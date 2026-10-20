@@ -1,0 +1,133 @@
+{
+  "distilbert": {
+    "model_id": "rasbt/ai-text-detector-distilbert",
+    "revision": "66e301801e7057ec118553b8c7ba1b6abd7d2e6b",
+    "max_tokens": 512,
+    "files": {
+      "LICENSE": {
+        "size": 11357,
+        "hash": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+        "kind": "git_blob"
+      },
+      "README.md": {
+        "size": 3183,
+        "hash": "91b53031524a5a4f7933d2eb7ce6c60aaa9943b2",
+        "kind": "git_blob"
+      },
+      "config.json": {
+        "size": 766,
+        "hash": "8d3c473f00bc9e6212e7a29d1ac6853b61511a1b",
+        "kind": "git_blob"
+      },
+      "detector-config.json": {
+        "size": 587,
+        "hash": "16f6a47cbbcfb82f94a0603ebf106bb32f825c06",
+        "kind": "git_blob"
+      },
+      "model.safetensors": {
+        "size": 267832560,
+        "hash": "b463f86f0d63bd20d60655ccae2e57c96f88e2fc06d2a07150bbd44f689b12bb",
+        "kind": "sha256"
+      },
+      "tokenizer.json": {
+        "size": 711494,
+        "hash": "05a08d51432c8ca05501d170fbc36142a93a163e",
+        "kind": "git_blob"
+      },
+      "tokenizer_config.json": {
+        "size": 351,
+        "hash": "fb1d5b6a92c4b6a1cc83ebf75d012bfa57d7e994",
+        "kind": "git_blob"
+      }
+    }
+  },
+  "modernbert": {
+    "model_id": "rasbt/ai-text-detector-modernbert",
+    "revision": "a6efd4bf6ecd852f332b2569ae0f98cae13b7985",
+    "max_tokens": 8192,
+    "files": {
+      "LICENSE": {
+        "size": 11357,
+        "hash": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+        "kind": "git_blob"
+      },
+      "README.md": {
+        "size": 3174,
+        "hash": "baa288842838188d0377013556dabe8f55c9ea1d",
+        "kind": "git_blob"
+      },
+      "config.json": {
+        "size": 2090,
+        "hash": "02fef252420eaef49906b0de4ba1276de9d6cf00",
+        "kind": "git_blob"
+      },
+      "detector-config.json": {
+        "size": 896,
+        "hash": "ac8fa7de2fe045de0b3c932d83fe5769e6a56974",
+        "kind": "git_blob"
+      },
+      "model.safetensors": {
+        "size": 299227092,
+        "hash": "e7f7a617ad4af3abd8bcb939d564d2a2ea36fdb24b893177ae10c12ebe869361",
+        "kind": "sha256"
+      },
+      "tokenizer.json": {
+        "size": 3583228,
+        "hash": "2f4d8583e507b7466d2490e2d6c045647a822698",
+        "kind": "git_blob"
+      },
+      "tokenizer_config.json": {
+        "size": 380,
+        "hash": "58abfae09964980cc64df9ffbd3d683da5c5dcda",
+        "kind": "git_blob"
+      }
+    }
+  },
+  "desklib": {
+    "model_id": "desklib/ai-text-detector-v1.01",
+    "revision": "5fdea974cd4287c61674951ec78803aa274e2fb7",
+    "max_tokens": 768,
+    "files": {
+      "README.md": {
+        "size": 6856,
+        "hash": "51fb028b331fbd7b1786b1f057eb3d76880fd119",
+        "kind": "git_blob"
+      },
+      "added_tokens.json": {
+        "size": 23,
+        "hash": "8ee2b3623dc526b123cde0aaa401755b82299af2",
+        "kind": "git_blob"
+      },
+      "config.json": {
+        "size": 890,
+        "hash": "8461c98809a6dbd9cb48614822890fd5f91aedb9",
+        "kind": "git_blob"
+      },
+      "model.safetensors": {
+        "size": 1736100972,
+        "hash": "c024a1704c65f5a4bffeda58745c58fc0ed67d6ca07b158b068a257238815265",
+        "kind": "sha256"
+      },
+      "special_tokens_map.json": {
+        "size": 286,
+        "hash": "2c9cb07c8fdeeb5ac3ceafb170592e990b204dcd",
+        "kind": "git_blob"
+      },
+      "spm.model": {
+        "size": 2464616,
+        "hash": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+        "kind": "sha256"
+      },
+      "tokenizer.json": {
+        "size": 8656624,
+        "hash": "12cc2e86bad0e731393847b017b32a7405ebd4f8",
+        "kind": "git_blob"
+      },
+      "tokenizer_config.json": {
+        "size": 1315,
+        "hash": "d97990f914148256b78fc640156dbce40981c8f7",
+        "kind": "git_blob"
+      }
+    }
+  }
+}

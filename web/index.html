@@ -41,6 +41,13 @@
       </aside>
     </section>
     <p class="experiment-note"><strong>Experimental.</strong> Model signals and writing suggestions can be wrong. MAGE supplies the primary signal; TF-IDF provides a separate comparison. Highlights do not prove authorship.</p>
+    <section class="diagnostics" id="hybrid-panel" aria-labelledby="hybrid-heading">
+      <h2 id="hybrid-heading">Pretrained hybrid comparison</h2>
+      <p>Compare DistilBERT and ModernBERT locally, with no training. Scores are experimental signals, not proof of authorship.</p>
+      <button id="hybrid-run" class="secondary-button" type="button" disabled>Compare pretrained models</button>
+      <p id="hybrid-status" role="status" aria-live="polite"></p>
+      <div id="hybrid-results"></div>
+    </section>
     <section id="comparison" class="comparison-panel" hidden aria-labelledby="comparison-heading"><div class="comparison-heading"><div><span class="eyebrow">REVISION CHECK</span><h2 id="comparison-heading">Original → revised</h2></div><button id="reset-comparison" class="text-button" type="button">Clear comparison</button></div><p id="comparison-status" class="muted-copy"></p><table class="comparison-counts"><thead><tr><th scope="col">Text size</th><th scope="col">Original</th><th scope="col">Revised</th></tr></thead><tbody><tr><th scope="row">Characters</th><td id="comparison-original-characters"></td><td id="comparison-revised-characters"></td></tr><tr><th scope="row" title="Whitespace-separated words">Words</th><td id="comparison-original-words"></td><td id="comparison-revised-words"></td></tr></tbody></table><div id="comparison-signals"></div><p class="comparison-note">Signals can change after an edit without proving authorship. Versions stay in this page's memory until you clear them or leave.</p><details><summary>Read both versions</summary><div class="version-texts"><div><h3>Original</h3><p id="comparison-original-text"></p></div><div><h3>Revised</h3><p id="comparison-revised-text"></p></div></div></details></section>
     <section id="results" class="results" hidden aria-label="Writing analysis results">
       <div class="results-title"><div><span class="eyebrow">YOUR WRITING, EXAMINED</span><h2>Understand. Then revise.</h2></div><button id="export" class="secondary-button" type="button">Save report ↓</button></div>

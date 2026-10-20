@@ -4,6 +4,7 @@ const passage = $('passage');
 const LABELS = {ai_leaning: 'AI-leaning model signal', human_leaning: 'Human-leaning model signal', inconclusive: 'Inconclusive'};
 const CLASS_NAMES = {ai_leaning: 'lean-ai', human_leaning: 'lean-human', inconclusive: 'lean-inconclusive'};
 const SAMPLE = 'Urban green spaces can contribute to student wellbeing by providing accessible places for exercise, social interaction, and quiet reflection. Trees and vegetation may also reduce local heat and improve the comfort of outdoor study areas. However, the benefits of a new park depend on its location, maintenance, and accessibility. A space that is difficult to reach or feels unsafe may be used less often, even if its design is attractive. Universities should therefore combine environmental planning with consultation among students and nearby residents. Evaluating patterns of use before and after a change would help determine whether the space meets the needs of its community. These observations should be supported with local evidence rather than assumed to apply equally across all campuses.';
+let hybridRunning = false;
 let revision = 0;
 let sequence = 0;
 let currentRun = null;
@@ -144,7 +145,10 @@ function updateInput(options = {}) {
   $('annotated-text').replaceChildren(); $('revision-cards').replaceChildren(); $('model-cards').replaceChildren(); $('model-signals').replaceChildren();
   const {words, characters} = textCounts(passage.value);
   $('word-count').textContent = `${words.toLocaleString()} words · ${characters.toLocaleString()} characters`;
-  $('analyze').disabled = !words;
+  $('analyze').disabled = !words || hybridRunning;
+  $('hybrid-run').disabled = !words || hybridRunning;
+  $('hybrid-results').replaceChildren();
+  $('hybrid-status').textContent = hybridRunning ? 'Comparison running; results for edited text will be discarded.' : '';
   $('analyze').replaceChildren(document.createTextNode('Analyze writing '), node('span', '↗'));
   $('workspace').setAttribute('aria-busy', 'false');
   message('notice', staleNotice ? 'The input changed. Analyze again to refresh the assessment and revisions.' : '');
@@ -366,7 +370,7 @@ async function component(run, name, path, timeoutMs, render, extra = {}) {
   } finally { clearTimeout(timeout); delete run.controllers[name]; }
 }
 $('analyze').addEventListener('click', async () => {
-  if (!passage.value.trim() || (currentRun && currentRun.running)) return;
+  if (hybridRunning || !passage.value.trim() || (currentRun && currentRun.running)) return;
   const provider = $('coach-provider').value;
   const includeFeedback = $('include-feedback').checked;
   if (includeFeedback && provider === 'openai' && capabilities?.coaching?.openai?.available !== true) { message('notice', 'OpenAI coaching is not configured. Select the local coach.'); return; }
@@ -405,5 +409,39 @@ $('export').addEventListener('click', () => {
   if (!lastReport) return;
   const url = URL.createObjectURL(new Blob([JSON.stringify(lastReport, null, 2)], {type: 'application/json'}));
   const link = node('a'); link.href = url; link.download = 'turingtint-writing-report.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+$('hybrid-run').addEventListener('click', async () => {
+  if (hybridRunning || (currentRun && currentRun.running) || !passage.value.trim()) return;
+  const text = passage.value, inputRevision = revision, requestId = `hybrid-${Date.now()}-${++sequence}`;
+  hybridRunning = true; $('hybrid-run').disabled = true; $('analyze').disabled = true;
+  $('hybrid-results').replaceChildren(); $('hybrid-status').textContent = 'Comparing pretrained models locally. First use loads the checkpoints.';
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 300000);
+  try {
+    const response = await fetch('/api/research/hybrid', {method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({text, request_id: requestId}), signal: controller.signal});
+    const result = await response.json();
+    if (revision !== inputRevision || passage.value !== text) return;
+    if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Hybrid comparison failed.');
+    if (result.request_id !== requestId || result.product_approved !== false || result.status !== 'experimental'
+        || !Array.isArray(result.components) || result.components.length < 2) throw new Error('Unexpected hybrid result.');
+    $('hybrid-status').textContent = 'Comparison complete. Authorship remains unverified.';
+    const container = $('hybrid-results');
+    container.append(node('p', `Experimental mean: ${rawScore(result.score_ai)}. Score spread: ${rawScore(result.score_spread)}.`));
+    container.append(node('p', `Disagreement: ${result.disagreement ? 'yes' : 'no'}. Every model covered the full passage: ${result.coverage_complete ? 'yes' : 'no'}.`));
+    for (const component of result.components) {
+      const card = node('article', undefined, 'model-card');
+      card.append(node('h3', component.model_id), node('p', `Model score: ${rawScore(component.score_ai)}`),
+        node('p', `${component.input_tokens} of ${component.original_tokens} tokens; limit ${component.max_tokens}. ${component.truncated ? 'Truncated: only the beginning was scored.' : 'Full passage fitted.'}`));
+      container.append(card);
+    }
+    const limits = node('ul'); strings(result.limitations).forEach(value => limits.append(node('li', value))); container.append(limits);
+  } catch (error) {
+    if (revision === inputRevision) $('hybrid-status').textContent = error.name === 'AbortError'
+      ? 'Request timed out; the server may still be processing. Wait before retrying.' : error.message;
+  } finally {
+    clearTimeout(timeout); hybridRunning = false;
+    $('hybrid-run').disabled = !passage.value.trim();
+    $('analyze').disabled = !passage.value.trim() || Boolean(currentRun && currentRun.running);
+  }
 });
 loadCapabilities(); loadCorpus(); loadExamples(); updateInput();
