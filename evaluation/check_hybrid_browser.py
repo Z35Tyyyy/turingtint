@@ -44,6 +44,12 @@ def run():
             expect(page.locator('#hybrid-heading')).to_have_text('The models give similar scores.', timeout=120000)
             expect(page.locator('.simple-model').first).to_contain_text('DistilBERT')
             expect(page.locator('.simple-model').last).to_contain_text('ModernBERT')
+            expect(page.locator('.sentence-excerpt')).to_have_text(text)
+            assert page.locator('.sentence-mark').count() == 2
+            page.locator('.sentence-mark').first.focus()
+            page.keyboard.press('Enter')
+            expect(page.locator('.sentence-detail')).to_contain_text('Limited context')
+            expect(page.locator('.sentence-detail')).to_contain_text('distilbert:')
             out = ROOT / 'outputs/hybrid'
             out.mkdir(parents=True, exist_ok=True)
             page.locator('#hybrid-panel').screenshot(path=str(out / 'browser.png'))
@@ -80,7 +86,8 @@ def run():
                       mocked='Disagreement/truncation fixture and final 503 error response.', external_requests=external, browser_errors=errors,
                       checks=['real component scores rendered', 'concurrent analysis button disabled', 'edited text invalidates results',
                               'advanced tools and technical averages collapsed by default', 'plain-language disagreement and truncation',
-                              'mobile viewport has no horizontal overflow', '503 error displayed'],
+                              'mobile viewport has no horizontal overflow', '503 error displayed',
+                              'real sentence highlights preserve text and expose scores with keyboard selection'],
                       rendered_result=rendered, accuracy_evidence=False)
         (out / 'browser.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
         print(json.dumps(report))

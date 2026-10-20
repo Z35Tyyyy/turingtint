@@ -418,7 +418,47 @@ function signalScore(value) {
   return value.toFixed(3);
 }
 
-function renderHybrid(result) {
+function renderSentenceSignals(data, text, container) {
+  if (!data) return;
+  const labels = {stronger: 'Stronger AI signal', weaker: 'Weaker AI signal', disagree: 'Models disagree', uncertain: 'Uncertain signal', unscored: 'Not scored'};
+  if (data.offset_encoding !== 'utf-16' || !Array.isArray(data.segments)) throw new Error('Invalid sentence offsets.');
+  let previous = 0;
+  for (const segment of data.segments) {
+    if (!Number.isInteger(segment.start) || !Number.isInteger(segment.end) || segment.start < previous || segment.end <= segment.start || segment.end > text.length || !labels[segment.label]) throw new Error('Invalid sentence coverage.');
+    previous = segment.end;
+  }
+  const section = node('section', undefined, 'sentence-signals');
+  section.append(node('h3', 'Signals in your text'), node('p', 'Select a sentence to inspect its scores. Short sentences have limited context; colors do not prove authorship.', 'score-explanation'));
+  const legend = node('div', undefined, 'sentence-legend');
+  for (const [key, label] of Object.entries(labels)) legend.append(node('span', label, `sentence-${key}`));
+  const excerpt = node('div', undefined, 'sentence-excerpt');
+  const detail = node('p', 'Select a highlighted sentence for details.', 'sentence-detail');
+  detail.setAttribute('aria-live', 'polite');
+  let cursor = 0;
+  for (const segment of data.segments) {
+    excerpt.append(document.createTextNode(text.slice(cursor, segment.start)));
+    const mark = node('span', text.slice(segment.start, segment.end), `sentence-mark sentence-${segment.label}`);
+    mark.tabIndex = 0; mark.setAttribute('role', 'button');
+    const warning = segment.low_context ? ' Limited context: fewer than 40 words.' : '';
+    mark.setAttribute('aria-label', `${labels[segment.label]}.${warning} ${text.slice(segment.start, segment.end)}`);
+    const show = () => {
+      const scores = Array.isArray(segment.scores) ? segment.scores.map(c => `${c.model}: ${signalScore(c.score_ai)}`).join(' · ') : '';
+      detail.textContent = `${labels[segment.label]}. ${scores ? scores + '.' : ''}${warning} ${segment.reason || ''}`;
+      excerpt.querySelectorAll('[aria-pressed]').forEach(el => el.setAttribute('aria-pressed', 'false'));
+      mark.setAttribute('aria-pressed', 'true');
+    };
+    mark.setAttribute('aria-pressed', 'false');
+    mark.addEventListener('click', show);
+    mark.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); show(); } });
+    excerpt.append(mark); cursor = segment.end;
+  }
+  excerpt.append(document.createTextNode(text.slice(cursor)));
+  section.append(legend, excerpt, detail);
+  if (!data.complete) section.append(node('p', 'Some text could not be scored and remains neutral. Select it to see why.', 'score-explanation'));
+  container.append(section);
+}
+
+function renderHybrid(result, text) {
   if (typeof result.disagreement !== 'boolean' || typeof result.coverage_complete !== 'boolean') throw new Error('Incomplete comparison.');
   // Validate all scores before adding any part of the result to the page.
   signalScore(result.score_ai); signalScore(result.score_spread);
@@ -430,6 +470,7 @@ function renderHybrid(result) {
   const container = $('hybrid-results');
   container.append(node('p', result.coverage_complete ? 'Both models read your full text.' : 'At least one model read only the beginning. This check does not cover the full text in every model.',
     result.coverage_complete ? 'coverage-note complete' : 'coverage-note partial'));
+  renderSentenceSignals(result.sentence_signals, text, container);
   container.append(node('p', 'Scores run from 0 to 1. A higher value means a stronger AI-pattern signal. These scores are not authorship probabilities.', 'score-explanation'));
   const cards = node('div', undefined, 'simple-models');
   const details = node('details', undefined, 'score-details');
@@ -467,7 +508,7 @@ $('hybrid-run').addEventListener('click', async () => {
     if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : 'Hybrid comparison failed.');
     if (result.request_id !== requestId || result.product_approved !== false || result.status !== 'experimental'
         || !Array.isArray(result.components) || result.components.length < 2) throw new Error('Unexpected hybrid result.');
-    renderHybrid(result);
+    renderHybrid(result, text);
   } catch (error) {
     if (revision === inputRevision) {
       $('hybrid-heading').textContent = 'The check could not finish.';

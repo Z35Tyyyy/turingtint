@@ -49,6 +49,25 @@ DistilBERT and ModernBERT share training data; agreement is not independent
 evidence. No improvement over individual detectors has been established.
 The existing authorship capability remains unavailable.
 
+## Sentence highlighting in the web checker
+
+The web result also scores sentences/newline-separated passages independently.
+Select a pastel highlight (or focus it and press Enter) to see each model's score.
+Peach means both scores are at least 0.65; mint means both are at most 0.35.
+Lavender indicates a spread of at least 0.25 or scores on opposite sides of 0.5.
+Other scored sentences are pale yellow. These are unvalidated display thresholds,
+not calibrated authorship decisions. The document score is still computed on the
+whole input; sentence results do not alter it.
+
+Fewer than 8 words remain unscored; fewer than 40 words receive a limited-context
+warning. The checker processes at most 24 segments, each at most 1,200 characters,
+and stops starting new sentence predictions after 25 seconds. An in-progress
+prediction may finish after that budget. Failed or truncated sentences and the
+unprocessed remainder stay neutral. Sentence boundaries are approximate; browser
+line wrapping is not a stable linguistic unit. UTF-16 offsets preserve whitespace
+and emoji in the original display. No mixed-authorship localization accuracy has
+been established.
+
 ## CLI and optional Desklib
 
 Input is JSONL with `id` and `text`; outputs omit the text. Existing output and

@@ -5,6 +5,7 @@ import time
 
 from .coaching import GPU_LOCK
 from .research import ResearchBusy, ResearchUnavailable
+from .hybrid_spans import analyze_spans
 
 
 def load_detector():
@@ -40,6 +41,7 @@ class HybridResearch:
                     'components', 'score_spread', 'disagreement', 'disagreement_threshold', 'coverage_complete')}
             except Exception:
                 raise ResearchUnavailable('Hybrid inference could not finish. Try a shorter passage or restart the app.') from None
+            result['sentence_signals'] = analyze_spans(text, self.model, prediction)
             result.update(status='experimental', product_approved=False, calibrated=False,
                 elapsed_ms=round((time.perf_counter() - started) * 1000),
                 limitations=[
