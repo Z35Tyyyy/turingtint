@@ -56,6 +56,20 @@ evidence of current-generator, sentence-level, mixed-authorship or essay accurac
 Overlap with the original detector's training data is unverified. A better HC3
 score is insufficient to deploy the tuned checkpoint or adjust the hybrid weights.
 
+## Current validation and runtime status
+
+The data, split and metric checks pass (42 tests). A separate synthetic tiny-model
+smoke run also completed training, checkpoint selection, calibration, safetensors
+export and reload. That smoke run is software validation, not detector accuracy.
+
+Two remote preflights saved `NvidiaTeslaT4` and Internet settings successfully,
+but the actual sessions reported CPU-only PyTorch, no NVIDIA devices and DNS
+failures for package/model downloads. An explicit GPU image request did not
+change that behavior. No HC3 model has been trained remotely. Resolve the Kaggle
+runtime allocation/network problem before running the pilot; the notebook now
+checks CUDA before downloading dependencies or data. The local receipts are in
+`outputs/training/kaggle-gpu-preflight-v1.json` and `-v2.json`.
+
 Sources: [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3),
 [Kaggle GPU quota](https://www.kaggle.com/docs/efficient-gpu-usage),
 [Hugging Face Jobs pricing](https://huggingface.co/docs/hub/jobs-pricing).
