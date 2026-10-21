@@ -26,7 +26,7 @@ def freeze_pilot(source: Path, output: Path) -> dict:
         if {r["label"] for r in rows if r["split"] == split} != {0, 1}:
             raise ValueError(f"Both classes are required in {split}; use more source families.")
     records = output / "records.jsonl"
-    records.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+    records.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8", newline="\n")
     manifest.update(
         records_sha256=file_sha(records), validation_seed=VALIDATION_SEED,
         split_policy="Existing 60/20/20 families; independently reserve 1/6 of train for validation (about 50/10/20/20).",

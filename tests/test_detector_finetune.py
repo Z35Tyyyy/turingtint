@@ -25,6 +25,7 @@ class FineTunePilotTests(unittest.TestCase):
             frozen = root / "frozen"
             freeze_pilot(source, frozen)
             result, receipt = load_frozen(frozen)
+            self.assertNotIn(b"\r\n", (frozen / "records.jsonl").read_bytes())
             self.assertEqual({r["split"] for r in result}, {"train", "validation", "calibration", "test"})
             related = [r for r in result if r["source_group"] in {"question-0", "question-299"}]
             self.assertEqual(len({r["split"] for r in related}), 1)
