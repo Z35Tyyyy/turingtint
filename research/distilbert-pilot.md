@@ -70,6 +70,26 @@ runtime allocation/network problem before running the pilot; the notebook now
 checks CUDA before downloading dependencies or data. The local receipts are in
 `outputs/training/kaggle-gpu-preflight-v1.json` and `-v2.json`.
 
+The follow-up checked the official Kaggle CLI and an interactive Jupyter session
+with explicit T4 hardware and Internet enabled. Both also reported no CUDA/NVIDIA
+device and failed outbound requests. The interactive session was cancelled after
+the probe. Receipts are in `outputs/training/kaggle-cli-diagnostic-result/` and
+`outputs/training/kaggle-interactive-probe.json`.
+
+Credential setup was repaired separately: the replacement API token authenticates
+and has `resources.admin:*` scope. A stale Windows user environment variable was
+updated to match the owner-protected `~/.kaggle/access_token` file. Existing shells
+can retain the old variable; remove it from that shell to let the CLI use the file.
+Never put tokens in this repository or notebook source.
+
+**P0 remains working Kaggle GPU and Internet access.** Local CPU training was
+stopped at the user's request. No further model training should start while this
+setup is unresolved. The remaining web-account check is phone verification and
+any restriction displayed beside the Accelerator or Internet controls. A quota
+allowance and saved T4 setting alone do not establish that a GPU was allocated.
+Use a fresh session with T4 and the latest environment, then require a successful
+CUDA matrix operation and HTTP requests to Hugging Face/PyPI before training.
+
 Sources: [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3),
 [Kaggle GPU quota](https://www.kaggle.com/docs/efficient-gpu-usage),
 [Hugging Face Jobs pricing](https://huggingface.co/docs/hub/jobs-pricing).
