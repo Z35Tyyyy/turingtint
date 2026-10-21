@@ -8,6 +8,10 @@ ModernBERT without training or the historical research artifacts. It shows
 individual scores, disagreement and truncation; authorship remains unverified.
 See [setup, optional Desklib and verification](research/hybrid-v2.md).
 
+For continued training on a free notebook GPU, see the
+[bounded DistilBERT/HC3 pilot](research/distilbert-pilot.md). Its exported model
+stays separate from the pretrained detectors used by the app.
+
 To include writing suggestions in the same review, install the compact local CPU
 coach with `scripts/setup-coach-cpu.ps1`, then restart using `scripts/start.ps1`.
 Sentence highlights and writing feedback work without the historical MAGE/TF-IDF

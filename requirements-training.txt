@@ -1,0 +1,6 @@
+# Keep the GPU runtime's existing CUDA-enabled torch (2.6+).
+transformers==4.56.2
+accelerate==1.10.1
+huggingface-hub==0.36.2
+safetensors==0.8.0
+numpy>=1.26,<3
